@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+}
+
+group 'ranzer'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile ('net.dv8tion:JDA:3.8.1_448'){
+        exclude module: 'opus-java'
+    }
+    compile files('libs/mysql-connector-java-8.0.13.jar')
+}

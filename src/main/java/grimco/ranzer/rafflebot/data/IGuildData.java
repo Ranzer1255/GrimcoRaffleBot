@@ -19,15 +19,15 @@ public interface IGuildData {
      * returns the Timeout for XP earnings
      * @return the length of time in milliseconds between earnings
      */
-    long getXPTImeout();
+    long getXPTimeout();
     /**
      * @return the low bound for a random xp earning
      */
-    int getXPLowbound();
+    int getXPLowBound();
     /**
      * @return the high bound for a random xp earning
      */
-    int getXPHighbound();
+    int getXPHighBound();
     /**
      * sets the boundres for xp earnings set bounderies equal to guarentee a set outcome
      * @param low the low bound inclusive
@@ -59,4 +59,6 @@ public interface IGuildData {
     //channel data
     IChannelData getChannel(TextChannel channel);
     void deleteChannel(TextChannel channel);
+
+    IRaffleData getRaffleData();
 }

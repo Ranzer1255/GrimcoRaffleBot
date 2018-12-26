@@ -12,6 +12,6 @@ public interface IMemberData {
     void removeXP(int amount);
     long lastXP();
 
-    boolean isBarredFromRaffle();
-    void setBarredFromRaffle();
+    boolean isBannedFromRaffle();
+    void setBannedFromRaffle(boolean banned);
 }

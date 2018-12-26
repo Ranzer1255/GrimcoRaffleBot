@@ -4,17 +4,18 @@ import grimco.ranzer.rafflebot.GrimcoRaffleBot;
 import grimco.ranzer.rafflebot.database.BotDB;
 import grimco.ranzer.rafflebot.util.Logging;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
+import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * container for all the GuildData objects
@@ -25,15 +26,15 @@ import java.util.List;
 public class GuildManager extends ListenerAdapter{
 	
 	/*
-	 * update the DB to match things that happend while bot was offline
+	 * update the DB to match things that happened while bot was offline
 	 */
 	static{
-		Logging.info("updating DB to things that happend while offline");
+		Logging.info("updating DB to things that happened while offline");
 		
 		Logging.info("adding new guilds");
 		addNewGuilds();
 		
-		Logging.info("removeing old guilds");
+		Logging.info("removing old guilds");
 		removeOldGuilds();
 		
 		Logging.info("updating members");
@@ -47,7 +48,7 @@ public class GuildManager extends ListenerAdapter{
 	}
 
 
-	//convenance passthrough methods
+	//convenience pass through methods
 	public static String getPrefix(Guild key){
 		return new GuildDB(key).getPrefix();
 	}
@@ -60,45 +61,26 @@ public class GuildManager extends ListenerAdapter{
 
 	//DB update methods
 	private static void addNewGuilds() {
-		List<Guild> dbGuilds = pullGuildsFromDB();
 
-		for(Guild g: GrimcoRaffleBot.getJDA().getGuilds()){
-			if(!dbGuilds.contains(g)){
-				try
-				(PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-						"insert into guild(guild_id) values (?) on duplicate key update guild_id = guild_id"
-						)){
-					stmt.setString(1, g.getId());
-
-					Logging.info(String.format("%d rows added to Guild Table", stmt.executeUpdate()));
-
-
-				} catch (SQLException e) {
-					Logging.error("issue adding new guilds to the DB");
-					Logging.log(e);
-				}
-
+		try {
+			Connection con = BotDB.getConnection();
+			con.setAutoCommit(false);
+			PreparedStatement stmt = con.prepareStatement(
+					"insert ignore into guild(guild_id) values (?)"
+			);
+			for(Guild g: GrimcoRaffleBot.getJDA().getGuilds()){
+				stmt.setString(1,g.getId());
+				stmt.addBatch();
 			}
-		}
-	}
-	private static List<Guild> pullGuildsFromDB() {
-		List<Guild> rtn = new ArrayList<>();
-
-		try (ResultSet rs = BotDB.getConnection().prepareStatement(
-				"select guild_id from guild"
-		).executeQuery()){
-
-			while(rs.next()){
-				rtn.add(GrimcoRaffleBot.getJDA().getGuildById(rs.getString(1)));
-			}
-
+			stmt.executeBatch();
+			con.commit();
+			con.setAutoCommit(true);
 		} catch (SQLException e) {
-			Logging.error("issue data from DB");
+			Logging.error("issue adding new guilds to the DB");
 			Logging.log(e);
 		}
-
-		return rtn;
 	}
+
 	private static void removeOldGuilds() {
 		try (ResultSet rs = BotDB.getConnection().prepareStatement(
 					"select guild_id from guild" ,ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_UPDATABLE
@@ -115,25 +97,52 @@ public class GuildManager extends ListenerAdapter{
 		}
 	}
 	private static void updateMembers() {
-		try (ResultSet rs = BotDB.getConnection().prepareStatement(
-				"select guild_id, user_id from member" ,ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_UPDATABLE
-			).executeQuery()){
-			while (rs.next()){
-				if (GrimcoRaffleBot.getJDA().getGuildById(rs.getString(1)).getMemberById(rs.getString(2))==null){
-					rs.deleteRow();
+
+		//add new members
+		try {
+			Connection con = BotDB.getConnection();
+			con.setAutoCommit(false);
+			PreparedStatement stmt = con.prepareStatement(
+					"insert ignore into member (guild_id, user_id) " +
+							"values (?,?)"
+			);
+			for(Guild g: GrimcoRaffleBot.getJDA().getGuilds()){
+				for(Member m: g.getMembers()){
+					stmt.setString(1,g.getId());
+					stmt.setString(2,m.getUser().getId());
+					stmt.addBatch();
 				}
 			}
+			stmt.executeBatch();
+			con.commit();
+			con.setAutoCommit(true);
 		} catch (SQLException e) {
-			Logging.error("issue updating members");
-			Logging.log(e);
+			e.printStackTrace();
 		}
+
+		//old code to delete old members, i'm going to keep it commented out, but likely wont use it
+		//see onGuildMemberLeave() for more details
+
+//		//delete old members
+//		try (ResultSet rs = BotDB.getConnection().prepareStatement(
+//				"select guild_id, user_id from member" ,ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_UPDATABLE
+//			).executeQuery()){
+//			while (rs.next()){
+//				if (GrimcoRaffleBot.getJDA().getGuildById(rs.getString(1)).getMemberById(rs.getString(2))==null){
+//					rs.deleteRow();
+//				}
+//			}
+//		} catch (SQLException e) {
+//			Logging.error("issue updating members");
+//			Logging.log(e);
+//		}
 
 	}
 
 
 	//data modification listeners
 	@Override
-	public void onGuildJoin(GuildJoinEvent event) {
+	public void onGuildJoin(GuildJoinEvent event) {// TODO: 12/26/2018 extract addGuild(Guild guild) as its own method
 
 		try(PreparedStatement stmt = BotDB.getConnection().prepareStatement("insert into guild(guild_id) values (?)")){
 			stmt.setString(1, event.getGuild().getId());
@@ -146,7 +155,7 @@ public class GuildManager extends ListenerAdapter{
 	}
 
 	@Override
-	public void onGuildLeave(GuildLeaveEvent event) {
+	public void onGuildLeave(GuildLeaveEvent event) {// TODO: 12/26/2018 extract removeGuild(Guild guild) as its own method
 		super.onGuildLeave(event);
 
 		try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
@@ -168,16 +177,21 @@ public class GuildManager extends ListenerAdapter{
 	}
 
 	@Override
-	public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
-		super.onGuildMemberLeave(event);
+	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
+		getGuildData(event.getGuild()).addMember(event.getMember());
+	}
 
-		getGuildData(event.getGuild()).deleteMember(event.getMember());
+	@Override
+	public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
+
+		//we don't want to delete member data when they leave the guild
+		//this is to help prevent ban evasion
+//		getGuildData(event.getGuild()).deleteMember(event.getMember());
 
 	}
 
 	@Override
 	public void onTextChannelDelete(TextChannelDeleteEvent event) {
-		super.onTextChannelDelete(event); //TODO make onTextChannelDelete
 		getGuildData(event.getGuild()).deleteChannel(event.getChannel());
 	}
 }

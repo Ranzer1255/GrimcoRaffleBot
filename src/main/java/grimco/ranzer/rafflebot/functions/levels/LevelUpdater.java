@@ -25,8 +25,7 @@ delete old rows according to decay time
 
 public class LevelUpdater extends ListenerAdapter{
 
-	private static final long MESSAGE_TIMEOUT = 60000L;
-	private final static int XP_LOWBOUND = 15, XP_HIGHBOUND = 25;
+
 	
 	@Override
 	public void onGuildMessageReceived(GuildMessageReceivedEvent event){
@@ -35,8 +34,8 @@ public class LevelUpdater extends ListenerAdapter{
 		if (isXPChannel(event, gd)) {
 			if (isNotBot(event)) {
 				if (isNotTimedOut(event, gd)) {
-					gd.addXP(event.getAuthor(), getRandomXP(),event.getChannel());
-
+					System.out.println("adding xp");
+					gd.getMemberData(event.getMember()).addXP(getRandomXP(gd));
 				}
 			} 
 		}
@@ -45,8 +44,8 @@ public class LevelUpdater extends ListenerAdapter{
 	
 	private boolean isNotTimedOut(GuildMessageReceivedEvent event, IGuildData gd) {
 		
-		return gd.getUserLevel(event.getMember())==null
-				||(System.currentTimeMillis()- gd.getUserLevel(event.getMember()).getLastXPTime()) > MESSAGE_TIMEOUT;
+		return gd.getMemberData(event.getMember())==null
+				||(System.currentTimeMillis()- gd.getMemberData(event.getMember()).lastXP()) > gd.getXPTimeout();
 	}
 	
 	private boolean isNotBot(GuildMessageReceivedEvent event) {
@@ -57,9 +56,9 @@ public class LevelUpdater extends ListenerAdapter{
 		return gd.getChannel(event.getChannel()).getXPPerm();
 	}
 	
-	private int getRandomXP() {
+	private int getRandomXP(IGuildData gd) {
 		
-		return ThreadLocalRandom.current().nextInt(XP_LOWBOUND, XP_HIGHBOUND+1);
+		return ThreadLocalRandom.current().nextInt(gd.getXPLowBound(), gd.getXPHighBound()+1);
 	}
 
 }

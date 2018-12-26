@@ -101,7 +101,7 @@ public class HelpCommand extends BotCommand implements Describable{
 	@Override
 	public String getUsage(Guild g) {
 
-		return getPrefix(g)+"help [<command>]`";
+		return "`"+getPrefix(g)+"help [<command>]`";
 	}
 
 	@Override

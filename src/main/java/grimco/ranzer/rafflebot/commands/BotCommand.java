@@ -23,7 +23,7 @@ public abstract class BotCommand {
 
 	public void runCommand(String[] args, MessageReceivedEvent event){
 		if (!event.getAuthor().getId().equals(BotConfiguration.getInstance().getOwner())) { //override all permission checks if its me
-			if (!hasPermission(args, event)) {
+			if (!hasPermission(event)) {
 				noPermission(event);
 				return;
 			} 
@@ -42,11 +42,12 @@ public abstract class BotCommand {
 	abstract public List<String> getAlias();
 
 	/*
-	TODO rewrite this so that it checks if user has
+	TODO rewrite this so that it checks for both roles and perm requirements regardless of what the command needs
+	this way a command can have either requirement
 	 */
-	private boolean hasPermission(String[] args, MessageReceivedEvent event) {
+	private boolean hasPermission(MessageReceivedEvent event) {
 		if(getPermissionRequirements()==null)
-			return hasRoleRequirements(args, event);
+			return hasRoleRequirements(event);
 		for (Role role : event.getGuild().getMember(event.getAuthor()).getRoles()) {
 			if(role.getPermissions().contains(getPermissionRequirements())){
 				return true;
@@ -55,11 +56,11 @@ public abstract class BotCommand {
 		return false;
 	}
 
-	private boolean hasRoleRequirements(String[] args, MessageReceivedEvent event) {
-		if(getRoleRequirements()==null)
+	private boolean hasRoleRequirements(MessageReceivedEvent event) {
+		if(getRoleRequirements(event.getGuild())==null)
 			return true;
 		for(Role role : event.getGuild().getMember(event.getAuthor()).getRoles()){
-			if(getRoleRequirements().contains(role))
+			if(getRoleRequirements(event.getGuild()).contains(role))
 				return true;
 		}
 		
@@ -67,7 +68,7 @@ public abstract class BotCommand {
 		return false;
 	}
 	
-	public List<Role> getRoleRequirements() {
+	public List<Role> getRoleRequirements(Guild guild) {
 		return null;
 	}
 

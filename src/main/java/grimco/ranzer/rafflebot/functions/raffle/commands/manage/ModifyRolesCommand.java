@@ -1,43 +1,119 @@
 package grimco.ranzer.rafflebot.functions.raffle.commands.manage;
 
 import grimco.ranzer.rafflebot.commands.Describable;
+import grimco.ranzer.rafflebot.commands.admin.HelpCommand;
+import grimco.ranzer.rafflebot.data.GuildManager;
 import grimco.ranzer.rafflebot.functions.raffle.commands.AbstractRaffleCommand;
+import grimco.ranzer.rafflebot.util.StringUtil;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.Arrays;
 import java.util.List;
 
-/*todo
-command args
-
-Add <role>      add role
-Remove <role>   remove role
-none            see current roles
-
-get role by Guild#getRolesByName();
- */
 public class ModifyRolesCommand extends AbstractRaffleCommand implements Describable {
 
     @Override
     public void process(String[] args, MessageReceivedEvent event) {
-        // TODO: 12/24/2018
+
+        if (args.length==0){
+            List<Role> roles = GuildManager.getGuildData(event.getGuild()).getRaffleData().allowedManagementRoles();
+            StringBuilder sb = new StringBuilder();
+
+            for (Role r :
+                    roles) {
+                sb.append(r.getName()).append(" ,");
+            }
+            sb.delete(sb.length()-1,sb.length());
+
+            event.getChannel().sendMessage(String.format(
+                    "Allowed Roles: %s",
+                    sb.toString()
+            )).queue();
+        } else {
+            switch (args[0]){
+                case "add":
+                    Role r = event.getJDA().getRolesByName(
+                            StringUtil.arrayToString(Arrays.copyOfRange(args,1,args.length)," "),
+                            true).get(0);
+                    if (r == null) {
+                        roleNotFound(event.getChannel());
+                        return;
+                    }
+
+                    if (GuildManager.getGuildData(event.getGuild()).getRaffleData().addAllowedRole(r)){
+                        roleAdd(event.getChannel(), r, true);
+                    } else {
+                        roleAdd(event.getChannel(), r, false);
+                    }
+                    break;
+                case "remove":
+                    r = event.getJDA().getRolesByName(
+                            StringUtil.arrayToString(Arrays.copyOfRange(args,1,args.length)," "),
+                            true).get(0);
+                    if (r == null) {
+                        roleNotFound(event.getChannel());
+                        return;
+                    }
+
+                    if (GuildManager.getGuildData(event.getGuild()).getRaffleData().removeAllowedRole(r)){
+                        roleRemove(event.getChannel(),r,true);
+                    } else {
+                        roleRemove(event.getChannel(),r,false);
+                    }
+                    break;
+                default:
+                    event.getChannel().sendMessage(HelpCommand.getDescription(this,event.getGuild())).queue();
+                    break;
+            }
+        }
+
+
+    }
+
+    private void roleRemove(MessageChannel channel, Role r, boolean b) {
+        channel.sendMessage(String.format(
+                "The role %s was %s",
+                r.getName(),
+                b?"removed":"not in the list"
+        )).queue();
+    }
+
+    private void roleAdd(MessageChannel channel, Role r, boolean b) {
+        channel.sendMessage(String.format(
+                "The role %s was %s",
+                r.getName(),
+                b?"added":"already in the list"
+        )).queue();
+    }
+
+    private void roleNotFound(MessageChannel channel) {
 
     }
 
     @Override
     public List<String> getAlias() {
-        return Arrays.asList("roles"); // TODO: 12/24/2018
+        return Arrays.asList("roles");
     }
 
     @Override
     public String getShortDescription() {
-        return null;// TODO: 12/24/2018
+        return "modify the list of roles that can run a raffle";
     }
 
     @Override
     public String getLongDescription() {
-        return null;// TODO: 12/24/2018
+        return getShortDescription()+"\n\n" +
+                "add: add the specified role to the list\n" +
+                "remove: remove the specified role from the list";
+    }
+
+    @Override
+    public String getUsage(Guild g) {
+        return "`"+getPrefix(g)+getName()+" [{add | remove) <user>]`";
     }
 
     @Override

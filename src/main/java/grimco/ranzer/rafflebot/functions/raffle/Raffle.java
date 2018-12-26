@@ -12,6 +12,10 @@ public class Raffle {
 
     private List<Member> entries = new ArrayList<>();
 
+    public Raffle(){
+        isOpen = true;
+    }
+
     //? entry gating is handled at the Command level
     /**
      * Add entrant to the Raffle

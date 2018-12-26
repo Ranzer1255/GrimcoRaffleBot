@@ -9,13 +9,11 @@ import java.util.List;
 import grimco.ranzer.rafflebot.GrimcoRaffleBot;
 import grimco.ranzer.rafflebot.database.BotDB;
 import grimco.ranzer.rafflebot.config.BotConfiguration;
-import grimco.ranzer.rafflebot.functions.levels.UserLevel;
 import grimco.ranzer.rafflebot.util.Logging;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 
 @SuppressWarnings("ConstantConditions")
 public class GuildDB implements IGuildData {

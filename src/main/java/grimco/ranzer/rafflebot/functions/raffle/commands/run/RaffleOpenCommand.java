@@ -1,26 +1,24 @@
 package grimco.ranzer.rafflebot.functions.raffle.commands.run;
 
-import grimco.ranzer.rafflebot.commands.Category;
 import grimco.ranzer.rafflebot.commands.Describable;
+import grimco.ranzer.rafflebot.functions.raffle.Raffle;
 import grimco.ranzer.rafflebot.functions.raffle.commands.AbstractRaffleCommand;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.Arrays;
 import java.util.List;
 
-/* todo
-create new Raffle object and store it in Raffle Map in the Superclass keyed off the Text Channel
-
-if Raffle already exists overwrite with new instance;
- */
 public class RaffleOpenCommand extends AbstractRaffleCommand implements Describable {
 
-    // TODO: 12/24/2018
     @Override
     public void process(String[] args, MessageReceivedEvent event) {
+        Raffle raffle = new Raffle();
+        raffles.put(event.getTextChannel(),raffle);
 
+        event.getChannel().sendMessage("The raffle is now Open, Good luck").queue();
     }
 
     @Override
@@ -28,16 +26,13 @@ public class RaffleOpenCommand extends AbstractRaffleCommand implements Describa
         return Arrays.asList("open","enable","start");
     }
 
-    // TODO: 12/24/2018
     @Override
     public String getShortDescription() {
-        return null;
+        return "Open a new raffle";
     }
-
-    // TODO: 12/24/2018
     @Override
     public String getLongDescription() {
-        return null;
+        return getShortDescription();
     }
 
     @Override
@@ -46,7 +41,7 @@ public class RaffleOpenCommand extends AbstractRaffleCommand implements Describa
     }
 
     @Override
-    public List<Role> getRoleRequirements() {
-        return allowedManagementRoles;
+    public List<Role> getRoleRequirements(Guild guild) {
+        return getAllowedManagementRoles(guild);
     }
 }

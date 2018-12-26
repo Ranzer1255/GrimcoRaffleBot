@@ -3,13 +3,12 @@ package grimco.ranzer.rafflebot.functions.raffle.commands;
 import grimco.ranzer.rafflebot.commands.BotCommand;
 import grimco.ranzer.rafflebot.commands.Describable;
 import grimco.ranzer.rafflebot.commands.admin.HelpCommand;
+import grimco.ranzer.rafflebot.functions.raffle.commands.manage.BanUserCommand;
 import grimco.ranzer.rafflebot.functions.raffle.commands.manage.ModifyRolesCommand;
-import grimco.ranzer.rafflebot.functions.raffle.commands.run.RaffleCloseCommand;
-import grimco.ranzer.rafflebot.functions.raffle.commands.run.RaffleDrawCommand;
-import grimco.ranzer.rafflebot.functions.raffle.commands.run.RaffleEnterCommand;
-import grimco.ranzer.rafflebot.functions.raffle.commands.run.RaffleOpenCommand;
+import grimco.ranzer.rafflebot.functions.raffle.commands.run.*;
 import grimco.ranzer.rafflebot.util.Logging;
 import net.dv8tion.jda.core.MessageBuilder;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.ArrayList;
@@ -23,13 +22,15 @@ public class RaffleCommand extends AbstractRaffleCommand implements Describable 
     //TODO grant Lyrium nuclear launch codes
     private static List<BotCommand> subCommands;
 
-    static {// TODO: 12/24/2018 add raffle subcommands
+    static {
         subCommands=new ArrayList<>();
         subCommands.add(new RaffleOpenCommand());
-        subCommands.add(new RaffleDrawCommand());
         subCommands.add(new RaffleEnterCommand());
-        subCommands.add(new ModifyRolesCommand());
         subCommands.add(new RaffleCloseCommand());
+        subCommands.add(new RaffleDrawCommand());
+        subCommands.add(new RaffleEndCommand());
+        subCommands.add(new ModifyRolesCommand());
+        subCommands.add(new BanUserCommand());
 
     }
 
@@ -41,9 +42,8 @@ public class RaffleCommand extends AbstractRaffleCommand implements Describable 
     @Override
     public void process(String[] args, MessageReceivedEvent event) {
 
-        /*todo
-        no args
-        send help message or current raffle status?
+        /*
+        TODO on no args, send help message or current raffle status?
          */
         if (args.length == 0) {
             event.getTextChannel().sendMessage(new MessageBuilder().setEmbed(HelpCommand.getDescription(this, event.getGuild())).build()).queue();
@@ -84,6 +84,20 @@ public class RaffleCommand extends AbstractRaffleCommand implements Describable 
                     String.format("**%s**: %s\n", cmd.getName(), ((Describable)cmd).getShortDescription())
             );
         }
+
+        return sb.toString();
+    }
+
+    @Override
+    public String getUsage(Guild g) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(String.format("`%s%s {", getPrefix(g), getName()));
+        for(BotCommand cmd : subCommands){
+            sb.append(String.format("%s|", cmd.getName()));
+        }
+        sb.delete(sb.length()-1,sb.length());
+        sb.append("}`");
 
         return sb.toString();
     }

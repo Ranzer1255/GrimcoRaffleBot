@@ -1,33 +1,63 @@
 package grimco.ranzer.rafflebot.functions.raffle.commands.run;
 
 import grimco.ranzer.rafflebot.commands.Describable;
+import grimco.ranzer.rafflebot.data.GuildManager;
 import grimco.ranzer.rafflebot.functions.raffle.commands.AbstractRaffleCommand;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.Arrays;
 import java.util.List;
 
-
-/*todo
-users call this to enter current active raffle in this TextChannel
-
-if no Raffle object exists for this TextChannel respond accordingly
-
-else
-
-check member's activity. if above threshold allow into raffle
-
-add Member to Raffle
-if member exists in Raffle
-handle accordingly
-
- */
 public class RaffleEnterCommand extends AbstractRaffleCommand implements Describable {
 
-    // TODO: 12/24/2018 proccess enter command
+    private final String NO_RAFFLE_MESSAGE = "I'm sorry, but there isn't a raffle currently";
+    private final String BARRED_MESSAGE = "sorry %s, but you have been barred from entry";
+    private final String INACTIVE_MESSAGE = "Sorry %s, but you haven't been active enough in the community to be eligible for raffles";
+    private final String RAFFLE_CLOSED_MESSAGE = "sorry %s, but the raffle's been closed and a drawing is about to happen.";
+
     @Override
     public void process(String[] args, MessageReceivedEvent event) {
+        if (raffles.containsKey(event.getTextChannel())) {
 
+            //check entrant's eligibility
+            if (barred(event.getMember())) {
+                event.getChannel().sendMessage(String.format(
+                        BARRED_MESSAGE,
+                        event.getAuthor().getAsMention()
+                )).queue();
+            } else if (notActive(event.getMember())) {
+                event.getChannel().sendMessage(String.format(
+                        INACTIVE_MESSAGE,
+                        event.getAuthor().getAsMention()
+                )).queue();
+            } else {
+                if (raffles.get(event.getTextChannel()).addEntry(event.getMember())) {
+                    event.getChannel().sendMessage(String.format(
+                        "%s you have been entered into the Raffle",
+                        event.getAuthor().getAsMention()
+                    )).queue();
+                } else {
+                    event.getChannel().sendMessage(String.format(
+                        RAFFLE_CLOSED_MESSAGE,
+                        event.getAuthor().getAsMention()
+                    )).queue();
+                }
+            }
+
+        } else {
+            event.getChannel().sendMessage(NO_RAFFLE_MESSAGE).queue();
+        }
+    }
+
+    private boolean notActive(Member member) {
+        return GuildManager.getGuildData(member.getGuild()).getMemberData(member).getXP()
+                <
+                getRaffleData(member.getGuild()).getRaffleXPThreshold();
+    }
+
+    private boolean barred(Member member) {
+        return GuildManager.getGuildData(member.getGuild()).getMemberData(member).isBannedFromRaffle();
     }
 
     @Override
@@ -37,11 +67,11 @@ public class RaffleEnterCommand extends AbstractRaffleCommand implements Describ
 
     @Override
     public String getShortDescription() {
-        return null;// TODO: 12/24/2018 short description of enter
+        return "enter the Raffle";
     }
 
     @Override
     public String getLongDescription() {
-        return getShortDescription(); // TODO: 12/24/2018 long descripton of enter
+        return getShortDescription();
     }
 }

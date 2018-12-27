@@ -11,13 +11,14 @@ import grimco.ranzer.rafflebot.functions.levels.Commands.settings.XPPermCommand;
 import grimco.ranzer.rafflebot.functions.levels.Commands.settings.XPSettingsCommand;
 import grimco.ranzer.rafflebot.functions.raffle.commands.RaffleCommand;
 import grimco.ranzer.rafflebot.functions.raffle.commands.run.RaffleEnterCommand;
+import grimco.ranzer.rafflebot.functions.raffle.commands.run.RaffleWithdrawCommand;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 public class CommandListener extends ListenerAdapter {
 	private static CommandListener cl;
-	private List<BotCommand> cmds = new ArrayList<BotCommand>();
+	private List<BotCommand> cmds = new ArrayList<>();
 	
 	public static CommandListener getInstance(){
 		if (cl==null) cl = new CommandListener();
@@ -33,10 +34,11 @@ public class CommandListener extends ListenerAdapter {
 			.addCommand(new XPPermCommand())
 			.addCommand(new XPSettingsCommand())
 			.addCommand(new RaffleCommand())
-			.addCommand(new RaffleEnterCommand());
+			.addCommand(new RaffleEnterCommand())
+			.addCommand(new RaffleWithdrawCommand());
 	}
 	
-	public CommandListener addCommand(BotCommand cmd){
+	private CommandListener addCommand(BotCommand cmd){
 		this.cmds.add(cmd);
 		return this;
 	}
@@ -92,7 +94,7 @@ public class CommandListener extends ListenerAdapter {
 
 	}
 
-	protected void callCommand(MessageReceivedEvent event, String[] finalArgs, 
+	private void callCommand(MessageReceivedEvent event, String[] finalArgs,
 			BotCommand cmd) {
 		new Thread() {
 			@Override

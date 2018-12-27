@@ -9,6 +9,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class XPPermCommand extends AbstractLevelCommand implements Describable{
@@ -40,7 +41,7 @@ public class XPPermCommand extends AbstractLevelCommand implements Describable{
 
 	@Override
 	public List<String> getAlias() {
-		return Arrays.asList("earn-xp");
+		return Collections.singletonList("earn-xp");
 	}
 
 	@Override

@@ -2,13 +2,16 @@ package grimco.ranzer.rafflebot.functions.raffle.commands;
 
 import grimco.ranzer.rafflebot.commands.BotCommand;
 import grimco.ranzer.rafflebot.commands.Describable;
-import grimco.ranzer.rafflebot.commands.admin.HelpCommand;
+import grimco.ranzer.rafflebot.data.GuildManager;
+import grimco.ranzer.rafflebot.functions.raffle.Raffle;
 import grimco.ranzer.rafflebot.functions.raffle.commands.manage.BanUserCommand;
+import grimco.ranzer.rafflebot.functions.raffle.commands.manage.ChannelEnableCommand;
 import grimco.ranzer.rafflebot.functions.raffle.commands.manage.ModifyRolesCommand;
 import grimco.ranzer.rafflebot.functions.raffle.commands.run.*;
 import grimco.ranzer.rafflebot.util.Logging;
-import net.dv8tion.jda.core.MessageBuilder;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.ArrayList;
@@ -26,27 +29,24 @@ public class RaffleCommand extends AbstractRaffleCommand implements Describable 
         subCommands=new ArrayList<>();
         subCommands.add(new RaffleOpenCommand());
         subCommands.add(new RaffleEnterCommand());
+        subCommands.add(new RaffleWithdrawCommand());
         subCommands.add(new RaffleCloseCommand());
         subCommands.add(new RaffleDrawCommand());
         subCommands.add(new RaffleEndCommand());
         subCommands.add(new ModifyRolesCommand());
         subCommands.add(new BanUserCommand());
+        subCommands.add(new ChannelEnableCommand());
 
-    }
-
-    @Override
-    public boolean isApplicableToPM() {
-        return false;
     }
 
     @Override
     public void process(String[] args, MessageReceivedEvent event) {
 
-        /*
-        TODO on no args, send help message or current raffle status?
-         */
-        if (args.length == 0) {
-            event.getTextChannel().sendMessage(new MessageBuilder().setEmbed(HelpCommand.getDescription(this, event.getGuild())).build()).queue();
+       super.process(args,event);
+       if (args.length == 0) {
+            if(raffles.containsKey(event.getTextChannel())) {
+                event.getChannel().sendMessage(statusEmbed(raffles.get(event.getTextChannel()))).queue();
+            }
             return;
         }
 
@@ -58,8 +58,22 @@ public class RaffleCommand extends AbstractRaffleCommand implements Describable 
             return;
         }
         Logging.debug("raffle Subcommand: "+c.get().getName());
+        if (!c.get().getName().equals("enable")){
+            if (!GuildManager.getGuildData(event.getGuild()).getChannel(event.getTextChannel()).getRaffle()) return;
+        }
         c.get().runCommand(Arrays.copyOfRange(args, 1, args.length), event);
 
+    }
+
+    private MessageEmbed statusEmbed(Raffle r) {
+        EmbedBuilder eb = new EmbedBuilder();
+
+        eb.setColor(getCategory().COLOR);
+        eb.setAuthor("Current Raffle Status");
+        eb.addField("Status",r.isOpen()?"Open":"Closed",true);
+        eb.addField("Entries",Integer.toString(r.getNumEntries()),true);
+
+        return eb.build();
     }
 
     @Override
@@ -77,7 +91,7 @@ public class RaffleCommand extends AbstractRaffleCommand implements Describable 
         StringBuilder sb = new StringBuilder();
 
 
-        sb.append(getShortDescription() +"\n\n");
+        sb.append(getShortDescription()).append("\n\n");
 
         for (BotCommand cmd : subCommands) {
             sb.append(

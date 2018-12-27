@@ -23,7 +23,7 @@ public class RaffleOpenCommand extends AbstractRaffleCommand implements Describa
 
     @Override
     public List<String> getAlias() {
-        return Arrays.asList("open","enable","start");
+        return Arrays.asList("open","start");
     }
 
     @Override

@@ -7,7 +7,8 @@ import java.util.Optional;
 
 import grimco.ranzer.rafflebot.commands.BotCommand;
 import grimco.ranzer.rafflebot.commands.admin.*;
-import grimco.ranzer.rafflebot.functions.levels.Commands.XPPermCommand;
+import grimco.ranzer.rafflebot.functions.levels.Commands.settings.XPPermCommand;
+import grimco.ranzer.rafflebot.functions.levels.Commands.settings.XPSettingsCommand;
 import grimco.ranzer.rafflebot.functions.raffle.commands.RaffleCommand;
 import grimco.ranzer.rafflebot.functions.raffle.commands.run.RaffleEnterCommand;
 import net.dv8tion.jda.core.entities.User;
@@ -30,6 +31,7 @@ public class CommandListener extends ListenerAdapter {
 			.addCommand(new ShutdownCommand())
 			.addCommand(new PrefixCommand())
 			.addCommand(new XPPermCommand())
+			.addCommand(new XPSettingsCommand())
 			.addCommand(new RaffleCommand())
 			.addCommand(new RaffleEnterCommand());
 	}

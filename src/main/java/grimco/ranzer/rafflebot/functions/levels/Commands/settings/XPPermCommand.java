@@ -1,8 +1,9 @@
-package grimco.ranzer.rafflebot.functions.levels.Commands;
+package grimco.ranzer.rafflebot.functions.levels.Commands.settings;
 
 import grimco.ranzer.rafflebot.commands.Describable;
 import grimco.ranzer.rafflebot.data.IChannelData;
 import grimco.ranzer.rafflebot.data.GuildManager;
+import grimco.ranzer.rafflebot.functions.levels.Commands.AbstractLevelCommand;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;

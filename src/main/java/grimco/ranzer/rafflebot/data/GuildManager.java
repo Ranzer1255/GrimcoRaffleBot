@@ -123,19 +123,19 @@ public class GuildManager extends ListenerAdapter{
 		//old code to delete old members, i'm going to keep it commented out, but likely wont use it
 		//see onGuildMemberLeave() for more details
 
-//		//delete old members
-//		try (ResultSet rs = BotDB.getConnection().prepareStatement(
-//				"select guild_id, user_id from member" ,ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_UPDATABLE
-//			).executeQuery()){
-//			while (rs.next()){
-//				if (GrimcoRaffleBot.getJDA().getGuildById(rs.getString(1)).getMemberById(rs.getString(2))==null){
-//					rs.deleteRow();
-//				}
-//			}
-//		} catch (SQLException e) {
-//			Logging.error("issue updating members");
-//			Logging.log(e);
-//		}
+		//delete old members' XP
+		try (ResultSet rs = BotDB.getConnection().prepareStatement(
+				"select guild_id, user_id, xp from member" ,ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_UPDATABLE
+			).executeQuery()){
+			while (rs.next()){
+				if (GrimcoRaffleBot.getJDA().getGuildById(rs.getString(1)).getMemberById(rs.getString(2))==null){
+					rs.updateInt(3,0);
+				}
+			}
+		} catch (SQLException e) {
+			Logging.error("issue updating members");
+			Logging.log(e);
+		}
 
 	}
 
@@ -183,6 +183,11 @@ public class GuildManager extends ListenerAdapter{
 
 	@Override
 	public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
+
+		//remove leaver's xp
+		IMemberData md = getGuildData(event.getGuild()).getMemberData(event.getMember());
+		int xp = md.getXP();
+		md.removeXP(xp);
 
 		//we don't want to delete member data when they leave the guild
 		//this is to help prevent ban evasion

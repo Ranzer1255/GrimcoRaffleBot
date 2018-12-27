@@ -52,22 +52,21 @@ public class InfoCommand extends BotCommand implements Describable{
 		return rtn;
 	}
 
-	static private EmbedBuilder infoEmbed(User bot) {//TODO replace this stuff too
+	static private EmbedBuilder infoEmbed(User bot) {
 		EmbedBuilder rtn = coreEmbed(bot);
 		  rtn.addField("Version", BotConfiguration.getInstance().getVersion(), true)
 		  .addField("Language", "Java", true)
-		  .addField("Artwork", "Mellie", false)
-		  .addField("Invite me!", inviteLinkBuilder(bot), true)
-		  .addField("GitHub Repo", "[GitHub](https://github.com/sgmaniac1255/bot)\n[Bugs and Suggestions](https://gitreports.com/issue/Sgmaniac1255/bot)", true)
+		  .addField("Artwork", "Needed", false)
+//		  .addField("Invite me!", inviteLinkBuilder(bot), true)
+		  .addField("GitHub Repo", "[GitHub](https://github.com/Ranzer1255/GrimcoRaffleBot)\n[Bugs and Suggestions](https://github.com/Ranzer1255/GrimcoRaffleBot/issues)", true)
 		  .setFooter("Please report bugs or suggestions in the link above", null);
 		return rtn;
 	}
 
-	//TODO change the branding
 	static private EmbedBuilder coreEmbed(User bot) {
 		EmbedBuilder rtn = new EmbedBuilder();
-		rtn.setAuthor("Caex Hewa", "https://github.com/Sgmaniac1255/bot", bot.getAvatarUrl())
-		  .setTitle("A Discord Chatbot",null)
+		rtn.setAuthor(bot.getName(), "https://github.com/Ranzer1255/GrimcoRaffleBot", bot.getAvatarUrl())
+		  .setTitle("Raffle Bot for TLoG",null)
 		  .setDescription("Written by Ranzer")
 		  .setThumbnail(bot.getAvatarUrl());
 		return rtn;

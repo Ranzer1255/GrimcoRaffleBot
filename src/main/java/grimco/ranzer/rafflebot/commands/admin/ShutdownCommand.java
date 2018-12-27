@@ -7,7 +7,7 @@ import grimco.ranzer.rafflebot.commands.BotCommand;
 import grimco.ranzer.rafflebot.config.BotConfiguration;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class ShutdownCommand extends BotCommand { //TODO this command to be called by GrimCo admins only
+public class ShutdownCommand extends BotCommand {
 	
 	@Override
 	public void process(String[] args,  MessageReceivedEvent event) {

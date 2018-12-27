@@ -48,7 +48,7 @@ public abstract class BotCommand {
 	private boolean hasPermission(MessageReceivedEvent event) {
 		if(getPermissionRequirements()==null)
 			return hasRoleRequirements(event);
-		for (Role role : event.getGuild().getMember(event.getAuthor()).getRoles()) {
+		for (Role role : event.getMember().getRoles()) {
 			if(role.getPermissions().contains(getPermissionRequirements())){
 				return true;
 			}

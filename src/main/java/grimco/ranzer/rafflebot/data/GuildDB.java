@@ -262,7 +262,7 @@ public class GuildDB implements IGuildData {
 					stmt.setLong(4, timestamp);
 					stmt.setInt(5, XP);
 					stmt.setLong(6, timestamp);
-					System.out.println(stmt.executeUpdate());
+					stmt.executeUpdate();
 
 				} catch (Exception e){
 					Logging.error(e.getMessage());

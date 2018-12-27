@@ -7,12 +7,11 @@ import grimco.ranzer.rafflebot.data.IGuildData;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
-//TODO change the XP eanrings to be adjustable
 //todo add xp decay
 //todo change alert system to PM Member once they reach the xp threshold for Raffle participation
 
 /*
-idea, rebuild database to include a table of xp history
+idea for decay, rebuild database to include a table of xp history
 
 **xp history table**
 guild_id, member_id, earned, timestamp
@@ -34,7 +33,6 @@ public class LevelUpdater extends ListenerAdapter{
 		if (isXPChannel(event, gd)) {
 			if (isNotBot(event)) {
 				if (isNotTimedOut(event, gd)) {
-					System.out.println("adding xp");
 					gd.getMemberData(event.getMember()).addXP(getRandomXP(gd));
 				}
 			} 

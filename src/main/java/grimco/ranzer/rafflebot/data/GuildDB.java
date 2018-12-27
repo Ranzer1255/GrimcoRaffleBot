@@ -68,7 +68,6 @@ public class GuildDB implements IGuildData {
 				stmt.setString(2, prefix);
 				stmt.setString(3, prefix);
 				stmt.executeUpdate();
-				stmt.close();
 			} catch (Exception e) {
 				Logging.error(e.getMessage());
 				Logging.log(e);

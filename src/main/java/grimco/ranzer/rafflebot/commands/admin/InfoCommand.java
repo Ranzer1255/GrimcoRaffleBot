@@ -99,7 +99,6 @@ public class InfoCommand extends BotCommand implements Describable{
 		}
 		if(GrimcoRaffleBot.START_TIME.until(now, ChronoUnit.SECONDS)!=0){
 			sb.append(GrimcoRaffleBot.START_TIME.until(now, ChronoUnit.SECONDS)+" Secs, ");
-			now=now.minusSeconds(GrimcoRaffleBot.START_TIME.until(now, ChronoUnit.SECONDS));
 		}
 		
 		
@@ -131,19 +130,6 @@ public class InfoCommand extends BotCommand implements Describable{
 		}
 		
 		return String.valueOf(count);
-	}
-
-	private static String inviteLinkBuilder(User bot) {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("[No Permissions]")
-		  .append("(https://discordapp.com/oauth2/authorize?client_id=").append(bot.getId()).append("&scope=bot)\n")
-		  .append("[Limited Permissions]")
-		  .append("(https://discordapp.com/oauth2/authorize?client_id=").append(bot.getId()).append("&scope=bot&permissions=").append(REQUIRED_PERMISSIONS).append(")\n")
-		  .append("[Admin Permissions]")
-		  .append("(https://discordapp.com/oauth2/authorize?client_id=").append(bot.getId()).append("&scope=bot&permissions=8)");
-
-		return sb.toString();
 	}
 
 	@Override

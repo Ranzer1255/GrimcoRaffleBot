@@ -16,7 +16,7 @@ public class ShutdownCommand extends BotCommand {
 			return;
 		}
 		event.getChannel().sendMessage("if you insist boss.... *blerg*").complete();
-		try {Thread.sleep(1000L);} catch (InterruptedException e) {}
+		try {Thread.sleep(1000L);} catch (InterruptedException ignored) {}
 		event.getJDA().shutdown();
 		System.exit(0);
 	}

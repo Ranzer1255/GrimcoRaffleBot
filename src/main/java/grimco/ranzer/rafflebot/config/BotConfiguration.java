@@ -8,7 +8,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.net.URLClassLoader;
 import java.util.Properties;
+import java.util.jar.Manifest;
 
 public class BotConfiguration {
 	
@@ -234,17 +236,12 @@ public class BotConfiguration {
 	}
 	
 	private void loadVersionFromJAR(){
-		Properties pom = new Properties();
 				try {
-					InputStream in = getClass().getResourceAsStream("/META-INF/maven/com.ranzer.bot/bot/pom.properties");
-						if(in==null){
-						setVersion("TESTING_VERSION");
-						return;
-					}
-					pom.load(in);
-					setVersion(pom.getProperty("version"));
-					
+					Manifest manifest = new Manifest(getClass().getClassLoader().getResources("META-INF/MANIFEST.MF").nextElement().openStream());
+					String version = manifest.getMainAttributes().getValue("version");
+					setVersion(version!=null?version:"TESTING_VERSION");
 				} catch (IOException e) {
+					System.out.println("error loading version from JAR");
 					setVersion("TESTING_VERSION");
 				}
 	}

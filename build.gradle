@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'ranzer'
-version '1.0-SNAPSHOT'
+version '1.1'
 
 sourceCompatibility = 1.8
 
@@ -18,4 +18,17 @@ dependencies {
         exclude module: 'opus-java'
     }
     compile files('libs/mysql-connector-java-8.0.13.jar')
+}
+
+jar {
+    manifest {
+        attributes (
+                "Main-Class": "grimco.ranzer.rafflebot.GrimcoRaffleBot",
+                "version"   : version
+        )
+    }
+    
+    from {
+        configurations.compile.collect{it.isDirectory() ? it : zipTree(it)}
+    }
 }

@@ -1,6 +1,7 @@
 package grimco.ranzer.rafflebot.data;
 
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 
 import java.util.List;
@@ -25,4 +26,6 @@ public interface IRaffleData {
      * @return true if role was removed, false if role did not exist in the list
      */
     boolean removeAllowedRole(Role r);
+
+    List<Member> getBannedUsers();
 }

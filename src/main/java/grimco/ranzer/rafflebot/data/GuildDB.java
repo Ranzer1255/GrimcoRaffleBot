@@ -618,6 +618,27 @@ public class GuildDB implements IGuildData {
 					return false;
 				}
 			}
+
+			@Override
+			public List<Member> getBannedUsers() {
+				try (ResultSet rs = BotDB.getConnection().prepareStatement(
+						String.format("select user_id from member where guild_id = %s and raffle_ban = true;", guild.getId())
+				).executeQuery()) {
+					List<Member> rtn = new ArrayList<>();
+					while (rs.next()) {
+						rtn.add(guild.getMemberById(rs.getString(1)));
+					}
+
+					return rtn;
+
+				} catch (SQLException e) {
+
+					Logging.error("issue getting banned members");
+					Logging.log(e);
+					return null;
+
+				}
+			}
 		};
 	}
 }

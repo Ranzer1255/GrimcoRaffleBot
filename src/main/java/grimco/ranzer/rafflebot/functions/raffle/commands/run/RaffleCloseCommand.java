@@ -45,4 +45,13 @@ public class RaffleCloseCommand extends AbstractRaffleCommand implements Describ
     public List<Role> getRoleRequirements(Guild guild) {
         return getAllowedManagementRoles(guild);
     }
+
+    @Override
+    public String getUsage(Guild g) {
+        return String.format(
+                "`%sraffle %s`",
+                getPrefix(g),
+                getName()
+        );
+    }
 }

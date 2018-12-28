@@ -1,7 +1,6 @@
 package grimco.ranzer.rafflebot.functions.raffle.commands.manage;
 
 import grimco.ranzer.rafflebot.commands.Describable;
-import grimco.ranzer.rafflebot.commands.admin.HelpCommand;
 import grimco.ranzer.rafflebot.data.GuildManager;
 import grimco.ranzer.rafflebot.data.IGuildData;
 import grimco.ranzer.rafflebot.functions.raffle.commands.AbstractRaffleCommand;
@@ -25,11 +24,31 @@ import java.util.List;
 public class BanUserCommand extends AbstractRaffleCommand implements Describable {
     @Override
     public void process(String[] args, MessageReceivedEvent event) {
-        if (!(args.length==2)){
-            event.getChannel().sendMessage(HelpCommand.getDescription(this,event.getGuild())).queue();
+        if (args.length==0){
+            List<Member> banned = GuildManager.getGuildData(event.getGuild()).getRaffleData().getBannedUsers();
+
+            if (banned.isEmpty()){
+                event.getChannel().sendMessage("No baned users").queue();
+                return;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            for (Member m : banned) {
+                sb.append(m.getEffectiveName()).append(", ");
+            }
+            sb.delete(sb.length()-2,sb.length());
+
+            event.getChannel().sendMessage(
+                    "Banned users:\n" +
+                            sb.toString()
+            ).queue();
+            return;
         }
+
+        if (!(args.length>=2)) return;
         IGuildData gd = GuildManager.getGuildData(event.getGuild());
         List<Member> members = event.getMessage().getMentionedMembers();
+        if(members.isEmpty()) return;
         switch (args[0]) {
             case "ban":
                 for (Member m :members) {
@@ -50,7 +69,7 @@ public class BanUserCommand extends AbstractRaffleCommand implements Describable
 
     @Override
     public List<String> getAlias() {
-        return Arrays.asList("user","manage");
+        return Arrays.asList("user","users","manage");
     }
 
     @Override
@@ -68,7 +87,7 @@ public class BanUserCommand extends AbstractRaffleCommand implements Describable
     @Override
     public String getUsage(Guild g) {
         return String.format(
-                "`%s%s {ban | unban} <@user>`",
+                "`%sraffle %s {ban | unban} <@user>`",
                 getPrefix(g),
                 getName()
         );

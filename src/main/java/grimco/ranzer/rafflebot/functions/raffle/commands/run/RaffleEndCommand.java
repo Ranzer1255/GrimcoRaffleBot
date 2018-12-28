@@ -1,7 +1,6 @@
 package grimco.ranzer.rafflebot.functions.raffle.commands.run;
 
 import grimco.ranzer.rafflebot.commands.Describable;
-import grimco.ranzer.rafflebot.functions.raffle.Raffle;
 import grimco.ranzer.rafflebot.functions.raffle.commands.AbstractRaffleCommand;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -44,5 +43,14 @@ public class RaffleEndCommand extends AbstractRaffleCommand implements Describab
     @Override
     public Permission getPermissionRequirements() {
         return Permission.ADMINISTRATOR;
+    }
+
+    @Override
+    public String getUsage(Guild g) {
+        return String.format(
+                "`%sraffle %s`",
+                getPrefix(g),
+                getName()
+        );
     }
 }

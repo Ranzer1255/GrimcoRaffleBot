@@ -42,7 +42,6 @@ public class RaffleCommand extends AbstractRaffleCommand implements Describable 
     @Override
     public void process(String[] args, MessageReceivedEvent event) {
 
-       super.process(args,event);
        if (args.length == 0) {
             if(raffles.containsKey(event.getTextChannel())) {
                 event.getChannel().sendMessage(statusEmbed(raffles.get(event.getTextChannel()))).queue();
@@ -59,7 +58,10 @@ public class RaffleCommand extends AbstractRaffleCommand implements Describable 
         }
         Logging.debug("raffle Subcommand: "+c.get().getName());
         if (!c.get().getName().equals("enable")){
-            if (!GuildManager.getGuildData(event.getGuild()).getChannel(event.getTextChannel()).getRaffle()) return;
+            if (!GuildManager.getGuildData(event.getGuild()).getChannel(event.getTextChannel()).getRaffle()){
+                event.getChannel().sendMessage("Raffles are Disabled in this channel").queue();
+                return;
+            }
         }
         c.get().runCommand(Arrays.copyOfRange(args, 1, args.length), event);
 

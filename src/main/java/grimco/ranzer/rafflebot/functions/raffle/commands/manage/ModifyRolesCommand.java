@@ -96,7 +96,7 @@ public class ModifyRolesCommand extends AbstractRaffleCommand implements Describ
 
     @Override
     public List<String> getAlias() {
-        return Arrays.asList("roles");
+        return Arrays.asList("role","roles");
     }
 
     @Override
@@ -113,7 +113,11 @@ public class ModifyRolesCommand extends AbstractRaffleCommand implements Describ
 
     @Override
     public String getUsage(Guild g) {
-        return "`"+getPrefix(g)+getName()+" [{add | remove) <user>]`";
+        return String.format(
+                "`%sraffle %s [{add | remove} <user>]",
+                getPrefix(g),
+                getName()
+        );
     }
 
     @Override

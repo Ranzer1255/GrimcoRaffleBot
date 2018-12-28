@@ -63,7 +63,7 @@ public class RaffleWithdrawCommand extends AbstractRaffleCommand implements Desc
     @Override
     public String getUsage(Guild g) {
         return String.format(
-                "%s%s [<@user1 @user2...]",
+                "`%s%s [<@user1 @user2...]`",
                 getPrefix(g),
                 getName());
     }

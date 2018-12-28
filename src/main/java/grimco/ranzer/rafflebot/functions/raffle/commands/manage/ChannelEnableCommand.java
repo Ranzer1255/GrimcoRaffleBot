@@ -20,10 +20,9 @@ public class ChannelEnableCommand extends AbstractRaffleCommand implements Descr
         channel.setRaffle(!channel.getRaffle());
 
         event.getChannel().sendMessage(
-                "raffles are now "+
-                        (channel.getRaffle()?"allowed":"not allowed")+
-                        " in channel #"+
-                        event.getChannel().getName()
+                (channel.getRaffle())?
+                        "raffles are Allowed in this channel":
+                        "Raffles are No longer Allowed in this channel"
         ).queue();
 
     }
@@ -51,5 +50,14 @@ public class ChannelEnableCommand extends AbstractRaffleCommand implements Descr
     @Override
     public Permission getPermissionRequirements() {
         return Permission.ADMINISTRATOR;
+    }
+
+    @Override
+    public String getUsage(Guild g) {
+        return String.format(
+                "`%sraffle %s`",
+                getPrefix(g),
+                getName()
+        );
     }
 }

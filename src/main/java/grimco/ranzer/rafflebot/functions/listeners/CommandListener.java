@@ -31,8 +31,8 @@ public class CommandListener extends ListenerAdapter {
 			.addCommand(new PingCommand())
 			.addCommand(new ShutdownCommand())
 			.addCommand(new PrefixCommand())
-			.addCommand(new XPPermCommand())
-			.addCommand(new XPSettingsCommand())
+//			.addCommand(new XPPermCommand())
+//			.addCommand(new XPSettingsCommand())
 			.addCommand(new RaffleCommand())
 			.addCommand(new RaffleEnterCommand())
 			.addCommand(new RaffleWithdrawCommand());

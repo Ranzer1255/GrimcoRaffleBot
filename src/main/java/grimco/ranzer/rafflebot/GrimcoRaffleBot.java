@@ -46,8 +46,9 @@ public class GrimcoRaffleBot {
 		}
 		
 		//add Listeners
+		//TODO setup each module as its own command listner
 		build.addEventListener(CommandListener.getInstance(),
-							   new LevelUpdater(),
+//							   new LevelUpdater(),
 							   new StartUpListener());
 		build.setGame(Game.playing("Waking up, please wait"));
 		build.setStatus(OnlineStatus.DO_NOT_DISTURB);

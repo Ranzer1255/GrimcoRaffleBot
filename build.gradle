@@ -17,7 +17,7 @@ dependencies {
     compile ('net.dv8tion:JDA:3.8.1_448'){
         exclude module: 'opus-java'
     }
-    compile files('libs/mysql-connector-java-8.0.13.jar')
+    compile files('libs/postgresql-42.2.5.jar')
 }
 
 jar {

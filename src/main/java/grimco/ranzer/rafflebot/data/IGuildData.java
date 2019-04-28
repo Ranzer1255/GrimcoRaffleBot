@@ -59,6 +59,7 @@ public interface IGuildData {
     //channel data
     IChannelData getChannel(TextChannel channel);
     void deleteChannel(TextChannel channel);
+    void addChannel(TextChannel channel);
 
     IRaffleData getRaffleData();
 }

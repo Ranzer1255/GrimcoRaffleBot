@@ -91,7 +91,9 @@ public class ModifyRolesCommand extends AbstractRaffleCommand implements Describ
     }
 
     private void roleNotFound(MessageChannel channel) {
-
+        channel.sendMessage(
+                "I'm sorry but i cannot find that role"
+        ).queue();
     }
 
     @Override

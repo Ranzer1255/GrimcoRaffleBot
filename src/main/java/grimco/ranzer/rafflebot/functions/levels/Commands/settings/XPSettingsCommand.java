@@ -16,7 +16,7 @@ import java.util.*;
 
 public class XPSettingsCommand extends AbstractLevelCommand implements Describable {
 
-    private static List<BotCommand> subCommands;
+    private static final List<BotCommand> subCommands;
 
     static{
         subCommands = new ArrayList<>();

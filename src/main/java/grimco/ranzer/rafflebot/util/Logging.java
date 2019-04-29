@@ -15,7 +15,7 @@ public class Logging {
 
 	private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss Z");
 
-	public static void log(LogLevel level, String message) {
+	private static void log(LogLevel level, String message) {
 		BotConfiguration config = BotConfiguration.getInstance();
 
 		String line = String.format("[%s\t%s] %s\n",level.name(), getTimestamp(), message);

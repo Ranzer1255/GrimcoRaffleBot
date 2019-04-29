@@ -23,7 +23,7 @@ public class RaffleCommand extends AbstractRaffleCommand implements Describable 
 
 
     //TODO grant Lyrium nuclear launch codes
-    private static List<BotCommand> subCommands;
+    private static final List<BotCommand> subCommands;
 
     static {
         subCommands=new ArrayList<>();

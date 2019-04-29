@@ -171,12 +171,12 @@ public class BotConfiguration {
 		this.owner = owner; 
 	}
 
-	public void setVersion(String version) {
+	private void setVersion(String version) {
 		System.out.printf("[CaexConfig] setVersion: (%s)\n", version);
 		this.version = version;
 	}
 
-	public void load() {
+	private void load() {
 
 		loadVersionFromJAR(); 
 		

@@ -35,9 +35,9 @@ public abstract class BotCommand {
 		process(args, event);
 	}
 	
-	abstract public boolean isApplicableToPM();
+	protected abstract boolean isApplicableToPM();
 	
-	abstract public void process(String[] args, MessageReceivedEvent event);
+	protected abstract void process(String[] args, MessageReceivedEvent event);
 	
 	abstract public List<String> getAlias();
 
@@ -71,7 +71,7 @@ public abstract class BotCommand {
 		return false;
 	}
 	
-	public List<Role> getRoleRequirements(Guild guild) {
+	protected List<Role> getRoleRequirements(Guild guild) {
 		return null;
 	}
 

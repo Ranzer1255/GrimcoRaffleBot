@@ -18,7 +18,7 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 public class CommandListener extends ListenerAdapter {
 	private static CommandListener cl;
-	private List<BotCommand> cmds = new ArrayList<>();
+	private final List<BotCommand> cmds = new ArrayList<>();
 	
 	public static CommandListener getInstance(){
 		if (cl==null) cl = new CommandListener();

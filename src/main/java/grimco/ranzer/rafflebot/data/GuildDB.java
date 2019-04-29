@@ -145,7 +145,7 @@ public class GuildDB implements IGuildData { //TODO look at using activeJBDC or 
 				"WHERE guild_id = '%s' " +
 				"AND raffle_ban = true;";
 
-	private Guild guild;
+	private final Guild guild;
 	
 	GuildDB(Guild guild) {
 		this.guild=guild;
@@ -159,7 +159,7 @@ public class GuildDB implements IGuildData { //TODO look at using activeJBDC or 
 		try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
 				GET_PREFIX_SQL
 		)){
-			
+
 			stmt.setString(1, guild.getId());
 			ResultSet rs = stmt.executeQuery();
 			

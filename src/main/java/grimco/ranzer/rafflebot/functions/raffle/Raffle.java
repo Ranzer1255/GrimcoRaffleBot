@@ -10,7 +10,7 @@ public class Raffle {
 
     private boolean isOpen;
 
-    private List<Member> entries = new ArrayList<>();
+    private final List<Member> entries = new ArrayList<>();
 
     public Raffle(){
         isOpen = true;

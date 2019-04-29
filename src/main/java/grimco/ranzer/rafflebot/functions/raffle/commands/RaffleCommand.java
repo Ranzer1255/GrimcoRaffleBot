@@ -23,7 +23,7 @@ public class RaffleCommand extends AbstractRaffleCommand implements Describable 
 
 
     //TODO grant Lyrium nuclear launch codes
-    private static List<BotCommand> subCommands;
+    private static final List<BotCommand> subCommands;
 
     static {
         subCommands=new ArrayList<>();
@@ -57,7 +57,7 @@ public class RaffleCommand extends AbstractRaffleCommand implements Describable 
             return;
         }
         Logging.debug("raffle Subcommand: "+c.get().getName());
-        if (!c.get().getName().equals("enable")){
+        if (!(c.get().getName().equals("enable")||c.get().getName().equals("role"))){
             if (!GuildManager.getGuildData(event.getGuild()).getChannel(event.getTextChannel()).getRaffle()){
                 event.getChannel().sendMessage("Raffles are Disabled in this channel").queue();
                 return;

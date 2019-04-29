@@ -5,6 +5,8 @@ import grimco.ranzer.rafflebot.database.BotDB;
 import grimco.ranzer.rafflebot.util.Logging;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.events.channel.text.TextChannelCreateEvent;
 import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
@@ -24,7 +26,15 @@ import java.sql.SQLException;
  *
  */
 public class GuildManager extends ListenerAdapter{
-	
+
+	//SQL Statements
+
+	private static final String ADD_NEW_GUILDS_SQL =
+			"INSERT INTO grimcodb.guild" +
+				"(guild_id) " +
+				"VALUES (?) " +
+				"ON CONFLICT DO NOTHING";
+
 	/*
 	 * update the DB to match things that happened while bot was offline
 	 */
@@ -36,10 +46,14 @@ public class GuildManager extends ListenerAdapter{
 		
 		Logging.info("removing old guilds");
 		removeOldGuilds();
-		
+
+		Logging.info("updating text channels");
+		updateTextChannels();
+
 		Logging.info("updating members");
 		updateMembers();
-		
+
+
 		
 	}
 
@@ -66,7 +80,7 @@ public class GuildManager extends ListenerAdapter{
 			Connection con = BotDB.getConnection();
 			con.setAutoCommit(false);
 			PreparedStatement stmt = con.prepareStatement(
-					"insert ignore into guild(guild_id) values (?)"
+					ADD_NEW_GUILDS_SQL
 			);
 			for(Guild g: GrimcoRaffleBot.getJDA().getGuilds()){
 				stmt.setString(1,g.getId());
@@ -83,7 +97,7 @@ public class GuildManager extends ListenerAdapter{
 
 	private static void removeOldGuilds() {
 		try (ResultSet rs = BotDB.getConnection().prepareStatement(
-					"select guild_id from guild" ,ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_UPDATABLE
+					"SELECT guild_id FROM grimcodb.guild" ,ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_UPDATABLE
 			).executeQuery()){
 
 			while(rs.next()){
@@ -96,6 +110,46 @@ public class GuildManager extends ListenerAdapter{
 			Logging.log(e);
 		}
 	}
+
+	private static void updateTextChannels(){
+		//add new text channels
+		try {
+			Connection con = BotDB.getConnection();
+			con.setAutoCommit(false);
+			PreparedStatement stmt = con.prepareStatement(
+					"insert into grimcodb.text_channel (guild_id, text_channel_id) " +
+							"values (?,?) ON CONFLICT DO NOTHING"
+			);
+			for(Guild g: GrimcoRaffleBot.getJDA().getGuilds()){
+				for(TextChannel t: g.getTextChannels()){
+					stmt.setString(1,g.getId());
+					stmt.setString(2,t.getId());
+					stmt.addBatch();
+				}
+			}
+			stmt.executeBatch();
+			con.commit();
+			con.setAutoCommit(true);
+		} catch (SQLException e) {
+			Logging.error("issue adding channels");
+			Logging.log(e);
+		}
+
+
+		//delete old text channels
+		try (ResultSet rs = BotDB.getConnection().prepareStatement(
+				"select text_channel_id from grimcodb.text_channel" ,ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_UPDATABLE
+		).executeQuery()){
+			while(rs.next()){
+				if(GrimcoRaffleBot.getJDA().getTextChannelById(rs.getString(1))==null)
+					rs.deleteRow();
+			}
+		} catch (SQLException e) {
+			Logging.error("issue deleting channels");
+			Logging.log(e);
+		}
+	}
+
 	private static void updateMembers() {
 
 		//add new members
@@ -103,8 +157,8 @@ public class GuildManager extends ListenerAdapter{
 			Connection con = BotDB.getConnection();
 			con.setAutoCommit(false);
 			PreparedStatement stmt = con.prepareStatement(
-					"insert ignore into member (guild_id, user_id) " +
-							"values (?,?)"
+					"insert into grimcodb.member (guild_id, user_id) " +
+							"values (?,?) ON CONFLICT DO NOTHING"
 			);
 			for(Guild g: GrimcoRaffleBot.getJDA().getGuilds()){
 				for(Member m: g.getMembers()){
@@ -125,7 +179,7 @@ public class GuildManager extends ListenerAdapter{
 
 		//delete old members' XP
 		try (ResultSet rs = BotDB.getConnection().prepareStatement(
-				"select guild_id, user_id, xp from member" ,ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_UPDATABLE
+				"select guild_id, user_id, xp from grimcodb.member" ,ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_UPDATABLE
 			).executeQuery()){
 			while (rs.next()){
 				if (GrimcoRaffleBot.getJDA().getGuildById(rs.getString(1)).getMemberById(rs.getString(2))==null){
@@ -144,7 +198,7 @@ public class GuildManager extends ListenerAdapter{
 	@Override
 	public void onGuildJoin(GuildJoinEvent event) {// TODO: 12/26/2018 extract addGuild(Guild guild) as its own method
 
-		try(PreparedStatement stmt = BotDB.getConnection().prepareStatement("insert into guild(guild_id) values (?)")){
+		try(PreparedStatement stmt = BotDB.getConnection().prepareStatement("insert into grimcodb.guild(guild_id) values (?)")){
 			stmt.setString(1, event.getGuild().getId());
 			stmt.execute();
 		} catch (SQLException e) {
@@ -159,7 +213,7 @@ public class GuildManager extends ListenerAdapter{
 		super.onGuildLeave(event);
 
 		try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-				"delete from guild where guild_id = ?"
+				"delete from grimcodb.guild where guild_id = ?"
 		)){
 
 			stmt.setString(1, event.getGuild().getId());
@@ -198,5 +252,10 @@ public class GuildManager extends ListenerAdapter{
 	@Override
 	public void onTextChannelDelete(TextChannelDeleteEvent event) {
 		getGuildData(event.getGuild()).deleteChannel(event.getChannel());
+	}
+
+	@Override
+	public void onTextChannelCreate(TextChannelCreateEvent event) {
+		getGuildData(event.getGuild()).addChannel(event.getChannel());
 	}
 }

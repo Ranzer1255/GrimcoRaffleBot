@@ -17,6 +17,12 @@ public class RaffleDrawCommand extends AbstractRaffleCommand implements Describa
     public void process(String[] args, MessageReceivedEvent event) {
         if (raffles.containsKey(event.getTextChannel())){
             Raffle r = raffles.get(event.getTextChannel());
+            if(r.getNumEntries()<=0){
+                event.getChannel().sendMessage(
+                        "there are no entries in the raffle"
+                ).queue();
+                return;
+            }
             r.close();
             Member winner = r.draw();
 

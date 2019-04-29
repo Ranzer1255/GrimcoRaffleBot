@@ -18,7 +18,7 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 public class CommandListener extends ListenerAdapter {
 	private static CommandListener cl;
-	private List<BotCommand> cmds = new ArrayList<>();
+	private final List<BotCommand> cmds = new ArrayList<>();
 	
 	public static CommandListener getInstance(){
 		if (cl==null) cl = new CommandListener();
@@ -31,8 +31,8 @@ public class CommandListener extends ListenerAdapter {
 			.addCommand(new PingCommand())
 			.addCommand(new ShutdownCommand())
 			.addCommand(new PrefixCommand())
-			.addCommand(new XPPermCommand())
-			.addCommand(new XPSettingsCommand())
+//			.addCommand(new XPPermCommand())
+//			.addCommand(new XPSettingsCommand())
 			.addCommand(new RaffleCommand())
 			.addCommand(new RaffleEnterCommand())
 			.addCommand(new RaffleWithdrawCommand());

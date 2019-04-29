@@ -16,13 +16,136 @@ import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 
 @SuppressWarnings("ConstantConditions")
-public class GuildDB implements IGuildData {
+public class GuildDB implements IGuildData { //TODO look at using activeJBDC or other ORM framework
 
 	private static final long DEFAULT_MESSAGE_TIMEOUT = 60000L;
 	private final static int DEFAULT_XP_LOWBOUND = 15, DEFAULT_XP_HIGHBOUND = 25;
 	private static final int DEFAULT_RAFFLE_THRESHOLD = 0;
 
-	private Guild guild;
+	//sql statements
+	//prefix commands
+	private static final String GET_PREFIX_SQL =
+			"SELECT prefix " +
+				"FROM grimcodb.guild " +
+				"WHERE guild_id = ?";
+	private static final String SET_PREFIX_SQL =
+			"UPDATE grimcodb.guild " +
+				"SET prefix = ? " +
+				"WHERE guild_id = ?";
+	private static final String REMOVE_PREFIX_SQL =
+			"UPDATE grimcodb.guild " +
+				"SET prefix = null " +
+				"WHERE guild_id = ?;";
+
+	//XP commands
+	private static final String SET_XP_TIMEOUT_SQL =
+			"UPDATE grimcodb.guild " +
+				"SET xp_timeout = ? " +
+				"WHERE guild_id = ?";
+	private static final String GET_XP_TIMEOUT_SQL =
+			"SELECT xp_timeout " +
+				"FROM grimcodb.guild " +
+				"WHERE guild_id = '%s';";
+	private static final String GET_XP_LOW_SQL =
+			"SELECT xp_low " +
+				"FROM grimcodb.guild " +
+				"WHERE guild_id = '%s';";
+	private static final String GET_XP_HI_SQL =
+			"SELECT xp_high " +
+				"FROM grimcodb.guild " +
+				"WHERE guild_id = '%s';";
+	private static final String SET_XP_BOUNDS_SQL =
+			"UPDATE grimcodb.guild " +
+				"SET xp_low = ?, xp_high = ?  " +
+				"WHERE guild_id = ?;";
+	private static final String GET_XP_SQL =
+			"SELECT xp " +
+				"FROM grimcodb.member " +
+				"WHERE guild_id = '%s' " +
+				"AND user_id='%s';";
+	private static final String ADD_XP_SQL =
+			"UPDATE grimcodb.member " +
+				"SET xp=xp+?,last_xp=? " +
+				"WHERE user_id = ? " +
+				"AND guild_id =?;";
+	private static final String REMOVE_XP_SQL =
+			"UPDATE grimcodb.member " +
+				"SET xp = xp-? " +
+				"WHERE user_id = ? AND guild_id = ?;";
+	private static final String GET_LAST_XP_SQL =
+			"SELECT last_xp " +
+				"FROM grimcodb.member " +
+				"WHERE guild_id = '%s' " +
+				"AND user_id = '%s';";
+	private static final String GET_IS_BANNED_SQL =
+			"SELECT raffle_ban " +
+				"FROM grimcodb.member " +
+				"WHERE user_id = ?" +
+				"AND guild_id = ?;";
+	private static final String SET_BANNED_SQL =
+			"UPDATE grimcodb.member " +
+				"SET raffle_ban = ? " +
+				"WHERE user_id = ? " +
+				"AND guild_id = ?;";
+	private static final String ADD_MEMBER_SQL =
+			"INSERT INTO grimcodb.member " +
+				"(user_id, guild_id) " +
+				"values(?,?);";
+	private static final String REMOVE_MEMBER_SQL =
+			"DELETE FROM grimcodb.member " +
+				"WHERE guild_id = ? " +
+				"AND user_id = ?";
+	private static final String SET_XP_PERM_SQL =
+			"UPDATE grimcodb.text_channel " +
+				"SET perm_xp = ? " +
+				"WHERE text_channel_id = ?";
+	private static final String GET_XP_PERM_SQL =
+			"SELECT perm_xp " +
+				"FROM grimcodb.text_channel " +
+				"WHERE text_channel_id = ?;";
+	private static final String SET_RAFFLE_PERM_SQL =
+			"UPDATE grimcodb.text_channel " +
+				"SET perm_raffle = ? " +
+				"WHERE text_channel_id = ?;";
+	private static final String GET_RAFFLE_PERM_SQL =
+			"SELECT perm_raffle " +
+				"FROM grimcodb.text_channel " +
+				"WHERE text_channel_id = ?;";
+	private static final String REMOVE_CHANNEL_SQL =
+			"DELETE FROM grimcodb.text_channel " +
+				"WHERE text_channel_id = ?;";
+	private static final String ADD_CHANNEL_SQL =
+			"INSERT INTO grimcodb.text_channel " +
+				"(text_channel_id, guild_id) " +
+				"VALUES(?,?);";
+	private static final String GET_MANAGEMENT_ROLES_SQL =
+			"SELECT role_id " +
+				"FROM grimcodb.raffle_roles " +
+				"WHERE guild_id = ?";
+	private static final String GET_XP_THRESHOLD_SQL =
+			"SELECT raffle_threshold " +
+				"FROM grimcodb.guild " +
+				"WHERE guild_id = '%s';";
+	private static final String SET_RAFFLE_THRESHOLD_SQL =
+			"UPDATE grimcodb.guild " +
+				"SET raffle_threshold = ? " +
+				"WHERE guild_id = ?;";
+	private static final String ADD_MANAGEMENT_ROLE_SQL =
+			"INSERT INTO grimcodb.raffle_roles " +
+				"(guild_id,role_id) " +
+				"values(?,?) " +
+				"ON CONFLICT DO NOTHING;";
+	private static final String REMOVE_MANAGEMENT_ROLE_SQL =
+			"DELETE FROM grimcodb.raffle_roles " +
+				"WHERE guild_id = ?" +
+				"AND role_id = ?";
+	private static final String GET_BANNED_USERS_SQL =
+			"SELECT user_id " +
+				"FROM member " +
+				"WHERE guild_id = '%s' " +
+				"AND raffle_ban = true;";
+
+	private final Guild guild;
 	
 	GuildDB(Guild guild) {
 		this.guild=guild;
@@ -34,9 +157,9 @@ public class GuildDB implements IGuildData {
 		String prefix=null;
 		
 		try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-				"select prefix from guild where guild_id = ?"
+				GET_PREFIX_SQL
 		)){
-			
+
 			stmt.setString(1, guild.getId());
 			ResultSet rs = stmt.executeQuery();
 			
@@ -61,12 +184,10 @@ public class GuildDB implements IGuildData {
 			prefix = prefix.toLowerCase();
 			try (PreparedStatement stmt = BotDB.getConnection()
 						.prepareStatement(
-						"insert into guild (guild_id, prefix) values (?,?) "
-						+ "on duplicate key update prefix=?;"
+								SET_PREFIX_SQL
 				)){
-				stmt.setString(1, guild.getId());
-				stmt.setString(2, prefix);
-				stmt.setString(3, prefix);
+				stmt.setString(1, prefix);
+				stmt.setString(2, guild.getId());
 				stmt.executeUpdate();
 			} catch (Exception e) {
 				Logging.error(e.getMessage());
@@ -81,7 +202,7 @@ public class GuildDB implements IGuildData {
 	public void removePrefix() {
 		
 		try (PreparedStatement stmt = BotDB.getConnection()
-					.prepareStatement("update guild set prefix = null where guild_id = ?;")
+					.prepareStatement(REMOVE_PREFIX_SQL)
 		){
 			stmt.setString(1, guild.getId());
 			stmt.executeUpdate();
@@ -102,7 +223,7 @@ public class GuildDB implements IGuildData {
 	public void setXPTimeout(long timeout) {
 
 		try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-					"update guild set xp_timeout = ? where guild_id = ?"
+				SET_XP_TIMEOUT_SQL
 			)){
 			stmt.setLong(1,timeout);
 			stmt.setString(2,guild.getId());
@@ -123,7 +244,7 @@ public class GuildDB implements IGuildData {
 	public long getXPTimeout() {
 
 		try (ResultSet rs = BotDB.getConnection().prepareStatement(
-				String.format("select xp_timeout from guild where guild_id = %s;", guild.getId())
+				String.format(GET_XP_TIMEOUT_SQL, guild.getId())
 		).executeQuery()) {
 			long rtn = DEFAULT_MESSAGE_TIMEOUT;
 			while (rs.next()) {
@@ -146,7 +267,7 @@ public class GuildDB implements IGuildData {
 	@Override
 	public int getXPLowBound() {
 		try (ResultSet rs = BotDB.getConnection().prepareStatement(
-				String.format("select xp_low from guild where guild_id = %s;", guild.getId())
+				String.format(GET_XP_LOW_SQL, guild.getId())
 		).executeQuery()) {
 			int rtn = DEFAULT_XP_LOWBOUND;
 			while (rs.next()) {
@@ -169,7 +290,7 @@ public class GuildDB implements IGuildData {
 	@Override
 	public int getXPHighBound() {
 		try (ResultSet rs = BotDB.getConnection().prepareStatement(
-				String.format("select xp_high from guild where guild_id = %s;", guild.getId())
+				String.format(GET_XP_HI_SQL, guild.getId())
 		).executeQuery()) {
 			int rtn = DEFAULT_XP_HIGHBOUND;
 			while (rs.next()) {
@@ -196,10 +317,7 @@ public class GuildDB implements IGuildData {
 	@Override
 	public void setXPBounds(int low, int high) {
 		try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-						"update guild " +
-								"set xp_low = ?, " +
-								    "xp_high = ?  " +
-								"where guild_id = ?;"
+				SET_XP_BOUNDS_SQL
 		)){
 			stmt.setInt(1,low);
 			stmt.setInt(2,high);
@@ -228,7 +346,7 @@ public class GuildDB implements IGuildData {
 			public int getXP(){
 
 				try (ResultSet rs = BotDB.getConnection().prepareStatement(
-						String.format("select xp from member where guild_id = %s and user_id=%s;",guild.getId(), m.getUser().getId())
+						String.format(GET_XP_SQL,guild.getId(), m.getUser().getId())
 				).executeQuery()){
 					int rtn = -1;
 					while (rs.next()){
@@ -250,17 +368,14 @@ public class GuildDB implements IGuildData {
 			public void addXP(int XP) {
 				Logging.debug("adding "+ XP + "XP to "+ m.getUser().getName()+":"+guild.getName());
 				try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-						"insert into member (guild_id, user_id, xp, last_xp) values (?,?,?,?)"
-								+ "on duplicate key update xp=xp+?,last_xp=?;")){
+						ADD_XP_SQL)){
 
 					long timestamp = System.currentTimeMillis();
 
-					stmt.setString(1, m.getGuild().getId());
-					stmt.setString(2, m.getUser().getId());
-					stmt.setInt(3, XP);
-					stmt.setLong(4, timestamp);
-					stmt.setInt(5, XP);
-					stmt.setLong(6, timestamp);
+					stmt.setInt(1, XP);
+					stmt.setLong(2, timestamp);
+					stmt.setString(3, m.getUser().getId());
+					stmt.setString(4, m.getGuild().getId());
 					stmt.executeUpdate();
 
 				} catch (Exception e){
@@ -274,9 +389,7 @@ public class GuildDB implements IGuildData {
 				Logging.debug("Removing "+ XP + "XP from "+ m.getUser().getName()+":"+guild.getName());
 
 				try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-						"update member "
-								+ "set xp = xp-? "
-								+ "where user_id = ? and guild_id = ?;")){
+						REMOVE_XP_SQL)){
 
 					stmt.setString(3, m.getGuild().getId());
 					stmt.setString(2, m.getUser().getId());
@@ -292,7 +405,7 @@ public class GuildDB implements IGuildData {
 			@Override
 			public long lastXP() {
 				try (ResultSet rs = BotDB.getConnection().prepareStatement(
-						String.format("select last_xp from member where guild_id = %s and user_id = %s;",
+						String.format(GET_LAST_XP_SQL,
 								guild.getId(),
 								m.getUser().getId())
 				).executeQuery()) {
@@ -316,9 +429,7 @@ public class GuildDB implements IGuildData {
 			public boolean isBannedFromRaffle() {
 
 				try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-							"select raffle_ban from member " +
-									"where user_id = ?" +
-									"and guild_id = ?;"
+						GET_IS_BANNED_SQL
 					)){
 
 					stmt.setString(1, m.getUser().getId());
@@ -343,10 +454,7 @@ public class GuildDB implements IGuildData {
 			@Override
 			public void setBannedFromRaffle(boolean banned) {
 				try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-						"update member " +
-								"set raffle_ban = ? " +
-								"where user_id = ? " +
-								"and guild_id = ?;"
+						SET_BANNED_SQL
 				)){
 
 					stmt.setBoolean(1, banned);
@@ -370,12 +478,11 @@ public class GuildDB implements IGuildData {
 	@Override
 	public void addMember(Member m) {
 		try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-				"insert into member (user_id, guild_id) " +
-						"values(?,?);"
+				ADD_MEMBER_SQL
 		)){
 
 			stmt.setString(1, m.getUser().getId());
-			stmt.setString(1, guild.getId());
+			stmt.setString(2, guild.getId());
 			stmt.execute();
 
 
@@ -392,7 +499,7 @@ public class GuildDB implements IGuildData {
 
 	private void deleteMember(String guild, String user) {
 		try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-					"delete from member where guild_id = ? and user_id = ?"
+				REMOVE_MEMBER_SQL
 			)){
 			
 			stmt.setString(1, guild);
@@ -412,16 +519,12 @@ public class GuildDB implements IGuildData {
 			@Override
 			public void setXPPerm(boolean earnEXP) {
 				try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-							  "insert into text_channel (text_channel_id, guild_id, perm_xp) "
-							+ "values (?,?,?) "
-							+ "on duplicate key update perm_xp = ?;"
+						SET_XP_PERM_SQL
 					)){
-					
-					stmt.setString(1, channel.getId());
-					stmt.setString(2, channel.getGuild().getId());
-					stmt.setBoolean(3, earnEXP);
-					stmt.setBoolean(4, earnEXP);
-					
+
+					stmt.setBoolean(1, earnEXP);
+					stmt.setString(2, channel.getId());
+
 					stmt.executeUpdate();
 					
 				} catch (SQLException e) {
@@ -434,8 +537,7 @@ public class GuildDB implements IGuildData {
 			@Override
 			public boolean getXPPerm() {
 				try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-							"select perm_xp from text_channel "
-							+ "where text_channel_id = ?;"
+						GET_XP_PERM_SQL
 					)){
 					
 					stmt.setString(1, channel.getId());
@@ -459,15 +561,11 @@ public class GuildDB implements IGuildData {
 			@Override
 			public void setRaffle(boolean raffle) {
 				try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-							"insert into text_channel (text_channel_id, guild_id, perm_raffle) "
-									+ "values (?,?,?) "
-									+ "on duplicate key update perm_raffle = ?;"
-					)){
+						SET_RAFFLE_PERM_SQL
+				)){
 
-					stmt.setString(1, channel.getId());
-					stmt.setString(2, channel.getGuild().getId());
-					stmt.setBoolean(3, raffle);
-					stmt.setBoolean(4, raffle);
+					stmt.setBoolean(1, raffle);
+					stmt.setString(2, channel.getId());
 
 					stmt.executeUpdate();
 
@@ -480,8 +578,7 @@ public class GuildDB implements IGuildData {
 			@Override
 			public boolean getRaffle() {
 				try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-							"select perm_raffle from text_channel "
-									+ "where text_channel_id = ?;"
+						GET_RAFFLE_PERM_SQL
 					)){
 
 					stmt.setString(1, channel.getId());
@@ -507,13 +604,26 @@ public class GuildDB implements IGuildData {
 	@Override
 	public void deleteChannel(TextChannel channel) {
 		try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-			"delete from text_channel " +
-					"where text_channel_id = ?;"
+				REMOVE_CHANNEL_SQL
 		)){
 			stmt.setString(1, channel.getId());
 			stmt.execute();
 		} catch (SQLException e) {
-			Logging.error("problem getting XP perm");
+				Logging.error("problem deleting text channel data");
+			Logging.log(e);
+		}
+	}
+
+	@Override
+	public void addChannel(TextChannel channel) {
+		try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
+				ADD_CHANNEL_SQL
+		)){
+			stmt.setString(1, channel.getId());
+			stmt.setString(2, channel.getGuild().getId());
+			stmt.execute();
+		} catch (SQLException e) {
+			Logging.error("problem deleting text channel data");
 			Logging.log(e);
 		}
 	}
@@ -531,8 +641,7 @@ public class GuildDB implements IGuildData {
 				List<Role> rtn = new ArrayList<>();
 
 				try(PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-					"select role_id from raffle_roles " +
-							"where guild_id = ?"
+						GET_MANAGEMENT_ROLES_SQL
 				)){
 					stmt.setString(1,guild.getId());
 
@@ -552,7 +661,7 @@ public class GuildDB implements IGuildData {
 			@Override
 			public int getRaffleXPThreshold() {
 				try (ResultSet rs = BotDB.getConnection().prepareStatement(
-						String.format("select raffle_threshold from guild where guild_id = %s;", guild.getId())
+						String.format(GET_XP_THRESHOLD_SQL, guild.getId())
 				).executeQuery()) {
 					int rtn = DEFAULT_RAFFLE_THRESHOLD;
 					while (rs.next()) {
@@ -573,9 +682,7 @@ public class GuildDB implements IGuildData {
 			@Override
 			public void setRaffleXPThreshold(int threshold) {
 				try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-						"update guild " +
-								"set raffle_threshold = ?, " +
-								"where guild_id = ?;"
+						SET_RAFFLE_THRESHOLD_SQL
 				)){
 					stmt.setInt(1,threshold);
 					stmt.setString(2, guild.getId());
@@ -589,8 +696,7 @@ public class GuildDB implements IGuildData {
 			@Override
 			public boolean addAllowedRole(Role r) {
 				try(PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-						"insert ignore into raffle_roles (guild_id,role_id) " +
-								"values(?,?)"
+						ADD_MANAGEMENT_ROLE_SQL
 				)){
 					stmt.setString(1,guild.getId());
 					stmt.setString(2,r.getId());
@@ -605,9 +711,7 @@ public class GuildDB implements IGuildData {
 			@Override
 			public boolean removeAllowedRole(Role r) {
 				try(PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-						"delete from raffle_roles " +
-								"where guild_id = ?" +
-								"and role_id = ?"
+						REMOVE_MANAGEMENT_ROLE_SQL
 				)){
 					stmt.setString(1,guild.getId());
 					stmt.setString(2,r.getId());
@@ -620,9 +724,9 @@ public class GuildDB implements IGuildData {
 			}
 
 			@Override
-			public List<Member> getBannedUsers() {
+			public List<Member> getBannedUsers() { //todo add a command to see a list of banned users
 				try (ResultSet rs = BotDB.getConnection().prepareStatement(
-						String.format("select user_id from member where guild_id = %s and raffle_ban = true;", guild.getId())
+						String.format(GET_BANNED_USERS_SQL, guild.getId())
 				).executeQuery()) {
 					List<Member> rtn = new ArrayList<>();
 					while (rs.next()) {

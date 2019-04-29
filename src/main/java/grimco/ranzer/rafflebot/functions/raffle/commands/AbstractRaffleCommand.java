@@ -16,7 +16,7 @@ import java.util.Map;
 
 public abstract class AbstractRaffleCommand extends BotCommand implements Describable {
 
-    protected static Map<TextChannel, Raffle> raffles = new HashMap<>();
+    protected static final Map<TextChannel, Raffle> raffles = new HashMap<>();
 
     @Override
     public boolean isApplicableToPM() {

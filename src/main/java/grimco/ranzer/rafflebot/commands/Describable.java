@@ -7,14 +7,14 @@ import net.dv8tion.jda.core.entities.Guild;
 
 public interface Describable {
 
-	public Category getCategory();
+	Category getCategory();
 	
-	public String getName();
-	public List<String> getAlias();
-	public String getUsage(Guild g);
-	public String getShortDescription();
-	public String getLongDescription();
-	public Permission getPermissionRequirements();
-	public boolean hasSubcommands();
-	public List<BotCommand> getSubcommands();
+	String getName();
+	List<String> getAlias();
+	String getUsage(Guild g);
+	String getShortDescription();
+	String getLongDescription();
+	Permission getPermissionRequirements();
+	boolean hasSubcommands();
+	List<BotCommand> getSubcommands();
 }

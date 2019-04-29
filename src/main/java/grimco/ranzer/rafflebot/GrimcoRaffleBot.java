@@ -29,7 +29,7 @@ public class GrimcoRaffleBot {
 	
 	private static JDA JDA;
 	public final static LocalDateTime START_TIME = LocalDateTime.now();
-	private static BotConfiguration config = BotConfiguration.getInstance();
+	private static final BotConfiguration config = BotConfiguration.getInstance();
 
 	public static void main (String[] args){
 		Logging.info("Huu... Wha... who... Oh, I guess it's time to [start up]");
@@ -46,6 +46,7 @@ public class GrimcoRaffleBot {
 		}
 		
 		//add Listeners
+		//TODO setup each module as its own command listner
 		build.addEventListener(CommandListener.getInstance(),
 							   new LevelUpdater(),
 							   new StartUpListener());

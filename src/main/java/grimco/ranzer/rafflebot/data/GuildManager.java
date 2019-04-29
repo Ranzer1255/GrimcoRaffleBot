@@ -30,9 +30,10 @@ public class GuildManager extends ListenerAdapter{
 	//SQL Statements
 
 	private static final String ADD_NEW_GUILDS_SQL =
-			"INSERT INTO grimcodb.guild(guild_id) " +
-					"values (?) " +
-					"ON CONFLICT DO NOTHING";
+			"INSERT INTO grimcodb.guild" +
+				"(guild_id) " +
+				"VALUES (?) " +
+				"ON CONFLICT DO NOTHING";
 
 	/*
 	 * update the DB to match things that happened while bot was offline

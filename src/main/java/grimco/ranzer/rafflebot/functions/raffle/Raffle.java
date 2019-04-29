@@ -23,12 +23,15 @@ public class Raffle {
      * @param entrant Member to be added to the raffle
      * @return true if the Raffle didn't already have this entrant
      */
-    public boolean addEntry(Member entrant){
-        if(!isOpen) return false;
-        if (!entries.contains(entrant))
-            return entries.add(entrant);
-        else
-            return false;
+    public EntryResult addEntry(Member entrant){
+        if(!isOpen) return EntryResult.closed;
+        if (!entries.contains(entrant)) {
+            entries.add(entrant);
+            return EntryResult.added;
+        }
+        else {
+            return EntryResult.exists;
+        }
     }
 
     /**
@@ -65,6 +68,10 @@ public class Raffle {
 
     public void close(){
         isOpen=false;
+    }
+
+    public enum EntryResult {
+        added,closed,exists
     }
 
 

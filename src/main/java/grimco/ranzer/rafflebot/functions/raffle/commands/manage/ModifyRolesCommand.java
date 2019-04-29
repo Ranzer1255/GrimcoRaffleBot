@@ -124,4 +124,9 @@ public class ModifyRolesCommand extends AbstractRaffleCommand implements Describ
     public Permission getPermissionRequirements() {
         return Permission.ADMINISTRATOR;
     }
+
+    @Override
+    public List<Role> getRoleRequirements(Guild guild) {//TODO this is FUBARed... anyone can add now
+        return null;
+    }
 }

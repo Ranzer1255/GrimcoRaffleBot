@@ -43,17 +43,20 @@ public abstract class BotCommand {
 
 	/*
 	TODO rewrite this so that it checks for both roles and perm requirements regardless of what the command needs
+	this doesn't work for commands with a NULL role list. if the caller doesn't have permissions then it rolls
+	 over to the role check. if that list is NULL it is treated as if the command doesn't have requirements and it
+	 allows the call.
 	this way a command can have either requirement
 	 */
 	private boolean hasPermission(MessageReceivedEvent event) {
-		if(getPermissionRequirements()==null)
-			return hasRoleRequirements(event);
 		for (Role role : event.getMember().getRoles()) {
-			if(role.getPermissions().contains(getPermissionRequirements())){
-				return true;
+			if(getPermissionRequirements()!=null) {
+				if (role.getPermissions().contains(getPermissionRequirements())) {
+					return true;
+				}
 			}
 		}
-		return false;
+		return hasRoleRequirements(event);
 	}
 
 	private boolean hasRoleRequirements(MessageReceivedEvent event) {

@@ -141,7 +141,7 @@ public class GuildDB implements IGuildData { //TODO look at using activeJBDC or 
 				"AND role_id = ?";
 	private static final String GET_BANNED_USERS_SQL =
 			"SELECT user_id " +
-				"FROM member " +
+				"FROM grimcodb.member " +
 				"WHERE guild_id = '%s' " +
 				"AND raffle_ban = true;";
 

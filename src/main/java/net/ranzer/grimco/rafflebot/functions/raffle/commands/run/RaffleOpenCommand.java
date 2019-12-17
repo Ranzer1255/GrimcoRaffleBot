@@ -19,7 +19,7 @@ public class RaffleOpenCommand extends AbstractRaffleCommand implements Describa
         Raffle raffle = new Raffle();
         raffles.put(event.getTextChannel(),raffle);
 
-        event.getChannel().sendMessage("The raffle is now Open, Good luck").queue();
+        event.getChannel().sendMessage("The raffle is now Open, to enter type `"+getPrefix(event.getGuild())+"enter`").queue();
     }
 
     @Override

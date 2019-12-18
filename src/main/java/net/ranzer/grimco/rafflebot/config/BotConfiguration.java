@@ -225,7 +225,7 @@ public class BotConfiguration {
 				e.printStackTrace();
 			}
 		} catch (Exception ex) {
-			System.out.println(String.format("Exception when loading in configuration, using default configuration values.", CONFIG_PATH));
+			System.out.println(String.format("Exception when loading in configuration \"%s\", using default configuration values.", CONFIG_PATH));
 			ex.printStackTrace();
 		}
 		

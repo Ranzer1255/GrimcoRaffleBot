@@ -12,7 +12,7 @@ import java.util.jar.Manifest;
 
 public class BotConfiguration {
 	
-	private static final String CONFIG_PATH = "/caexbot/config/caex.conf";
+	private static final String CONFIG_PATH = "/raffleBot/config/raffleBot.conf";
 	private static BotConfiguration instance;
 	
 	private String databaseManagementSystem = "mysql";

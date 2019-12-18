@@ -23,7 +23,7 @@ dependencies {
 jar {
     manifest {
         attributes (
-                "Main-Class": "grimco.ranzer.rafflebot.GrimcoRaffleBot",
+                "Main-Class": "net.ranzer.grimco.rafflebot.GrimcoRaffleBot",
                 "version"   : version
         )
     }

@@ -47,8 +47,7 @@ public class GrimcoRaffleBot {
 		
 		//add Listeners
 		//TODO setup each module as its own command listner
-		build.addEventListener(CommandListener.getInstance(),
-							   new LevelUpdater(),
+		build.addEventListener(new LevelUpdater(),
 							   new StartUpListener());
 		build.setGame(Game.playing("Waking up, please wait"));
 		build.setStatus(OnlineStatus.DO_NOT_DISTURB);
@@ -74,7 +73,8 @@ public class GrimcoRaffleBot {
 		public void onReady(ReadyEvent event) {
 			super.onReady(event);
 			JDA=event.getJDA();
-			JDA.addEventListener(new GuildManager());
+			JDA.addEventListener(CommandListener.getInstance(),
+								 new GuildManager());
 			JDA.getPresence().setGame(Game.playing(config.getStatus()));
 			
 			Logging.info("Done Loading and ready to go!");

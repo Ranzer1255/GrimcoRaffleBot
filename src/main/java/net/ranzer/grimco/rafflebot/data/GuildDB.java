@@ -4,16 +4,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import net.dv8tion.jda.core.entities.*;
 import net.ranzer.grimco.rafflebot.GrimcoRaffleBot;
 import net.ranzer.grimco.rafflebot.database.BotDB;
 import net.ranzer.grimco.rafflebot.config.BotConfiguration;
 import net.ranzer.grimco.rafflebot.util.Logging;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.TextChannel;
 
 @SuppressWarnings("ConstantConditions")
 public class GuildDB implements IGuildData { //TODO look at using activeJBDC or other ORM framework
@@ -118,7 +117,7 @@ public class GuildDB implements IGuildData { //TODO look at using activeJBDC or 
 			"INSERT INTO grimcodb.text_channel " +
 				"(text_channel_id, guild_id) " +
 				"VALUES(?,?);";
-	private static final String GET_MANAGEMENT_ROLES_SQL =
+	private static final String GET_RAFFLE_ROLES_SQL =
 			"SELECT role_id " +
 				"FROM grimcodb.raffle_roles " +
 				"WHERE guild_id = ?";
@@ -130,12 +129,12 @@ public class GuildDB implements IGuildData { //TODO look at using activeJBDC or 
 			"UPDATE grimcodb.guild " +
 				"SET raffle_threshold = ? " +
 				"WHERE guild_id = ?;";
-	private static final String ADD_MANAGEMENT_ROLE_SQL =
+	private static final String ADD_RAFFLE_ROLE_SQL =
 			"INSERT INTO grimcodb.raffle_roles " +
-				"(guild_id,role_id) " +
-				"values(?,?) " +
-				"ON CONFLICT DO NOTHING;";
-	private static final String REMOVE_MANAGEMENT_ROLE_SQL =
+					"(guild_id,role_id) " +
+					"values(?,?) " +
+					"ON CONFLICT DO NOTHING;";
+	private static final String REMOVE_RAFFLE_ROLE_SQL =
 			"DELETE FROM grimcodb.raffle_roles " +
 				"WHERE guild_id = ?" +
 				"AND role_id = ?";
@@ -144,6 +143,36 @@ public class GuildDB implements IGuildData { //TODO look at using activeJBDC or 
 				"FROM grimcodb.member " +
 				"WHERE guild_id = '%s' " +
 				"AND raffle_ban = true;";
+	// Timed roles SQL statements
+	private static final String GET_TIMED_ROLES_SQL =
+			"SELECT role_id, remove " +
+				"FROM grimcodb.timedrole " +
+				"WHERE guild_id = ? " +
+				"AND user_id = ?;";
+	private static final String ADD_TIMED_ROLE_SQL =
+			"INSERT INTO grimcodb.timedrole " +
+				"(guild_id, user_id, role_id,remove) " +
+				"values(?,?,?,?) " +
+				"ON CONFLICT (guild_id, user_id) DO UPDATE " +
+					"SET remove = ?;";
+	private static final String REMOVE_TIMED_ROLE_SQL =
+			"DELETE FROM grimcodb.timedrole " +
+					"WHERE guild_id = ? " +
+					"AND user_id = ?;";
+	private static final String ADD_MANAGEMENT_ROLE_SQL =
+			"INSERT INTO grimcodb.moderation_roles " +
+					"(guild_id,role_id) " +
+					"values(?,?) " +
+					"ON CONFLICT DO NOTHING;";
+	private static final String REMOVE_MANAGEMENT_ROLE_SQL =
+			"DELETE FROM grimcodb.moderation_roles " +
+					"WHERE guild_id = ?" +
+					"AND role_id = ?";
+	private static final String GET_MANAGEMENT_ROLES_SQL =
+			"SELECT role_id " +
+					"FROM grimcodb.moderation_roles " +
+					"WHERE guild_id = ?";
+
 
 	private final Guild guild;
 	
@@ -467,7 +496,94 @@ public class GuildDB implements IGuildData { //TODO look at using activeJBDC or 
 					Logging.log(e);
 				}
 			}
+
+			/**
+			 * @return map of timed roles on this users key is the role, value is the time as a long after which this role is to
+			 * be removed
+			 */
+			@Override
+			public Map<Role, Long> getTimedRoles() {
+				Map<Role,Long> rtn = new HashMap<>();
+
+				try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
+						GET_TIMED_ROLES_SQL
+				)){
+
+					stmt.setString(1, guild.getId());
+					stmt.setString(2, m.getUser().getId());
+					ResultSet rs = stmt.executeQuery();
+
+					while (rs.next()) {
+						String roleID = rs.getString(1);
+						Long remove = rs.getLong(2);
+						rtn.put(guild.getRoleById(roleID),remove);
+					}
+
+
+				} catch (SQLException e) {
+					Logging.error("problem getting timed roles map");
+					Logging.log(e);
+				}
+				return rtn;
+			}
+
+			/**
+			 * adds a role to the timed roles for this user
+			 *
+			 * @param role             the role to be added to this member
+			 * @param timeToRemoveRole time after which this role should be removed from this Member
+			 */
+			@Override
+			public void addTimedRole(Role role, long timeToRemoveRole) {
+				try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
+						ADD_TIMED_ROLE_SQL
+				)){
+
+					stmt.setString(1, guild.getId());
+					stmt.setString(2, m.getUser().getId());
+					stmt.setString(3, role.getId());
+					stmt.setLong(4,timeToRemoveRole);
+					stmt.setLong(5,timeToRemoveRole);
+					stmt.execute();
+
+				} catch (SQLException e) {
+					Logging.error("problem adding timed role");
+					Logging.log(e);
+				}
+			}
+
+			/**
+			 * removes a timed role from the DB
+			 *
+			 * @param role role to be removed from this member
+			 */
+			@Override
+			public void removedTimedRole(Role role) {
+				try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
+						REMOVE_TIMED_ROLE_SQL
+				)){
+
+					stmt.setString(1, guild.getId());
+					stmt.setString(2, m.getUser().getId());
+					stmt.execute();
+
+				} catch (SQLException e) {
+					Logging.error("problem adding timed role");
+					Logging.log(e);
+				}
+			}
 		};
+	}
+
+	/**
+	 * this method points to the correct member object defied by this user
+	 *
+	 * @param u user to retreve data on
+	 * @return IMemberData object contaiing data for specified Member
+	 */
+	@Override
+	public IMemberData getMemberData(User u) {
+		return getMemberData(guild.getMember(u));
 	}
 
 	/**
@@ -487,7 +603,7 @@ public class GuildDB implements IGuildData { //TODO look at using activeJBDC or 
 
 
 		} catch (SQLException e) {
-			Logging.error("problem getting Raffle perm");
+			Logging.error("problem adding member");
 			Logging.log(e);
 		}
 	}
@@ -637,11 +753,11 @@ public class GuildDB implements IGuildData { //TODO look at using activeJBDC or 
 			}
 
 			@Override
-			public List<Role> allowedManagementRoles() {
+			public List<Role> allowedRaffleRoles() {
 				List<Role> rtn = new ArrayList<>();
 
 				try(PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-						GET_MANAGEMENT_ROLES_SQL
+						GET_RAFFLE_ROLES_SQL
 				)){
 					stmt.setString(1,guild.getId());
 
@@ -696,7 +812,7 @@ public class GuildDB implements IGuildData { //TODO look at using activeJBDC or 
 			@Override
 			public boolean addAllowedRole(Role r) {
 				try(PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-						ADD_MANAGEMENT_ROLE_SQL
+						ADD_RAFFLE_ROLE_SQL
 				)){
 					stmt.setString(1,guild.getId());
 					stmt.setString(2,r.getId());
@@ -711,7 +827,7 @@ public class GuildDB implements IGuildData { //TODO look at using activeJBDC or 
 			@Override
 			public boolean removeAllowedRole(Role r) {
 				try(PreparedStatement stmt = BotDB.getConnection().prepareStatement(
-						REMOVE_MANAGEMENT_ROLE_SQL
+						REMOVE_RAFFLE_ROLE_SQL
 				)){
 					stmt.setString(1,guild.getId());
 					stmt.setString(2,r.getId());
@@ -744,5 +860,59 @@ public class GuildDB implements IGuildData { //TODO look at using activeJBDC or 
 				}
 			}
 		};
+	}
+
+	@Override
+	public List<Role> getModRoles() {
+
+			List<Role> rtn = new ArrayList<>();
+
+			try(PreparedStatement stmt = BotDB.getConnection().prepareStatement(
+					GET_MANAGEMENT_ROLES_SQL
+			)){
+				stmt.setString(1,guild.getId());
+
+				ResultSet rs = stmt.executeQuery();
+
+				while (rs.next()){
+					rtn.add(GrimcoRaffleBot.getJDA().getRoleById(Long.parseLong(rs.getString(1))));
+				}
+			} catch (SQLException e) {
+				Logging.error("problem getting roles");
+				Logging.log(e);
+			}
+
+			return rtn;
+
+	}
+
+	@Override
+	public boolean addModRole(Role r) {
+		try(PreparedStatement stmt = BotDB.getConnection().prepareStatement(
+				ADD_MANAGEMENT_ROLE_SQL
+		)){
+			stmt.setString(1,guild.getId());
+			stmt.setString(2,r.getId());
+			return stmt.executeUpdate()==1;
+		} catch (SQLException e) {
+			Logging.error("issue adding allowed role");
+			Logging.log(e);
+			return false;
+		}
+	}
+
+	@Override
+	public boolean removeModRole(Role r) {
+		try(PreparedStatement stmt = BotDB.getConnection().prepareStatement(
+				REMOVE_MANAGEMENT_ROLE_SQL
+		)){
+			stmt.setString(1,guild.getId());
+			stmt.setString(2,r.getId());
+			return stmt.executeUpdate()==1;
+		} catch (SQLException e) {
+			Logging.error("issue removing allowed role");
+			Logging.log(e);
+			return false;
+		}
 	}
 }

@@ -2,6 +2,8 @@ package net.ranzer.grimco.rafflebot.data;
 
 import net.dv8tion.jda.core.entities.*;
 
+import java.util.List;
+
 public interface IGuildData {
     //prefix methods
     String getPrefix();
@@ -45,6 +47,13 @@ public interface IGuildData {
     IMemberData getMemberData(Member m);
 
     /**
+     * this method points to the correct member object defied by this user
+     * @param u user to retreve data on
+     * @return IMemberData object contaiing data for specified Member
+     */
+    IMemberData getMemberData(User u);
+
+    /**
      * adds Member m to the data structure represented by this IGuildData Object
      * @param m Member to be added
      */
@@ -55,11 +64,17 @@ public interface IGuildData {
      * @param m
      */
     void deleteMember(Member m);
-
     //channel data
     IChannelData getChannel(TextChannel channel);
     void deleteChannel(TextChannel channel);
+
     void addChannel(TextChannel channel);
 
     IRaffleData getRaffleData();
+
+    List<Role> getModRoles();
+
+    boolean addModRole(Role r);
+
+    boolean removeModRole(Role r);
 }

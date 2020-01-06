@@ -34,7 +34,7 @@ public abstract class AbstractRaffleCommand extends BotCommand implements Descri
      * @return a List<Role> of all the Roles allowed to manage raffles
      */
     protected static List<Role> getAllowedManagementRoles(Guild guild) {
-       return GuildManager.getGuildData(guild).getRaffleData().allowedManagementRoles();
+       return GuildManager.getGuildData(guild).getRaffleData().allowedRaffleRoles();
     }
 
     protected IRaffleData getRaffleData(Guild g){

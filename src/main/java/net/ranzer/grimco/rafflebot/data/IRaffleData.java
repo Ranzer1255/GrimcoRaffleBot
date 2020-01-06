@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface IRaffleData {
     Guild getGuild();
-    List<Role> allowedManagementRoles();
+    List<Role> allowedRaffleRoles();
 
     int getRaffleXPThreshold();
     void setRaffleXPThreshold(int threshold);

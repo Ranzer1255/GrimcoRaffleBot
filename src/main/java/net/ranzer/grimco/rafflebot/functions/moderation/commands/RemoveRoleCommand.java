@@ -76,7 +76,7 @@ public class RemoveRoleCommand extends BotCommand implements Describable {
 
 	@Override
 	public String getShortDescription() {
-		return "removes a role to a user for a number of days";
+		return "removes a timed role from a user";
 	}
 
 	@Override

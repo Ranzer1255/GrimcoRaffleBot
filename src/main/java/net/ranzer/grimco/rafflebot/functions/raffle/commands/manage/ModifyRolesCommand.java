@@ -20,7 +20,7 @@ public class ModifyRolesCommand extends AbstractRaffleCommand implements Describ
     public void process(String[] args, MessageReceivedEvent event) {
 
         if (args.length==0){
-            List<Role> roles = GuildManager.getGuildData(event.getGuild()).getRaffleData().allowedManagementRoles();
+            List<Role> roles = GuildManager.getGuildData(event.getGuild()).getRaffleData().allowedRaffleRoles();
             StringBuilder sb = new StringBuilder();
 
             for (Role r :
@@ -36,13 +36,14 @@ public class ModifyRolesCommand extends AbstractRaffleCommand implements Describ
         } else {
             switch (args[0]){
                 case "add":
-                    Role r = event.getJDA().getRolesByName(
-                            StringUtil.arrayToString(Arrays.copyOfRange(args,1,args.length)," "),
-                            true).get(0);
-                    if (r == null) {
+                    List<Role> roles = event.getJDA().getRolesByName(
+                            StringUtil.arrayToString(Arrays.copyOfRange(args, 1, args.length), " "),
+                            true);
+                    if (roles.isEmpty()) {
                         roleNotFound(event.getChannel());
                         return;
                     }
+                    Role r = roles.get(0);
 
                     if (GuildManager.getGuildData(event.getGuild()).getRaffleData().addAllowedRole(r)){
                         roleAdd(event.getChannel(), r, true);
@@ -51,13 +52,14 @@ public class ModifyRolesCommand extends AbstractRaffleCommand implements Describ
                     }
                     break;
                 case "remove":
-                    r = event.getJDA().getRolesByName(
-                            StringUtil.arrayToString(Arrays.copyOfRange(args,1,args.length)," "),
-                            true).get(0);
-                    if (r == null) {
+                    roles = event.getJDA().getRolesByName(
+                            StringUtil.arrayToString(Arrays.copyOfRange(args, 1, args.length), " "),
+                            true);
+                    if (roles.isEmpty()) {
                         roleNotFound(event.getChannel());
                         return;
                     }
+                    r = roles.get(0);
 
                     if (GuildManager.getGuildData(event.getGuild()).getRaffleData().removeAllowedRole(r)){
                         roleRemove(event.getChannel(),r,true);
@@ -116,7 +118,7 @@ public class ModifyRolesCommand extends AbstractRaffleCommand implements Describ
     @Override
     public String getUsage(Guild g) {
         return String.format(
-                "`%sraffle %s [{add | remove} <user>]",
+                "`%sraffle %s [{add | remove} <role>]",
                 getPrefix(g),
                 getName()
         );
@@ -128,7 +130,7 @@ public class ModifyRolesCommand extends AbstractRaffleCommand implements Describ
     }
 
     @Override
-    public List<Role> getRoleRequirements(Guild guild) {//TODO this is FUBARed... anyone can add now
+    public List<Role> getRoleRequirements(Guild guild) {
         return null;
     }
 }

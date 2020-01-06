@@ -23,7 +23,7 @@ public abstract class BotCommand {
 
 	public void runCommand(String[] args, MessageReceivedEvent event){
 		if (!event.getAuthor().getId().equals(BotConfiguration.getInstance().getOwner())) { //override all permission checks if its me
-			if (!hasPermission(event)) {
+			if (!hasPermissionToRun(event)) {
 				noPermission(event);
 				return;
 			} 
@@ -41,14 +41,20 @@ public abstract class BotCommand {
 	
 	abstract public List<String> getAlias();
 
-	/*
-	TODO rewrite this so that it checks for both roles and perm requirements regardless of what the command needs
-	this doesn't work for commands with a NULL role list. if the caller doesn't have permissions then it rolls
-	 over to the role check. if that list is NULL it is treated as if the command doesn't have requirements and it
-	 allows the call.
-	this way a command can have either requirement
-	 */
-	private boolean hasPermission(MessageReceivedEvent event) {
+	private boolean hasPermissionToRun(MessageReceivedEvent event) {
+
+		if(getPermissionRequirements()==null && getRoleRequirements(event.getGuild())==null){
+			return true;
+		} else if(getPermissionRequirements()!=null && getRoleRequirements(event.getGuild())==null){
+			return checkPermissionRequirements(event);
+		} else if(getPermissionRequirements()==null && getRoleRequirements(event.getGuild())!= null){
+			return checkRoleRequirements(event);
+		} else {
+			return (checkPermissionRequirements(event) || checkRoleRequirements(event));
+		}
+	}
+
+	private boolean checkPermissionRequirements(MessageReceivedEvent event) {
 		for (Role role : event.getMember().getRoles()) {
 			if(getPermissionRequirements()!=null) {
 				if (role.getPermissions().contains(getPermissionRequirements())) {
@@ -56,12 +62,10 @@ public abstract class BotCommand {
 				}
 			}
 		}
-		return hasRoleRequirements(event);
+		return false;
 	}
 
-	private boolean hasRoleRequirements(MessageReceivedEvent event) {
-		if(getRoleRequirements(event.getGuild())==null)
-			return true;
+	private boolean checkRoleRequirements(MessageReceivedEvent event) {
 		for(Role role : event.getGuild().getMember(event.getAuthor()).getRoles()){
 			if(getRoleRequirements(event.getGuild()).contains(role))
 				return true;

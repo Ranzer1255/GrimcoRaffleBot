@@ -31,9 +31,9 @@ public class RemoveRoleCommand extends BotCommand implements Describable {
 	@Override
 	protected void process(String[] args, MessageReceivedEvent event) {
 
-		System.out.println(Arrays.toString(args));
+//		System.out.println(Arrays.toString(args));
 
-		if (args.length<3){
+		if (args.length<2){
 			return;
 		}
 

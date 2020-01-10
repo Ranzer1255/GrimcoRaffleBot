@@ -7,7 +7,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.Map;
 import java.util.Properties;
+import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 public class BotConfiguration {
@@ -234,14 +238,20 @@ public class BotConfiguration {
 	}
 	
 	private void loadVersionFromJAR(){
-				try {
-					Manifest manifest = new Manifest(getClass().getClassLoader().getResources("META-INF/MANIFEST.MF").nextElement().openStream());
-					String version = manifest.getMainAttributes().getValue("version");
-					setVersion(version!=null?version:"TESTING_VERSION");
-				} catch (IOException e) {
-					System.out.println("error loading version from JAR");
-					setVersion("TESTING_VERSION");
-				}
+		try {
+			String version;
+			Enumeration<URL> resources = getClass().getClassLoader().getResources("META-INF/MANIFEST.MF");
+			while (resources.hasMoreElements()){
+				URL url = resources.nextElement();
+				Manifest manifest = new Manifest(url.openStream());
+				version = manifest.getMainAttributes().getValue("version");
+				setVersion(version != null ? version : "TESTING_VERSION");
+
+			}
+		} catch (IOException e) {
+			System.out.println("error loading version from JAR");
+			setVersion("TESTING_VERSION");
+		}
 	}
 
 	private void startConfigMonitorThread() {

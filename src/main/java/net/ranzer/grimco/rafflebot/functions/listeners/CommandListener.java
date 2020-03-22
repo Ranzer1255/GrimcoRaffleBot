@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.admin.*;
+import net.ranzer.grimco.rafflebot.functions.foldingathome.commands.FoldingAtHomeStatsCommand;
 import net.ranzer.grimco.rafflebot.functions.moderation.commands.AddRoleCommand;
 import net.ranzer.grimco.rafflebot.functions.moderation.commands.RemoveRoleCommand;
 import net.ranzer.grimco.rafflebot.functions.moderation.commands.manage.ModRoleCommand;
@@ -39,7 +40,8 @@ public class CommandListener extends ListenerAdapter {
 //			.addCommand(new XPSettingsCommand())
 			.addCommand(new RaffleCommand())
 			.addCommand(new RaffleEnterCommand())
-			.addCommand(new RaffleWithdrawCommand());
+			.addCommand(new RaffleWithdrawCommand())
+			.addCommand(new FoldingAtHomeStatsCommand());
 	}
 	
 	private CommandListener addCommand(BotCommand cmd){

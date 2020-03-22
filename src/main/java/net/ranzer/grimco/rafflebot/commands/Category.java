@@ -6,7 +6,8 @@ public enum Category {
 			
 	ADMIN("Admin", Color.RED),
 	RAFFLE("Raffle",Color.ORANGE),
-	XP("Xp", Color.blue);
+	XP("Xp", Color.blue),
+	MISC("Misc", Color.blue);
 
     public final String NAME;
 	public final Color COLOR;

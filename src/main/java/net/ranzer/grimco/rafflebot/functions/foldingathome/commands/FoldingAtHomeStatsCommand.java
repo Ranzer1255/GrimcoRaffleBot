@@ -40,13 +40,10 @@ public class FoldingAtHomeStatsCommand extends BotCommand implements Describable
 					.setDescription(
 							String.format("Score: %,d\n"+
 										  "Work Units: %,d\n" +
-										  "Active Processors: %d\n" +
-										  "Rank: %,d / %,d",
+										  "Rank: %,d",
 									      teamStats.getInt("score"),
 									      teamStats.getInt("wus"),
-									      teamStats.getInt("active_50"),
-									      teamStats.getInt("rank"),
-									      teamStats.getInt("teams"))
+									      teamStats.getInt("rank"))
 					)
 					.setColor(getCategory().COLOR);
 			for (int i = 1; i < membStats.length(); i++) {
@@ -67,6 +64,12 @@ public class FoldingAtHomeStatsCommand extends BotCommand implements Describable
 
 		} catch (IOException e) {
 			event.getChannel().sendMessage("There was an issue reaching the Folding@Home API. please try again later.").queue();
+		} catch (JSONException e){
+			event.getChannel().sendMessage("Folding@Home has changed their API structure (again) and Ranzer is unaware. " +
+					"please give him this message so that he can correct the issue as soon as possible\n\n" +
+					"```\n" +
+					e.getLocalizedMessage() +
+					"\n```").queue();
 		}
 
 

@@ -1,6 +1,6 @@
 package net.ranzer.grimco.rafflebot.data;
 
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.api.entities.*;
 
 import java.util.List;
 

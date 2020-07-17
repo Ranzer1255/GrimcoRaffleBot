@@ -8,9 +8,9 @@ import net.ranzer.grimco.rafflebot.commands.Category;
 import net.ranzer.grimco.rafflebot.commands.Describable;
 import net.ranzer.grimco.rafflebot.config.BotConfiguration;
 import net.ranzer.grimco.rafflebot.data.GuildManager;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class PrefixCommand extends BotCommand implements Describable{
 

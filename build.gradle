@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'ranzer'
-version '1.9'
+version '1.10'
 
 sourceCompatibility = 1.8
 
@@ -14,9 +14,12 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile ('net.dv8tion:JDA:3.8.3_462'){
+    compile ('net.dv8tion:JDA:4.2.0_179'){
         exclude module: 'opus-java'
     }
+// https://mvnrepository.com/artifact/org.json/json
+    compile group: 'org.json', name: 'json', version: '20200518'
+
     compile files('libs/postgresql-42.2.5.jar')
 }
 

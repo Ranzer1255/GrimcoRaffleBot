@@ -10,12 +10,12 @@ import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.Category;
 import net.ranzer.grimco.rafflebot.commands.Describable;
 import net.ranzer.grimco.rafflebot.config.BotConfiguration;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class InfoCommand extends BotCommand implements Describable{
 
@@ -48,7 +48,7 @@ public class InfoCommand extends BotCommand implements Describable{
 		  .addField("Users", countNonBotUsers(bot.getJDA()), true)
 		  .addField("Bots", countBotUsers(bot.getJDA()), true)
 		  .addField("Up Time",getUpTime(), true)
-		  .addField("Game", bot.getJDA().getPresence().getGame().getName(), true);
+		  .addField("Game", bot.getJDA().getPresence().getActivity().getName(), true);
 		return rtn;
 	}
 

@@ -1,6 +1,6 @@
 package net.ranzer.grimco.rafflebot.functions.raffle;
 
-import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.api.entities.Member;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,8 +1,8 @@
 package net.ranzer.grimco.rafflebot.functions.moderation;
 
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.ranzer.grimco.rafflebot.GrimcoRaffleBot;
 import net.ranzer.grimco.rafflebot.data.GuildManager;
 import net.ranzer.grimco.rafflebot.util.Logging;
@@ -63,7 +63,7 @@ public class RoleManager {
 		Logging.debug(String.format("adding role %s to %s and removing in %s days", role.getName(),member.getEffectiveName(),daysToRemove));
 
 		//add role to member in discord
-		member.getGuild().getController().addSingleRoleToMember(member,role).queue();
+		member.getGuild().addRoleToMember(member,role).queue();
 
 		//schedule task to remove role
 		scheduleRemoval(member,role,daysToRemove,TimeUnit.DAYS);
@@ -76,7 +76,7 @@ public class RoleManager {
 
 	public void removeRole(Role role, Member member){
 		Logging.debug(String.format("removing role %s from %s",role.getName(),member.getEffectiveName()));
-		member.getGuild().getController().removeSingleRoleFromMember(member,role).queue();
+		member.getGuild().removeRoleFromMember(member,role).queue();
 		GuildManager.getGuildData(member.getGuild()).getMemberData(member).removedTimedRole(role);
 	}
 }

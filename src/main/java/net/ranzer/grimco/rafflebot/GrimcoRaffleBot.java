@@ -4,19 +4,18 @@ import java.time.LocalDateTime;
 
 import javax.security.auth.login.LoginException;
 
+import net.dv8tion.jda.api.entities.Activity;
 import net.ranzer.grimco.rafflebot.config.BotConfiguration;
 import net.ranzer.grimco.rafflebot.data.GuildManager;
 import net.ranzer.grimco.rafflebot.functions.levels.LevelUpdater;
 import net.ranzer.grimco.rafflebot.functions.listeners.CommandListener;
 import net.ranzer.grimco.rafflebot.util.Logging;
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.entities.Game;
-import net.dv8tion.jda.core.events.ReadyEvent;
-import net.dv8tion.jda.core.events.ShutdownEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.ShutdownEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 /**
  *
@@ -40,16 +39,16 @@ public class GrimcoRaffleBot {
 		
 		//set token
 		if (config.isDebug()) {
-			build = new JDABuilder(AccountType.BOT).setToken(config.getTestToken());
+			build = JDABuilder.createDefault(config.getTestToken());
 		} else {			
-			build = new JDABuilder(AccountType.BOT).setToken(config.getToken());
+			build = JDABuilder.createDefault(config.getToken());
 		}
 		
 		//add Listeners
 		//TODO setup each module as its own command listner
-		build.addEventListener(new LevelUpdater(),
+		build.addEventListeners(new LevelUpdater(),
 							   new StartUpListener());
-		build.setGame(Game.playing("Waking up, please wait"));
+		build.setActivity(Activity.watching("Waking up, please wait"));
 		build.setStatus(OnlineStatus.DO_NOT_DISTURB);
 		
 		//build
@@ -75,7 +74,7 @@ public class GrimcoRaffleBot {
 			JDA=event.getJDA();
 			JDA.addEventListener(CommandListener.getInstance(),
 								 new GuildManager());
-			JDA.getPresence().setGame(Game.playing(config.getStatus()));
+			JDA.getPresence().setActivity(Activity.playing(config.getStatus()));
 			
 			Logging.info("Done Loading and ready to go!");
 			JDA.getPresence().setStatus(OnlineStatus.ONLINE);
@@ -86,7 +85,7 @@ public class GrimcoRaffleBot {
 		
 			Logging.info("Shutting down....");
 			JDA.getPresence().setStatus(OnlineStatus.IDLE);
-			JDA.getPresence().setGame(Game.playing("shutting down...."));
+			JDA.getPresence().setActivity(Activity.playing("shutting down...."));
 		}
 		
 	}

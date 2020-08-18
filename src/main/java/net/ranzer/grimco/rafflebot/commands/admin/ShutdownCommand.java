@@ -5,7 +5,7 @@ import java.util.List;
 
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.config.BotConfiguration;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class ShutdownCommand extends BotCommand {
 	

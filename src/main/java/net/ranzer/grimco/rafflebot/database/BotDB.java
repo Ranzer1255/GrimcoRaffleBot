@@ -2,6 +2,7 @@ package net.ranzer.grimco.rafflebot.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import net.ranzer.grimco.rafflebot.config.BotConfiguration;
@@ -30,7 +31,11 @@ public class BotDB {
 				}
 				 
 				connection = DriverManager.getConnection(String.format("jdbc:%s://%s:%d/%s?useSSL=false",DBMS,host,port,DB), user, pw);
-				initDB(connection);
+
+				if(!connection.prepareStatement(
+						"select schema_name from information_schema.schemata where schema_name = 'grimcodb';").
+						executeQuery().next())
+					initDB(connection);
 			}
 
 
@@ -44,6 +49,7 @@ public class BotDB {
 
 	private static void initDB(Connection connection) throws SQLException {
 
+
 		createSchema(connection);
 		createTableGuild(connection);
 		createTableMember(connection);
@@ -51,7 +57,6 @@ public class BotDB {
 		createTableRaffle_Roles(connection);
 		createTableText_channel(connection);
 		createTableTimedrole(connection);
-		connection.commit();
 	}
 
 	private static void createSchema(Connection connection) throws SQLException {
@@ -60,23 +65,14 @@ public class BotDB {
 	}
 
 	private static void createTableGuild(Connection connection) throws SQLException {
-		String SQL = "CREATE TABLE IF NOT EXISTS grimcodb.timedrole\n" +
-				"(\n" +
-				"   guild_id  varchar(20)   NOT NULL,\n" +
-				"   user_id   varchar(20)   NOT NULL,\n" +
-				"   role_id   varchar(20)   NOT NULL,\n" +
-				"   remove    bigint        DEFAULT '0'::bigint\n" +
-				");\n" +
-				"\n" +
-				"ALTER TABLE grimcodb.timedrole\n" +
-				"   ADD CONSTRAINT timedrole_pkey\n" +
-				"   PRIMARY KEY (guild_id, user_id);\n" +
-				"\n" +
-				"ALTER TABLE timedrole\n" +
-				"  ADD CONSTRAINT timedrole_guild_id_fkey FOREIGN KEY (guild_id, user_id)\n" +
-				"  REFERENCES grimcodb.member (guild_id, user_id)\n" +
-				"  ON UPDATE CASCADE\n" +
-				"  ON DELETE CASCADE;";
+		String SQL = "CREATE TABLE IF NOT EXISTS grimcodb.guild (\n" +
+				"  guild_id			VARCHAR(20) 		PRIMARY KEY, --Guild ID of guild from Discord\n" +
+				"  prefix 			VARCHAR(45) , 					 --the set prefix for this guild, if null use global default\n" +
+				"  xp_timeout 		INT 				DEFAULT 60000,\n" +
+				"  xp_low 			INT 				DEFAULT 15,\n" +
+				"  xp_high 			INT 				DEFAULT 25,\n" +
+				"  raffle_threshold INT 		NULL 	DEFAULT 0\n" +
+				" );";
 
 		connection.prepareStatement(SQL).execute();
 	}
@@ -95,7 +91,7 @@ public class BotDB {
 				"   ADD CONSTRAINT member_pkey\n" +
 				"   PRIMARY KEY (guild_id, user_id);\n" +
 				"\n" +
-				"ALTER TABLE member\n" +
+				"ALTER TABLE grimcodb.member\n" +
 				"  ADD CONSTRAINT member_guild_id_fkey FOREIGN KEY (guild_id)\n" +
 				"  REFERENCES grimcodb.guild (guild_id)\n" +
 				"  ON UPDATE CASCADE\n" +
@@ -111,7 +107,7 @@ public class BotDB {
 				"   role_id   varchar(20)   NOT NULL\n" +
 				");\n" +
 				"\n" +
-				"ALTER TABLE moderation_roles\n" +
+				"ALTER TABLE grimcodb.moderation_roles\n" +
 				"  ADD CONSTRAINT moderation_roles_guild_id_fkey FOREIGN KEY (guild_id)\n" +
 				"  REFERENCES grimcodb.guild (guild_id)\n" +
 				"  ON UPDATE CASCADE\n" +
@@ -127,7 +123,7 @@ public class BotDB {
 				"   role_id   varchar(20)   NOT NULL\n" +
 				");\n" +
 				"\n" +
-				"ALTER TABLE raffle_roles\n" +
+				"ALTER TABLE grimcodb.raffle_roles\n" +
 				"  ADD CONSTRAINT raffle_roles_guild_id_fkey FOREIGN KEY (guild_id)\n" +
 				"  REFERENCES grimcodb.guild (guild_id)\n" +
 				"  ON UPDATE CASCADE\n" +
@@ -149,7 +145,7 @@ public class BotDB {
 				"   ADD CONSTRAINT text_channel_pkey\n" +
 				"   PRIMARY KEY (text_channel_id);\n" +
 				"\n" +
-				"ALTER TABLE text_channel\n" +
+				"ALTER TABLE grimcodb.text_channel\n" +
 				"  ADD CONSTRAINT text_channel_guild_id_fkey FOREIGN KEY (guild_id)\n" +
 				"  REFERENCES grimcodb.guild (guild_id)\n" +
 				"  ON UPDATE CASCADE\n" +
@@ -171,7 +167,7 @@ public class BotDB {
 				"   ADD CONSTRAINT timedrole_pkey\n" +
 				"   PRIMARY KEY (guild_id, user_id);\n" +
 				"\n" +
-				"ALTER TABLE timedrole\n" +
+				"ALTER TABLE grimcodb.timedrole\n" +
 				"  ADD CONSTRAINT timedrole_guild_id_fkey FOREIGN KEY (guild_id, user_id)\n" +
 				"  REFERENCES grimcodb.member (guild_id, user_id)\n" +
 				"  ON UPDATE CASCADE\n" +

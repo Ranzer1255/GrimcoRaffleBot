@@ -46,7 +46,7 @@ public class Lexer {
 		DIE("(\\d+)?[dD](\\d+)"),
 		REROLLONCE("ro<(\\d+)"),
 		REROLL("r<(\\d+)"),
-		COMPOUNDING("\\!!"),//TODO this probably wont work as it will recognize exploding twice instead or along with Compounding
+		COMPOUNDING("\\!!"),
 		EXPLODING("\\!"),
 		TARGETNUMBER("t(\\d+)"),
 		KEEPHIGH("k(h?)(\\d+)"),

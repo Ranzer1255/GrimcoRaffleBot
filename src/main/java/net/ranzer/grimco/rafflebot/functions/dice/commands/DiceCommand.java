@@ -72,6 +72,7 @@ public class DiceCommand extends BotCommand implements Describable{
 				+ "4d6ro<X: reroll every die lower than X, but only once\n"
 				+ "1d10!: exploding die - every time you roll a critical, add an extra die\n"
 				+ "5d6tX: roll Dice and count the number of results above X\n"
+				+ "    note: this mode is incompatible with non-target rolls, weird things happen if you combine the two\n"
 				+ "5d6!!: Shadowrun/Manapunk style compound exploding";
 	}
 	

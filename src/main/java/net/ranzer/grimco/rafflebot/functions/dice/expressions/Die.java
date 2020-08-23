@@ -62,7 +62,7 @@ public class Die extends Expression {
 				while (roll%numberOfFaces==0) {
 					roll += random.nextInt(numberOfFaces) + 1;
 				}
-				rollDescription =String.valueOf(roll)+"!!";
+				rollDescription = roll +"!!";
 			}
 
 			// Roll is crit success

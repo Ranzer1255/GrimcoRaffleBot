@@ -8,7 +8,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.Category;
 import net.ranzer.grimco.rafflebot.commands.Describable;
-import net.ranzer.grimco.rafflebot.functions.dice.Dice;
+import net.ranzer.grimco.rafflebot.functions.dice.DiceRoll;
+import net.ranzer.grimco.rafflebot.functions.dice.DiceRollBuilder;
 
 /**
  * <p> Credit where Credit is due:
@@ -19,7 +20,7 @@ import net.ranzer.grimco.rafflebot.functions.dice.Dice;
  */
 public class DiceCommand extends BotCommand implements Describable{
 
-	private static final int MAX_MESSAGE_LENGHT = 1000;
+	private static final int MAX_MESSAGE_LENGTH = 1000;
 
 	@Override
 	public void process(String[] args,  MessageReceivedEvent event) {
@@ -27,25 +28,21 @@ public class DiceCommand extends BotCommand implements Describable{
 		if(!(args.length<1)){
 			invalidUsage(event.getGuild());
 		}
-		String expression = "";
-		
-		for (int i = 0; i < args.length; i++) {
-			expression+=" " + args[i];
+		StringBuilder expression = new StringBuilder();
+
+		for (String arg : args) {
+			expression.append(" ").append(arg);
 		}
-		Dice dice = new Dice(expression.substring(1));
+		DiceRoll diceRoll = DiceRollBuilder.newDiceRoll(expression.substring(1));
 		
-		int result = dice.roll();
-		
-		
-		event.getChannel().sendMessage(String.format("%s: %s = %d", 
-				event.getAuthor().getAsMention(), 
-				(dice.getBreakdown().length()<MAX_MESSAGE_LENGHT)?dice.getBreakdown():
-					"(Message to long to display each die)"+expression.substring(1), 
-				result))
+		int result = diceRoll.roll();
+
+		event.getChannel().sendMessage(String.format("%s: %s",
+				event.getAuthor().getAsMention(),
+				(diceRoll.getLongReadout().length()< MAX_MESSAGE_LENGTH)? diceRoll.getLongReadout():
+					diceRoll.getShortReadout()))
 		.queue();
-		
-		
-		
+
 	}
 
 	@Override
@@ -73,7 +70,9 @@ public class DiceCommand extends BotCommand implements Describable{
 				+ "2d20klX: keep the X lowest dice\n"
 				+ "4d6r<X: reroll every die lower than X\n"
 				+ "4d6ro<X: reroll every die lower than X, but only once\n"
-				+ "1d10!: exploding die - every time you roll a crit, add an extra die";
+				+ "1d10!: exploding die - every time you roll a critical, add an extra die\n"
+				+ "5d6tX: roll Dice and count the number of results above X\n"
+				+ "5d6!!: Shadowrun/Manapunk style compound exploding";
 	}
 	
 	@Override

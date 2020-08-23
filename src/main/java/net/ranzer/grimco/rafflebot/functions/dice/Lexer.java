@@ -42,8 +42,23 @@ public class Lexer {
 	}
 
 	public enum TokenType {
-		COMMENT("\\[([^\\]]+)\\]"), DIE("(\\d+)?[dD](\\d+)"), REROLLONCE("ro<(\\d+)"), REROLL("r<(\\d+)"), EXPLODING("\\!"), KEEPHIGH("k(h?)(\\d+)"), KEEPLOW("kl(\\d+)"),
-		CRITSUCCESS("cs>(\\d+)"), CRITFAIL("cf<(\\d+)"), MULTIPLICATION("\\*"), NEGATION("\\+?\\-"), ADDITION("\\+"), ATOMIC("(\\d+)"), GIBBERISH("[a-zA-Z]+"), WHITESPACE("(\\s+)");
+		COMMENT("\\[([^\\]]+)\\]"),
+		DIE("(\\d+)?[dD](\\d+)"),
+		REROLLONCE("ro<(\\d+)"),
+		REROLL("r<(\\d+)"),
+		COMPOUNDING("\\!!"),//TODO this probably wont work as it will recognize exploding twice instead or along with Compounding
+		EXPLODING("\\!"),
+		TARGETNUMBER("t(\\d+)"),
+		KEEPHIGH("k(h?)(\\d+)"),
+		KEEPLOW("kl(\\d+)"),
+		CRITSUCCESS("cs>(\\d+)"),
+		CRITFAIL("cf<(\\d+)"),
+		MULTIPLICATION("\\*"),
+		NEGATION("\\+?\\-"),
+		ADDITION("\\+"),
+		ATOMIC("(\\d+)"),
+		GIBBERISH("[a-zA-Z]+"),
+		WHITESPACE("(\\s+)");
 
 		public final String pattern;
 

@@ -9,18 +9,23 @@ import java.util.Random;
 
 public class Die extends Expression {
 
+	private final int MAX_DICE = 1000;
+
 	private int numberOfDice = 0;
 	private int numberOfFaces = 1;
 	private int keepNumber = 0;
 	private boolean keepHighest = false;
 	private boolean keepLowest = false;
 	private boolean exploding = false;
+	private boolean compounding = false;
 	private int rerollNumber = 0;
 	private boolean rerollOnce = false;
 	private boolean reroll = false;
 	private int critSuccessNumber = numberOfFaces;
 	private int critFailNumber = 1;
 	private int rerolledDice = 0;
+	private boolean targetRoll = false; //this value determines if this is a target matching role or a summing roll
+	private int targetNumber = -1;
 
 	/**
 	 * Sets up a die with the selected options. Then roll the dice and add the explanation to the
@@ -41,8 +46,9 @@ public class Die extends Expression {
 		Random random = new Random();
 		List<Integer> rolls = new ArrayList<>();
 		List<String> rollDescriptions = new ArrayList<>();
+
 		// Roll the dice, add extra where necessary
-		for (int i = 0; i < Math.min(numberOfDice, 1000); i++) {
+		for (int i = 0; i < Math.min(numberOfDice, MAX_DICE); i++) {
 			int roll = random.nextInt(numberOfFaces) + 1;
 			String rollDescription = String.valueOf(roll);
 
@@ -52,8 +58,19 @@ public class Die extends Expression {
 				rollDescription += "!";
 			}
 
+			if (compounding && roll>= critSuccessNumber){
+				while (roll%numberOfFaces==0) {
+					roll += random.nextInt(numberOfFaces) + 1;
+				}
+				rollDescription =String.valueOf(roll)+"!!";
+			}
+
 			// Roll is crit success
-			if (roll >= critSuccessNumber) {
+			if (roll >= critSuccessNumber && !targetRoll) {
+				rollDescription = "**" + rollDescription + "**";
+			}
+
+			if (targetRoll && roll >= targetNumber){
 				rollDescription = "**" + rollDescription + "**";
 			}
 
@@ -70,6 +87,7 @@ public class Die extends Expression {
 				roll = 0;
 				rollDescription = "~~" + rollDescription + "~~";
 			}
+
 			// Reset the reroll cooldown
 			else if (rerollOnce && justRerolled) {
 				justRerolled = false;
@@ -127,10 +145,18 @@ public class Die extends Expression {
 			}
 		}
 
-		// Construct the final variables (value and description)
-		value = 0;
-		for (int roll : rolls) {
-			value += roll;
+		// Construct the final variables (value and description) in summing mode^r 1d20+5
+
+		if (targetRoll) { //target roll
+			value = 0;
+			for (int roll : rolls){
+				if (roll>=targetNumber) value++;
+			}
+		} else { //sum roll
+			value = 0;
+			for (int roll : rolls) {
+				value += roll;
+			}
 		}
 
 		description += " (";
@@ -174,6 +200,13 @@ public class Die extends Expression {
 
 			case EXPLODING: {
 				exploding = true;
+				compounding = false;
+				break;
+			}
+
+			case COMPOUNDING: {
+				exploding = false;
+				compounding = true;
 				break;
 			}
 
@@ -223,6 +256,11 @@ public class Die extends Expression {
 				String data = token.data.toLowerCase();
 				rerollNumber = Integer.parseInt(data.substring(3));
 				break;
+			}
+
+			case TARGETNUMBER: {
+				targetRoll = true;
+				targetNumber = Integer.parseInt(token.data.substring(1));
 			}
 			
 			default: {

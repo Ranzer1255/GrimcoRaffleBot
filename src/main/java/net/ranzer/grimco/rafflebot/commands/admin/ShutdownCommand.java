@@ -11,7 +11,7 @@ public class ShutdownCommand extends BotCommand {
 	
 	@Override
 	public void process(String[] args,  MessageReceivedEvent event) {
-		if (event.getAuthor()!=event.getJDA().getUserById(BotConfiguration.getInstance().getOwner())){
+		if (!event.getAuthor().getId().equals(BotConfiguration.getInstance().getOwner())){
 			noPermission(event);
 			return;
 		}

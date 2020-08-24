@@ -1,10 +1,15 @@
 package net.ranzer.grimco.rafflebot;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 import javax.security.auth.login.LoginException;
 
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.ranzer.grimco.rafflebot.config.BotConfiguration;
 import net.ranzer.grimco.rafflebot.data.GuildManager;
 import net.ranzer.grimco.rafflebot.functions.levels.LevelUpdater;
@@ -32,18 +37,25 @@ public class GrimcoRaffleBot {
 
 	public static void main (String[] args){
 		Logging.info("Huu... Wha... who... Oh, I guess it's time to [start up]");
-		
-		
-		
+
 		JDABuilder build;
+
+		//setup intients
+		Collection<GatewayIntent> intents = Arrays.asList(
+			GatewayIntent.GUILD_MEMBERS, //privileged
+			GatewayIntent.DIRECT_MESSAGES,
+			GatewayIntent.GUILD_MESSAGES
+		);
 		
 		//set token
 		if (config.isDebug()) {
-			build = JDABuilder.createDefault(config.getTestToken());
+			build = JDABuilder.create(config.getTestToken(),intents);
 		} else {			
-			build = JDABuilder.createDefault(config.getToken());
+			build = JDABuilder.create(config.getToken(),intents);
 		}
-		
+
+		build.enableIntents(GatewayIntent.GUILD_MEMBERS);
+		build.setMemberCachePolicy(MemberCachePolicy.ALL);
 		//add Listeners
 		//TODO setup each module as its own command listner
 		build.addEventListeners(new LevelUpdater(),

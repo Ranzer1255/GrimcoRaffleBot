@@ -35,7 +35,7 @@ public class HelpCommand extends BotCommand implements Describable{
 					.contains(args[0].toLowerCase())).findFirst();
 			if(opt.isPresent()){
 				Describable d = opt.get();
-				event.getAuthor().openPrivateChannel().complete().sendMessage(mb.setEmbed(getDescription(d,event.getGuild())).build()).queue();
+				event.getAuthor().openPrivateChannel().complete().sendMessage(mb.setEmbed(getDescription(d/*,event.getGuild()*/)).build()).queue();
 			}
 		}else if(args.length == 2){
 			Optional<Describable> opt = getDescribables(cmds.getCommands()).stream().filter(cc -> cc.getAlias()
@@ -46,7 +46,7 @@ public class HelpCommand extends BotCommand implements Describable{
 						.filter(cc -> cc.getAlias().contains(args[1].toLowerCase())).findFirst();
 				subOpt.ifPresent(describable -> event.getAuthor().openPrivateChannel().complete()
 						.sendMessage(new MessageBuilder().setEmbed(
-								getDescription(describable, event.getGuild())).build()).queue());
+								getDescription(describable/*, event.getGuild()*/)).build()).queue());
 			}
 		//full command list	
 		}else{
@@ -61,7 +61,7 @@ public class HelpCommand extends BotCommand implements Describable{
 			EmbedBuilder eb = new EmbedBuilder();
 			
 			eb.setAuthor("Full Command List", null, null);
-			if (event.getGuild() !=null) {
+			if (event.isFromGuild()) {
 				eb.setColor(event.getGuild().getMember(event.getJDA().getSelfUser()).getColor());
 			}
 			catagorized.keySet().stream().sorted((o1,o2)->
@@ -79,12 +79,12 @@ public class HelpCommand extends BotCommand implements Describable{
 		}
 	}
 
-	public static MessageEmbed getDescription(Describable d, Guild g) {
+	public static MessageEmbed getDescription(Describable d/*, Guild g*/) {
 		EmbedBuilder eb = new EmbedBuilder();
 		eb.setAuthor(d.getName(), null, null);
 		eb.setDescription((d.getLongDescription()!=null)?d.getLongDescription():"long descript wip");
 		eb.setColor(d.getCategory().COLOR);
-		eb.addField("Usage",d.getUsage(g)!=null?d.getUsage(g):"usage wip",false);
+//		eb.addField("Usage",d.getUsage(g)!=null?d.getUsage(g):"usage wip",false);
 		eb.addField("Other Aliases",
 				(d.getAlias().size()-1)!=0 ? 
 						"`"+StringUtil.arrayToString(d.getAlias().subList(1, d.getAlias().size()), "`, `")+"`":

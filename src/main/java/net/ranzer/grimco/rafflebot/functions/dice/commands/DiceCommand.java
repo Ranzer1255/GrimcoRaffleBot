@@ -25,8 +25,13 @@ public class DiceCommand extends BotCommand implements Describable{
 	@Override
 	public void process(String[] args,  MessageReceivedEvent event) {
 
-		if(!(args.length<1)){
-			invalidUsage(event.getGuild());
+		if(args.length<1){
+			if(event.isFromGuild()){
+				invalidUsage(event.getGuild());
+			} else {
+				invalidUsage(null);
+			}
+			return;
 		}
 		StringBuilder expression = new StringBuilder();
 

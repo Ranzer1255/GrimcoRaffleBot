@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.admin.*;
 import net.ranzer.grimco.rafflebot.functions.dice.commands.DiceCommand;
@@ -71,10 +73,15 @@ public class CommandListener extends ListenerAdapter {
 		
 		User author = event.getAuthor();
 		String message = event.getMessage().getContentRaw();
-		
-		if(!message.toLowerCase().startsWith(BotCommand.getPrefix(event.getGuild())))
-			return;
-		findCommand(event, author, message); 
+
+		if(event.isFromGuild()){
+			if(!message.toLowerCase().startsWith(BotCommand.getPrefix(event.getGuild()))) {
+				return;
+			}
+			findCommand(event, BotCommand.getPrefix(event.getGuild()), author, message);
+		} else {
+			findCommand(event, "",author,message);
+		}
 	}
 
 	private boolean containsKeyWord(MessageReceivedEvent event) {
@@ -87,10 +94,10 @@ public class CommandListener extends ListenerAdapter {
 		return false;
 	}
 	
-	private void findCommand(MessageReceivedEvent event, User author, String message) {
+	private void findCommand(MessageReceivedEvent event, String prefix, User author, String message) {
 		
 		String[] args = message.split(" ");
-		String command = args[0].toLowerCase().replace(BotCommand.getPrefix(event.getGuild()), "");
+		String command = args[0].toLowerCase().replace(prefix, "");
 		String[] finalArgs = Arrays.copyOfRange(args, 1, args.length);
 		Optional<BotCommand> c = cmds.stream().filter(cc -> cc.getAlias().contains(command)).findFirst();
 

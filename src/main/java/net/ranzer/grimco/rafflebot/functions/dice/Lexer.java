@@ -19,6 +19,7 @@ public class Lexer {
 		while (matcher.find()) {
 			for (TokenType tk : TokenType.values()) {
 				if (matcher.group(TokenType.WHITESPACE.name()) != null)
+					//noinspection ControlFlowStatementWithoutBraces
 					continue;
 				else if (matcher.group(tk.name()) != null) {
 					if (tk == TokenType.NEGATION)

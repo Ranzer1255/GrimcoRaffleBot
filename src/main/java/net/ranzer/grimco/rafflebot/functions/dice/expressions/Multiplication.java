@@ -17,7 +17,7 @@ public class Multiplication extends Expression {
 				Multiplication a = new Multiplication(new ArrayList<>(tokens.subList(0, i)));
 				Multiplication b = new Multiplication(new ArrayList<>(tokens.subList(i + 1, tokens.size())));
 				value = a.value * b.value;
-				description = a.description + " * " + b.description;
+				description=a.description.append(" * ").append(b.description);
 			}
 		}
 

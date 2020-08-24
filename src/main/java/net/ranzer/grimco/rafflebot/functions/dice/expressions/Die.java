@@ -23,7 +23,6 @@ public class Die extends Expression {
 	private boolean reroll = false;
 	private int critSuccessNumber = numberOfFaces;
 	private int critFailNumber = 1;
-	private int rerolledDice = 0;
 	private boolean targetRoll = false; //this value determines if this is a target matching role or a summing roll
 	private int targetNumber = -1;
 
@@ -34,9 +33,10 @@ public class Die extends Expression {
 	public Die(ArrayList<Lexer.Token> tokens) {
 		super(tokens);
 
-		for (int i = 0; i < tokens.size(); i++) {
-			Lexer.Token token = tokens.get(i);
-			description += token.data;
+//		StringBuilder descriptionAddition = new StringBuilder();
+
+		for (Lexer.Token token : tokens) {
+			description.append(token.data);
 			processTriggers(token);
 		}
 
@@ -48,6 +48,8 @@ public class Die extends Expression {
 		List<String> rollDescriptions = new ArrayList<>();
 
 		// Roll the dice, add extra where necessary
+		// will never roll more than MAX_DICE
+		int rerolledDice = 0;
 		for (int i = 0; i < Math.min(numberOfDice, MAX_DICE); i++) {
 			int roll = random.nextInt(numberOfFaces) + 1;
 			String rollDescription = String.valueOf(roll);
@@ -159,14 +161,14 @@ public class Die extends Expression {
 			}
 		}
 
-		description += " (";
+		description.append(" (");
 		for (String desc : rollDescriptions) {
-			description += desc + ", ";
+			description.append(desc).append(", ");
 		}
 		if (!rollDescriptions.isEmpty()) {
-			description = description.substring(0, description.length() - 2);
+			description.delete(description.length()-2,description.length());
 		}
-		description = description + ")";
+		description.append(")");
 
 	}
 

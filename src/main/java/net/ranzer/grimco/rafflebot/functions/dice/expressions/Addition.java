@@ -17,7 +17,7 @@ public class Addition extends Expression {
 				Addition a = new Addition(new ArrayList<>(tokens.subList(0, i)));
 				Addition b = new Addition(new ArrayList<>(tokens.subList(i + 1, tokens.size())));
 				value = a.value + b.value;
-				description = a.description + " + " + b.description;
+				description = a.description.append(" + ").append(b.description);
 			}
 		}
 

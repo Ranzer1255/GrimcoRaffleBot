@@ -13,10 +13,18 @@ import java.util.ArrayList;
 public abstract class Expression {
 
 	public ArrayList<Lexer.Token> tokens;
-	public int value;
-	public String description = "";
+	protected int value;
+	protected StringBuilder description = new StringBuilder();
 
 	public Expression(ArrayList<Lexer.Token> tokens) {
 		this.tokens = tokens;
+	}
+
+	public String getDescription(){
+		return description.toString();
+	}
+
+	public int getValue() {
+		return value;
 	}
 }

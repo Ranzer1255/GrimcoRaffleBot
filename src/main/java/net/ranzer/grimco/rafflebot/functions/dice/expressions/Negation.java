@@ -16,8 +16,8 @@ public class Negation extends Expression {
 			if (tokens.get(i).type == Lexer.TokenType.NEGATION) {
 				twoNegations = true;
 				Negation a = new Negation(new ArrayList<>(tokens.subList(i + 1, tokens.size())));
-				value = 0 - a.value;
-				description = "-" + a.description;
+				value = -a.value;
+				description = a.description.insert(0,"-");
 			}
 		}
 

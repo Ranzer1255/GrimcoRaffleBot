@@ -1,11 +1,8 @@
 package net.ranzer.grimco.rafflebot.functions.dice;
 
-import net.ranzer.grimco.rafflebot.functions.dice.expressions.Addition;
-
 import java.util.ArrayList;
 
 public class TargetDiceRoll extends DiceRoll {
-	private int total;
 
 	public TargetDiceRoll(String input, ArrayList<Lexer.Token> tokens) {
 		super(input, tokens);
@@ -13,14 +10,12 @@ public class TargetDiceRoll extends DiceRoll {
 
 	@Override
 	public String getTotal() {
-		return String.format("%d Successes", total);
-	}
-
-	@Override
-	public int roll() {
-		Addition expr = new Addition(tokens);
-		breakdown = expr.description;
-		total = expr.value;
-		return total;
+		if(total == 0){
+			return "No Successes";
+		} else if (total==1){
+			return String.format("%d Success", total);
+		} else {
+			return String.format("%d Successes", total);
+		}
 	}
 }

@@ -9,11 +9,11 @@ public class Atomic extends Expression {
 
 	public Atomic(ArrayList<Lexer.Token> tokens) {
 		super(tokens);
-		for (int i = 0; i < tokens.size(); i++) {
-			if (tokens.get(i).type == Lexer.TokenType.ATOMIC) {
-				value = Integer.parseInt(tokens.get(i).data);
+		for (Lexer.Token token : tokens) {
+			if (token.type == Lexer.TokenType.ATOMIC) {
+				value = Integer.parseInt(token.data);
 			}
-			description += tokens.get(i).data;
+			description.append(token.data);
 		}
 	}
 

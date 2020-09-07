@@ -40,6 +40,7 @@ public class CommandListener extends ListenerAdapter {
 			.addCommand(new RemoveRoleCommand())
 			.addCommand(new ModRoleCommand())
 			.addCommand(new DiceCommand())
+			.addCommand(new DraconicTranslateCommand())
 //			.addCommand(new XPPermCommand())
 //			.addCommand(new XPSettingsCommand())
 			.addCommand(new RaffleCommand())

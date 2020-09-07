@@ -5,11 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import net.dv8tion.jda.api.events.GenericEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.admin.*;
 import net.ranzer.grimco.rafflebot.functions.dice.commands.DiceCommand;
+import net.ranzer.grimco.rafflebot.functions.draconic.commands.DraconicTranslateCommand;
 import net.ranzer.grimco.rafflebot.functions.foldingathome.commands.FoldingAtHomeStatsCommand;
 import net.ranzer.grimco.rafflebot.functions.moderation.commands.AddRoleCommand;
 import net.ranzer.grimco.rafflebot.functions.moderation.commands.RemoveRoleCommand;
@@ -17,7 +16,6 @@ import net.ranzer.grimco.rafflebot.functions.moderation.commands.manage.ModRoleC
 import net.ranzer.grimco.rafflebot.functions.raffle.commands.RaffleCommand;
 import net.ranzer.grimco.rafflebot.functions.raffle.commands.run.RaffleEnterCommand;
 import net.ranzer.grimco.rafflebot.functions.raffle.commands.run.RaffleWithdrawCommand;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -62,6 +60,7 @@ public class CommandListener extends ListenerAdapter {
 		//user asked for prefix
 		if (event.getMessage().isMentioned(event.getJDA().getSelfUser()) && !event.getMessage().mentionsEveryone()){
 			if (containsKeyWord(event)) {
+				//noinspection SpellCheckingInspection
 				event.getChannel().sendMessage(String.format(
 						"My current prefix is: `%s`\n\n"
 						+ "If you have the `administrator` permission, you may change my prefix using the `set-prefix` command.\n\n"
@@ -71,17 +70,16 @@ public class CommandListener extends ListenerAdapter {
 								)).queue();
 			}
 		}
-		
-		User author = event.getAuthor();
+
 		String message = event.getMessage().getContentRaw();
 
 		if(event.isFromGuild()){
 			if(!message.toLowerCase().startsWith(BotCommand.getPrefix(event.getGuild()))) {
 				return;
 			}
-			findCommand(event, BotCommand.getPrefix(event.getGuild()), author, message);
+			findCommand(event, BotCommand.getPrefix(event.getGuild()), message);
 		} else {
-			findCommand(event, "",author,message);
+			findCommand(event, "", message);
 		}
 	}
 
@@ -95,7 +93,7 @@ public class CommandListener extends ListenerAdapter {
 		return false;
 	}
 	
-	private void findCommand(MessageReceivedEvent event, String prefix, User author, String message) {
+	private void findCommand(MessageReceivedEvent event, String prefix, String message) {
 		
 		String[] args = message.split(" ");
 		String command = args[0].toLowerCase().replace(prefix, "");

@@ -8,6 +8,7 @@ import java.util.Optional;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.admin.*;
 import net.ranzer.grimco.rafflebot.functions.dice.commands.DiceCommand;
+import net.ranzer.grimco.rafflebot.functions.draconic.commands.DraconicTranslateCommand;
 import net.ranzer.grimco.rafflebot.functions.foldingathome.commands.FoldingAtHomeStatsCommand;
 import net.ranzer.grimco.rafflebot.functions.moderation.commands.AddRoleCommand;
 import net.ranzer.grimco.rafflebot.functions.moderation.commands.RemoveRoleCommand;
@@ -15,7 +16,6 @@ import net.ranzer.grimco.rafflebot.functions.moderation.commands.manage.ModRoleC
 import net.ranzer.grimco.rafflebot.functions.raffle.commands.RaffleCommand;
 import net.ranzer.grimco.rafflebot.functions.raffle.commands.run.RaffleEnterCommand;
 import net.ranzer.grimco.rafflebot.functions.raffle.commands.run.RaffleWithdrawCommand;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -37,9 +37,10 @@ public class CommandListener extends ListenerAdapter {
 			.addCommand(new AddRoleCommand())
 			.addCommand(new RemoveRoleCommand())
 			.addCommand(new ModRoleCommand())
+			.addCommand(new DiceCommand())
+			.addCommand(new DraconicTranslateCommand())
 //			.addCommand(new XPPermCommand())
 //			.addCommand(new XPSettingsCommand())
-			.addCommand(new DiceCommand())
 			.addCommand(new RaffleCommand())
 			.addCommand(new RaffleEnterCommand())
 			.addCommand(new RaffleWithdrawCommand())
@@ -59,6 +60,7 @@ public class CommandListener extends ListenerAdapter {
 		//user asked for prefix
 		if (event.getMessage().isMentioned(event.getJDA().getSelfUser()) && !event.getMessage().mentionsEveryone()){
 			if (containsKeyWord(event)) {
+				//noinspection SpellCheckingInspection
 				event.getChannel().sendMessage(String.format(
 						"My current prefix is: `%s`\n\n"
 						+ "If you have the `administrator` permission, you may change my prefix using the `set-prefix` command.\n\n"
@@ -68,13 +70,17 @@ public class CommandListener extends ListenerAdapter {
 								)).queue();
 			}
 		}
-		
-		User author = event.getAuthor();
+
 		String message = event.getMessage().getContentRaw();
-		
-		if(!message.toLowerCase().startsWith(BotCommand.getPrefix(event.getGuild())))
-			return;
-		findCommand(event, author, message); 
+
+		if(event.isFromGuild()){
+			if(!message.toLowerCase().startsWith(BotCommand.getPrefix(event.getGuild()))) {
+				return;
+			}
+			findCommand(event, BotCommand.getPrefix(event.getGuild()), message);
+		} else {
+			findCommand(event, "", message);
+		}
 	}
 
 	private boolean containsKeyWord(MessageReceivedEvent event) {
@@ -87,10 +93,10 @@ public class CommandListener extends ListenerAdapter {
 		return false;
 	}
 	
-	private void findCommand(MessageReceivedEvent event, User author, String message) {
+	private void findCommand(MessageReceivedEvent event, String prefix, String message) {
 		
 		String[] args = message.split(" ");
-		String command = args[0].toLowerCase().replace(BotCommand.getPrefix(event.getGuild()), "");
+		String command = args[0].toLowerCase().replace(prefix, "");
 		String[] finalArgs = Arrays.copyOfRange(args, 1, args.length);
 		Optional<BotCommand> c = cmds.stream().filter(cc -> cc.getAlias().contains(command)).findFirst();
 

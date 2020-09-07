@@ -72,7 +72,7 @@ public class ModRoleCommand extends BotCommand implements Describable {
 					}
 					break;
 				default:
-					event.getChannel().sendMessage(HelpCommand.getDescription(this, event.getGuild())).queue();
+					event.getChannel().sendMessage(HelpCommand.getDescription(this/*, event.getGuild()*/)).queue();
 					break;
 			}
 

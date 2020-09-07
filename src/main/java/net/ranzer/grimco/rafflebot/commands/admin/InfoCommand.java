@@ -28,7 +28,7 @@ public class InfoCommand extends BotCommand implements Describable{
 		MessageBuilder mb = new MessageBuilder();
 		User bot = event.getJDA().getSelfUser();
 		
-		if (event.getGuild()!=null) {
+		if (event.isFromGuild()) {
 			eb.setColor(event.getGuild().getMember(bot).getColor());
 		}
 		

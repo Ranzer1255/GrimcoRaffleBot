@@ -161,11 +161,15 @@ public class GuildManager extends ListenerAdapter{
 							"values (?,?) ON CONFLICT DO NOTHING"
 			);
 			for(Guild g: GrimcoRaffleBot.getJDA().getGuilds()){
-				for(Member m: g.getMembers()){
-					stmt.setString(1,g.getId());
-					stmt.setString(2,m.getUser().getId());
-					stmt.addBatch();
-				}
+				g.loadMembers(m -> {
+					try {
+						stmt.setString(1,g.getId());
+						stmt.setString(2,m.getUser().getId());
+						stmt.addBatch();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				});
 			}
 			stmt.executeBatch();
 			con.commit();

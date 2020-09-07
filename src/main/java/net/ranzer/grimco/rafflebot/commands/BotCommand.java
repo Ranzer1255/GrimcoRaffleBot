@@ -28,7 +28,7 @@ public abstract class BotCommand {
 				return;
 			} 
 		}
-		if(event.getGuild()==null && !isApplicableToPM()){
+		if(!event.isFromGuild() && !isApplicableToPM()){
 			event.getChannel().sendMessage("This command cannot be used in Private channels").queue();
 			return;
 		}

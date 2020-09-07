@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'ranzer'
-version '1.11'
+version '1.15'
 
 sourceCompatibility = 1.8
 
@@ -17,6 +17,9 @@ dependencies {
     compile ('net.dv8tion:JDA:4.2.0_179'){
         exclude module: 'opus-java'
     }
+//    compile ("org.apache.commons:commons-collections4:4.1")
+    compile ("org.apache.commons:commons-lang3:3.5")
+    compile ("org.jsoup:jsoup:1.13.1")
 // https://mvnrepository.com/artifact/org.json/json
     compile group: 'org.json', name: 'json', version: '20200518'
 

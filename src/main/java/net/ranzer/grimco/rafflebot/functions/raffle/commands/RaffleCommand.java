@@ -80,7 +80,7 @@ public class RaffleCommand extends AbstractRaffleCommand implements Describable 
 
     @Override
     public List<String> getAlias() {
-        return Arrays.asList("raffle","r","giveaway");
+        return Arrays.asList("raffle","giveaway");
     }
 
     @Override

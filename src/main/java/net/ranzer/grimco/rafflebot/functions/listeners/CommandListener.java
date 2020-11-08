@@ -8,6 +8,7 @@ import java.util.Optional;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.admin.*;
 import net.ranzer.grimco.rafflebot.functions.dice.commands.DiceCommand;
+import net.ranzer.grimco.rafflebot.functions.dice.commands.FateDiceCommand;
 import net.ranzer.grimco.rafflebot.functions.draconic.commands.DraconicTranslateCommand;
 import net.ranzer.grimco.rafflebot.functions.foldingathome.commands.FoldingAtHomeStatsCommand;
 import net.ranzer.grimco.rafflebot.functions.moderation.commands.AddRoleCommand;
@@ -38,6 +39,7 @@ public class CommandListener extends ListenerAdapter {
 			.addCommand(new RemoveRoleCommand())
 			.addCommand(new ModRoleCommand())
 			.addCommand(new DiceCommand())
+			.addCommand(new FateDiceCommand())
 			.addCommand(new DraconicTranslateCommand())
 //			.addCommand(new XPPermCommand())
 //			.addCommand(new XPSettingsCommand())

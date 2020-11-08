@@ -13,6 +13,7 @@ public class Die extends Expression {
 
 	private int numberOfDice = 0;
 	private int numberOfFaces = 1;
+	private boolean fate = false;
 	private int keepNumber = 0;
 	private boolean keepHighest = false;
 	private boolean keepLowest = false;
@@ -52,7 +53,25 @@ public class Die extends Expression {
 		int rerolledDice = 0;
 		for (int i = 0; i < Math.min(numberOfDice, MAX_DICE); i++) {
 			int roll = random.nextInt(numberOfFaces) + 1;
-			String rollDescription = String.valueOf(roll);
+			String rollDescription = "";
+			if (!fate)
+				rollDescription = String.valueOf(roll);
+			else {
+				switch (roll){
+					case 1:
+						rollDescription = "-";
+						roll = -1;
+						break;
+					case 2:
+						rollDescription = "b";
+						roll = 0;
+						break;
+					case 3:
+						rollDescription = "+";
+						roll = 1;
+						break;
+				}
+			}
 
 			// Roll explodes, add one more die
 			if (exploding && roll >= critSuccessNumber) {
@@ -197,6 +216,27 @@ public class Die extends Expression {
 					numberOfFaces = 1;
 				}
 				critSuccessNumber = numberOfFaces;
+				break;
+			}
+
+			case FATEDIE: {
+				fate = true;
+				String data = token.data.toLowerCase();
+				int firstD = data.indexOf('d');
+
+				// Parse number of dice
+				if (firstD > 0) {
+					numberOfDice = Integer.parseInt(data.substring(0, firstD));
+				} else {
+					numberOfDice = 1;
+				}
+
+				// Parse type of die
+				numberOfFaces = 3;
+
+				//disable fail/crit notation
+				critSuccessNumber = 99;
+				critFailNumber = -99;
 				break;
 			}
 

@@ -1,8 +1,5 @@
 package net.ranzer.grimco.rafflebot.functions.dice.commands;
 
-import java.util.Arrays;
-import java.util.List;
-
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
@@ -10,6 +7,9 @@ import net.ranzer.grimco.rafflebot.commands.Category;
 import net.ranzer.grimco.rafflebot.commands.Describable;
 import net.ranzer.grimco.rafflebot.functions.dice.DiceRoll;
 import net.ranzer.grimco.rafflebot.functions.dice.DiceRollBuilder;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * <p> Credit where Credit is due:

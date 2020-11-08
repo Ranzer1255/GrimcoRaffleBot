@@ -45,6 +45,7 @@ public class Lexer {
 	public enum TokenType {
 		COMMENT("\\[([^\\]]+)\\]"),
 		DIE("(\\d+)?[dD](\\d+)"),
+		FATEDIE("(\\d+)?[dD]([fF])"),
 		REROLLONCE("ro<(\\d+)"),
 		REROLL("r<(\\d+)"),
 		COMPOUNDING("\\!!"),

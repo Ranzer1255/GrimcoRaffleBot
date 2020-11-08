@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'ranzer'
-version '1.16'
+version '1.19'
 
 sourceCompatibility = 1.8
 

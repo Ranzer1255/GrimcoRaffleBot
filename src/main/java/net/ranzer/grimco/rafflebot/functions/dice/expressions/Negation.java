@@ -29,7 +29,7 @@ public class Negation extends Expression {
 					value = atomic.value;
 					description = atomic.description;
 					break;
-				} else if (token.type == Lexer.TokenType.DIE) {
+				} else if (token.type == Lexer.TokenType.DIE || token.type == Lexer.TokenType.FATEDIE) {
 					Die die = new Die(tokens);
 					value = die.value;
 					description = die.description;

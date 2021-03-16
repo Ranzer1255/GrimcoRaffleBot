@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+//    id 'org.ajoberstar.grgit' version '4.1.0'
+//    id "org.ajoberstar.reckon" version "0.13.0-rc.1"
 }
 
 group 'ranzer'
@@ -8,6 +10,10 @@ version '1.19'
 sourceCompatibility = 1.8
 
 repositories {
+    maven {
+        name = 'ajoberstar-backup'
+        url = 'https://ajoberstar.github.io/bintray-backup/'
+    }
     mavenCentral()
     jcenter()
 }
@@ -17,7 +23,7 @@ dependencies {
     compile ('net.dv8tion:JDA:4.2.0_179'){
         exclude module: 'opus-java'
     }
-//    compile ("org.apache.commons:commons-collections4:4.1")
+//  compile ("org.apache.commons:commons-collections4:4.1")
     compile ("org.apache.commons:commons-lang3:3.5")
     compile ("org.jsoup:jsoup:1.13.1")
 // https://mvnrepository.com/artifact/org.json/json

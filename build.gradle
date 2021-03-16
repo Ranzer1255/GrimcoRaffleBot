@@ -1,11 +1,10 @@
 plugins {
     id 'java'
-//    id 'org.ajoberstar.grgit' version '4.1.0'
-//    id "org.ajoberstar.reckon" version "0.13.0-rc.1"
+    id 'org.ajoberstar.grgit' version '4.1.0'
+    id "org.ajoberstar.reckon" version "0.13.0-rc.1"
 }
 
 group 'ranzer'
-version '1.19'
 
 sourceCompatibility = 1.8
 
@@ -32,15 +31,21 @@ dependencies {
     compile files('libs/postgresql-42.2.5.jar')
 }
 
+reckon{
+    scopeFromProp()
+    stageFromProp('dev', 'final')
+}
+
 jar {
     manifest {
         attributes (
                 "Main-Class": "net.ranzer.grimco.rafflebot.GrimcoRaffleBot",
-                "version"   : version
+                "version"   : project.version
         )
     }
-    
+
     from {
         configurations.compile.collect{it.isDirectory() ? it : zipTree(it)}
     }
 }
+

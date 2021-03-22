@@ -2,7 +2,6 @@ package net.ranzer.grimco.rafflebot.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import net.ranzer.grimco.rafflebot.config.BotConfiguration;
@@ -43,7 +42,8 @@ public class BotDB {
 		} catch (SQLException e) {
 			Logging.error(e.getMessage());
 			Logging.log(e);
-			return null;
+			System.exit(-1);
+			return connection;
 		}
 	}
 

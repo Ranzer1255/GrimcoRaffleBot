@@ -51,25 +51,25 @@ public class HelpCommand extends BotCommand implements Describable{
 		//full command list	
 		}else{
 			
-			Map<Category, List<Describable>> catagorized = new HashMap<>();
+			Map<Category, List<Describable>> categorised = new HashMap<>();
 			
 			for (Describable d : getDescribables(cmds.getCommands())) {
-				catagorized.computeIfAbsent(d.getCategory(), k -> new ArrayList<>());
-				catagorized.get(d.getCategory()).add(d);
+				categorised.computeIfAbsent(d.getCategory(), k -> new ArrayList<>());
+				categorised.get(d.getCategory()).add(d);
 			}	
 			StringBuilder sb = new StringBuilder();
 			EmbedBuilder eb = new EmbedBuilder();
 			
 			eb.setAuthor("Full Command List", null, null);
 			if (event.isFromGuild()) {
-				eb.setColor(event.getGuild().getMember(event.getJDA().getSelfUser()).getColor());
+				event.getGuild().retrieveMember(event.getJDA().getSelfUser()).queue(m->eb.setColor(m.getColor()));
 			}
-			catagorized.keySet().stream().sorted((o1,o2)->
+			categorised.keySet().stream().sorted((o1,o2)->
 					o1.NAME.compareToIgnoreCase(o2.name())				
 			).forEachOrdered(cat -> {
 				sb.append(String.format("**__%s__**\n", cat.NAME));
-				catagorized.get(cat).stream().sorted((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName())
-				).forEachOrdered(d -> {sb.append(String.format("**%s:** %s\n", d.getName(), d.getShortDescription()));});
+				categorised.get(cat).stream().sorted((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName())
+				).forEachOrdered(d -> sb.append(String.format("**%s:** %s\n", d.getName(), d.getShortDescription())));
 			sb.append("\n");
 			});
 			eb.setDescription(sb.toString());
@@ -82,7 +82,7 @@ public class HelpCommand extends BotCommand implements Describable{
 	public static MessageEmbed getDescription(Describable d/*, Guild g*/) {
 		EmbedBuilder eb = new EmbedBuilder();
 		eb.setAuthor(d.getName(), null, null);
-		eb.setDescription((d.getLongDescription()!=null)?d.getLongDescription():"long descript wip");
+		eb.setDescription((d.getLongDescription()!=null)?d.getLongDescription():"long description WIP");
 		eb.setColor(d.getCategory().COLOR);
 //		eb.addField("Usage",d.getUsage(g)!=null?d.getUsage(g):"usage wip",false);
 		eb.addField("Other Aliases",
@@ -111,7 +111,7 @@ public class HelpCommand extends BotCommand implements Describable{
 
 	@Override
 	public String getShortDescription() {
-		return "Gives a list of avaliable command";
+		return "Gives a list of available command";
 	}
 
 	@Override

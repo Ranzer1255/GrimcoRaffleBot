@@ -96,30 +96,33 @@ public class FoldingAtHomeStatsCommand extends BotCommand implements Describable
 				"Get our current stats from Folding At Home's API and Member rankings";
 	}
 
-	private JSONObject readJsonFromUrl(String url) throws IOException, JSONException {
-		try (InputStream is = new URL(url).openStream()) {
-			BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-			String jsonText = readAll(rd);
-			return new JSONObject(jsonText);
+//	class JsonURLReader { TODO move this to it's own class
+		private JSONObject readJsonFromUrl(String url) throws IOException, JSONException {
+			try (InputStream is = new URL(url).openStream()) {
+				BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+				String jsonText = readAll(rd);
+				return new JSONObject(jsonText);
+			}
 		}
-	}
-	private JSONArray readArrayFromUrl(String url) throws IOException, JSONException {
-		try (InputStream is = new URL(url).openStream()) {
-			BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-			String jsonText = readAll(rd);
-			System.out.println(jsonText);
-			return new JSONArray(jsonText);
-		}
-	}
 
-	private static String readAll(Reader rd) throws IOException {
-		StringBuilder sb = new StringBuilder();
-		int cp;
-		while ((cp = rd.read()) != -1) {
-			sb.append((char) cp);
+		private JSONArray readArrayFromUrl(String url) throws IOException, JSONException {
+			try (InputStream is = new URL(url).openStream()) {
+				BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+				String jsonText = readAll(rd);
+				System.out.println(jsonText);
+				return new JSONArray(jsonText);
+			}
 		}
-		return sb.toString();
-	}
+
+		private static String readAll(Reader rd) throws IOException {
+			StringBuilder sb = new StringBuilder();
+			int cp;
+			while ((cp = rd.read()) != -1) {
+				sb.append((char) cp);
+			}
+			return sb.toString();
+		}
+//	}
 
 
 }

@@ -5,6 +5,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 
+import net.dv8tion.jda.api.entities.Member;
 import net.ranzer.grimco.rafflebot.GrimcoRaffleBot;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.Category;
@@ -19,23 +20,26 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class InfoCommand extends BotCommand implements Describable{
 
-	private static final String REQUIRED_PERMISSIONS = "70372416";
-
 	@Override
 	public void process(String[] args, MessageReceivedEvent event) {
 
-		EmbedBuilder eb = new EmbedBuilder();
+		EmbedBuilder eb;
 		MessageBuilder mb = new MessageBuilder();
 		User bot = event.getJDA().getSelfUser();
-		
-		if (event.isFromGuild()) {
-			eb.setColor(event.getGuild().getMember(bot).getColor());
+
+		// 1 argument !info stats
+		if (args.length == 1 && args[0].equals("stats")) {
+			eb = statusEmbed(bot);
 		}
-		
-		if (args.length == 1&&args[0].equals("stats")) { // 1 argument !info stats
-			eb = statusEmbed(event.getJDA().getSelfUser());
-		} else { // !info
+		// no arguments !info
+		else {
 			eb = infoEmbed(bot);
+		}
+
+		//color the embed
+		if (event.isFromGuild()) {
+			Member m = event.getGuild().retrieveMember(bot).complete();
+			eb.setColor(m.getColor());
 		}
 
 		event.getChannel().sendMessage(mb.setEmbed(eb.build()).build()).queue();
@@ -44,6 +48,7 @@ public class InfoCommand extends BotCommand implements Describable{
 
 	static private EmbedBuilder statusEmbed(User bot) {
 		EmbedBuilder rtn = coreEmbed(bot);
+		//noinspection ConstantConditions
 		rtn.addField("Guilds", String.valueOf(bot.getJDA().getGuilds().size()), false)
 		  .addField("Users", countNonBotUsers(bot.getJDA()), true)
 		  .addField("Bots", countBotUsers(bot.getJDA()), true)

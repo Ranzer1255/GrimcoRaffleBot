@@ -1,7 +1,6 @@
 package net.ranzer.grimco.rafflebot;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -21,6 +20,7 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 
 /**
  *
@@ -40,7 +40,7 @@ public class GrimcoRaffleBot {
 
 		JDABuilder build;
 
-		//setup intients
+		//setup intents
 		Collection<GatewayIntent> intents = Arrays.asList(
 			GatewayIntent.GUILD_MEMBERS, //privileged
 			GatewayIntent.DIRECT_MESSAGES,
@@ -57,7 +57,7 @@ public class GrimcoRaffleBot {
 		build.enableIntents(GatewayIntent.GUILD_MEMBERS);
 		build.setMemberCachePolicy(MemberCachePolicy.ALL);
 		//add Listeners
-		//TODO setup each module as its own command listner
+		//TODO setup each module as its own command listener
 		build.addEventListeners(new LevelUpdater(),
 							   new StartUpListener());
 		build.setActivity(Activity.watching("Waking up, please wait"));
@@ -81,7 +81,7 @@ public class GrimcoRaffleBot {
 		
 		
 		@Override
-		public void onReady(ReadyEvent event) {
+		public void onReady(@NotNull ReadyEvent event) {
 			super.onReady(event);
 			JDA=event.getJDA();
 			JDA.addEventListener(CommandListener.getInstance(),
@@ -93,7 +93,7 @@ public class GrimcoRaffleBot {
 		}
 		
 		@Override
-		public void onShutdown(ShutdownEvent event) {
+		public void onShutdown(@NotNull ShutdownEvent event) {
 		
 			Logging.info("Shutting down....");
 			JDA.getPresence().setStatus(OnlineStatus.IDLE);

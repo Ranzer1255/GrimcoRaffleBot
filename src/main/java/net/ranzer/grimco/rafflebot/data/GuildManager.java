@@ -1,18 +1,18 @@
 package net.ranzer.grimco.rafflebot.data;
 
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.ranzer.grimco.rafflebot.GrimcoRaffleBot;
 import net.ranzer.grimco.rafflebot.database.BotDB;
 import net.ranzer.grimco.rafflebot.util.Logging;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.channel.text.TextChannelCreateEvent;
 import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -213,7 +213,7 @@ public class GuildManager extends ListenerAdapter{
 	}
 
 	@Override
-	public void onGuildLeave(GuildLeaveEvent event) {// TODO: 12/26/2018 extract removeGuild(Guild guild) as its own method
+	public void onGuildLeave(@NotNull GuildLeaveEvent event) {// TODO: 12/26/2018 extract removeGuild(Guild guild) as its own method
 		super.onGuildLeave(event);
 
 		try (PreparedStatement stmt = BotDB.getConnection().prepareStatement(
@@ -221,7 +221,7 @@ public class GuildManager extends ListenerAdapter{
 		)){
 
 			stmt.setString(1, event.getGuild().getId());
-			Logging.info(String.format("Delteting guild %s(%s",
+			Logging.info(String.format("Deleting guild %s(%s",
 					event.getGuild().getName(),
 					event.getGuild().getId())
 			);
@@ -229,7 +229,7 @@ public class GuildManager extends ListenerAdapter{
 			Logging.debug(String.format("%d rows updated", stmt.executeUpdate()));
 
 		} catch (SQLException e){
-			Logging.error("issue removiing guild from DB: " +event.getGuild().getName());
+			Logging.error("issue removing guild from DB: " +event.getGuild().getName());
 			Logging.log(e);
 		}
 	}
@@ -240,7 +240,7 @@ public class GuildManager extends ListenerAdapter{
 	}
 
 	@Override
-	public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
+	public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
 
 		//remove leaver's xp
 		IMemberData md = getGuildData(event.getGuild()).getMemberData(event.getMember());

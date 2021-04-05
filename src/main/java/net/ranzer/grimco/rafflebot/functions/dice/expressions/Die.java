@@ -9,6 +9,7 @@ import java.util.Random;
 
 public class Die extends Expression {
 
+	@SuppressWarnings("FieldCanBeLocal")
 	private final int MAX_DICE = 1000;
 
 	private int numberOfDice = 0;

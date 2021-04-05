@@ -5,20 +5,16 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.Category;
 import net.ranzer.grimco.rafflebot.commands.Describable;
+import net.ranzer.grimco.rafflebot.util.JsonURLReader;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
 public class FoldingAtHomeStatsCommand extends BotCommand implements Describable {
-
-	private final String TEAM_STATS_URL = "https://api.foldingathome.org/team/238767";
-	private final String TEAM_MEMBERS_URL = TEAM_STATS_URL+"/members";
 
 	@Override
 	protected boolean isApplicableToPM() {
@@ -28,9 +24,12 @@ public class FoldingAtHomeStatsCommand extends BotCommand implements Describable
 	@Override
 	protected void process(String[] args, MessageReceivedEvent event) {
 
+		final String TEAM_STATS_URL = "https://api.foldingathome.org/team/238767";
+		final String TEAM_MEMBERS_URL = TEAM_STATS_URL+"/members";
+
 		try {
-			JSONObject teamStats = readJsonFromUrl(TEAM_STATS_URL);
-			JSONArray membStats = readArrayFromUrl(TEAM_MEMBERS_URL);
+			JSONObject teamStats = JsonURLReader.readJsonFromUrl(TEAM_STATS_URL);
+			JSONArray membStats = JsonURLReader.readArrayFromUrl(TEAM_MEMBERS_URL);
 
 			EmbedBuilder eb = new EmbedBuilder();
 
@@ -60,8 +59,6 @@ public class FoldingAtHomeStatsCommand extends BotCommand implements Describable
 
 			event.getChannel().sendMessage(eb.build()).queue();
 
-
-
 		} catch (IOException e) {
 			event.getChannel().sendMessage("There was an issue reaching the Folding@Home API. please try again later.").queue();
 		} catch (JSONException e){
@@ -71,7 +68,6 @@ public class FoldingAtHomeStatsCommand extends BotCommand implements Describable
 					e.getLocalizedMessage() +
 					"\n```").queue();
 		}
-
 
 	}
 
@@ -95,31 +91,4 @@ public class FoldingAtHomeStatsCommand extends BotCommand implements Describable
 		return getShortDescription()+"\n\n" +
 				"Get our current stats from Folding At Home's API and Member rankings";
 	}
-
-	private JSONObject readJsonFromUrl(String url) throws IOException, JSONException {
-		try (InputStream is = new URL(url).openStream()) {
-			BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-			String jsonText = readAll(rd);
-			return new JSONObject(jsonText);
-		}
-	}
-	private JSONArray readArrayFromUrl(String url) throws IOException, JSONException {
-		try (InputStream is = new URL(url).openStream()) {
-			BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-			String jsonText = readAll(rd);
-			System.out.println(jsonText);
-			return new JSONArray(jsonText);
-		}
-	}
-
-	private static String readAll(Reader rd) throws IOException {
-		StringBuilder sb = new StringBuilder();
-		int cp;
-		while ((cp = rd.read()) != -1) {
-			sb.append((char) cp);
-		}
-		return sb.toString();
-	}
-
-
 }

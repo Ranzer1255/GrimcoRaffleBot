@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.admin.*;
@@ -96,8 +98,8 @@ public class CommandListener extends ListenerAdapter {
 	}
 	
 	private void findCommand(MessageReceivedEvent event, String prefix, String message) {
-		
-		String[] args = message.split(" ");
+
+		String[] args = parseArgs(message);
 		String command = args[0].toLowerCase().replace(prefix, "");
 		String[] finalArgs = Arrays.copyOfRange(args, 1, args.length);
 		Optional<BotCommand> c = cmds.stream().filter(cc -> cc.getAlias().contains(command)).findFirst();
@@ -110,8 +112,19 @@ public class CommandListener extends ListenerAdapter {
 
 	}
 
-	private void callCommand(MessageReceivedEvent event, String[] finalArgs,
-			BotCommand cmd) {
+	private String[] parseArgs(String message) {
+//		return message.split(" ");
+
+		List<String> list = new ArrayList<String>();
+
+		Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(message);
+		while (m.find())
+			list.add(m.group(1).replace("\"",""));
+
+		return list.toArray(new String[0]);
+	}
+
+	private void callCommand(MessageReceivedEvent event, String[] finalArgs, BotCommand cmd) {
 		new Thread() {
 			@Override
 			public void run(){

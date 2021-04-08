@@ -38,7 +38,7 @@ public abstract class BotCommand {
 	protected abstract boolean isApplicableToPM();
 	
 	protected abstract void process(String[] args, MessageReceivedEvent event);
-	
+
 	abstract public List<String> getAlias();
 
 	private boolean hasPermissionToRun(MessageReceivedEvent event) {
@@ -70,11 +70,11 @@ public abstract class BotCommand {
 			if(getRoleRequirements(event.getGuild()).contains(role))
 				return true;
 		}
-		
-		
+
+
 		return false;
 	}
-	
+
 	protected List<Role> getRoleRequirements(Guild guild) {
 		return null;
 	}
@@ -85,9 +85,9 @@ public abstract class BotCommand {
 
 	protected void noPermission(MessageReceivedEvent event) {
 		event.getChannel().sendMessage(event.getAuthor().getAsMention()+" "+NO_PERMISSION_MESSAGE).queue();
-		
+
 	}
-	
+
 	public String invalidUsage(Guild g){
 		return null;
 	}
@@ -95,20 +95,32 @@ public abstract class BotCommand {
 	public BotCommand getCommand() {
 		return this;
 	}
-	
+
 	public String getName(){
 		return getAlias().get(0);
 	}
-	
+
 	public boolean hasSubcommands(){
 		return false;
 	}
-	
+
 	public List<BotCommand> getSubcommands(){
 		return null;
 	}
+
 	public String getUsage(Guild g) {
 		return String.format("`%s%s`", getPrefix(g),getName());
+	}
+
+	protected Role parseRole(MessageReceivedEvent event, String role) {
+
+		//parse role
+		List<Role> list = event.getJDA().getRolesByName(role,true);
+		if(list.size()==0){
+			return null;
+		}
+
+		return list.get(0);
 	}
 
 }

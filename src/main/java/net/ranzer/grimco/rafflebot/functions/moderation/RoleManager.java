@@ -19,8 +19,9 @@ public class RoleManager {
 	private static RoleManager instance;
 	private ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
 
-	private RoleManager(){
+	private RoleManager(){//TODO fix this to use the non-cached version of get.member
 		for (Guild guild : GrimcoRaffleBot.getJDA().getGuilds()) {
+			//TODO loop thorough ever entry in the database, not every member in the guild....
 			for (Member member : guild.getMembers()) {
 				if (GuildManager.getGuildData(guild).getMemberData(member).getTimedRoles().entrySet().isEmpty()){
 					continue;

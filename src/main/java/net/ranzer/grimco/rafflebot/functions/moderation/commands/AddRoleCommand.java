@@ -64,13 +64,18 @@ public class AddRoleCommand extends BotCommand implements Describable {
 		for (Member m :	users) {
 			try {
 				rm.addRole(role,m,days);
+				event.getChannel().sendMessage(String.format(
+						"Role %s successfully added to %s",
+						role.getName(),
+						m.getEffectiveName()
+				)).queue();
 			} catch (InsufficientPermissionException pe) {
 				event.getChannel().sendMessage(
 						String.format("i'm sorry but i lack the `%s` permission in the server settings to do this",
 						pe.getPermission().getName())).queue();
 			} catch (HierarchyException he){
 				event.getChannel().sendMessage(
-					"That role is above my paygrade and I cannot Modify it! sorry..."
+					"That role or user is above my paygrade and I cannot Modify it! sorry..."
 				).queue();
 			}
 		}

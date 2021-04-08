@@ -13,7 +13,6 @@ import net.ranzer.grimco.rafflebot.commands.Describable;
 import net.ranzer.grimco.rafflebot.data.GuildManager;
 import net.ranzer.grimco.rafflebot.functions.moderation.RoleManager;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -56,6 +55,11 @@ public class RemoveRoleCommand extends BotCommand implements Describable {
 		for (Member m :	users) {
 			try {
 				rm.removeRole(role,m);
+				event.getChannel().sendMessage(String.format(
+						"Role %s successfully removed from %s",
+						role.getName(),
+						m.getEffectiveName()
+				)).queue();
 			} catch (InsufficientPermissionException pe) {
 				event.getChannel().sendMessage(
 						String.format("i'm sorry but i lack the `%s` permission in the server settings to do this",

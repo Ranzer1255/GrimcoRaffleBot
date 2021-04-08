@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.Category;
@@ -37,12 +38,11 @@ public class AddRoleCommand extends BotCommand implements Describable {
 		}
 
 		//parse role
-		List<Role> list = event.getJDA().getRolesByName(args[0],true);
-		if(list.size()==0){
+		Role role = parseRole(event, args[0]);
+		if(role == null){
 			event.getChannel().sendMessage(String.format("i'm sorry i can't find role `%s`", args[0])).queue();
 			return;
 		}
-		Role role = list.get(0);
 
 		//parse members to add role to
 		List<Member> users = event.getMessage().getMentionedMembers();
@@ -68,6 +68,10 @@ public class AddRoleCommand extends BotCommand implements Describable {
 				event.getChannel().sendMessage(
 						String.format("i'm sorry but i lack the `%s` permission in the server settings to do this",
 						pe.getPermission().getName())).queue();
+			} catch (HierarchyException he){
+				event.getChannel().sendMessage(
+					"That role is above my paygrade and I cannot Modify it! sorry..."
+				).queue();
 			}
 		}
 	}

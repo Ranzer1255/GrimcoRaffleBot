@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class RemoveRoleCommand extends BotCommand implements Describable {
-	private RoleManager rm;
+	private final RoleManager rm;
 
 	public RemoveRoleCommand(){
 		rm = RoleManager.getInstance();
@@ -66,7 +66,7 @@ public class RemoveRoleCommand extends BotCommand implements Describable {
 								pe.getPermission().getName())).queue();
 			}catch (HierarchyException he){
 				event.getChannel().sendMessage(
-						"That role is above my paygrade and I cannot Modify it! sorry..."
+						"That role is above my pay-grade and I cannot Modify it! sorry..."
 				).queue();
 			}
 		}

@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class AddRoleCommand extends BotCommand implements Describable {
-	private RoleManager rm;
+	private final RoleManager rm;
 	public AddRoleCommand(){
 		rm = RoleManager.getInstance();
 	}
@@ -65,9 +65,11 @@ public class AddRoleCommand extends BotCommand implements Describable {
 			try {
 				rm.addRole(role,m,days);
 				event.getChannel().sendMessage(String.format(
-						"Role %s successfully added to %s",
+						"Role %s successfully added to %s for %d %s",
 						role.getName(),
-						m.getEffectiveName()
+						m.getEffectiveName(),
+						days,
+						days==1?"day":"days"
 				)).queue();
 			} catch (InsufficientPermissionException pe) {
 				event.getChannel().sendMessage(
@@ -75,7 +77,7 @@ public class AddRoleCommand extends BotCommand implements Describable {
 						pe.getPermission().getName())).queue();
 			} catch (HierarchyException he){
 				event.getChannel().sendMessage(
-					"That role or user is above my paygrade and I cannot Modify it! sorry..."
+					"That role or user is above my pay-grade and I cannot Modify it! sorry..."
 				).queue();
 			}
 		}

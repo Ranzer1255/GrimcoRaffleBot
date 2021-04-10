@@ -338,7 +338,7 @@ public class GuildDB implements IGuildData { //TODO look at using activeJBDC or 
 	}
 
 	/**
-	 * sets the boundres for xp earnings set bounderies equal to guarentee a set outcome
+	 * sets the boundaries for xp earnings set boundaries equal to guarantee a set outcome
 	 *
 	 * @param low  the low bound inclusive
 	 * @param high the high bound inclusive
@@ -360,7 +360,7 @@ public class GuildDB implements IGuildData { //TODO look at using activeJBDC or 
 
 	//member data
 	/**
-	 * @param m Member to retreve Data on
+	 * @param m Member to retrieve Data on
 	 * @return IMemberData object containing date for specified Member
 	 */
 	@Override
@@ -578,8 +578,8 @@ public class GuildDB implements IGuildData { //TODO look at using activeJBDC or 
 	/**
 	 * this method points to the correct member object defied by this user
 	 *
-	 * @param u user to retreve data on
-	 * @return IMemberData object contaiing data for specified Member
+	 * @param u user to retrieve data on
+	 * @return IMemberData object containing data for specified Member
 	 */
 	@Override
 	public IMemberData getMemberData(User u) {

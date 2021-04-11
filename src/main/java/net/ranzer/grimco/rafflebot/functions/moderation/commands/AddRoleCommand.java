@@ -31,8 +31,6 @@ public class AddRoleCommand extends BotCommand implements Describable {
 	@Override
 	protected void process(String[] args, MessageReceivedEvent event) {
 
-		System.out.println(Arrays.toString(args));
-
 		if (args.length<3){
 			return;
 		}
@@ -63,7 +61,7 @@ public class AddRoleCommand extends BotCommand implements Describable {
 		//apply roles
 		for (Member m :	users) {
 			try {
-				rm.addRole(role,m,days);
+				rm.addRole(role,m,days,event.getAuthor());
 				event.getChannel().sendMessage(String.format(
 						"Role %s successfully added to %s for %d %s",
 						role.getName(),

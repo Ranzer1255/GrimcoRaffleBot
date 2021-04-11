@@ -31,8 +31,6 @@ public class RemoveRoleCommand extends BotCommand implements Describable {
 	@Override
 	protected void process(String[] args, MessageReceivedEvent event) {
 
-//		System.out.println(Arrays.toString(args));
-
 		if (args.length<2){
 			return;
 		}
@@ -54,7 +52,7 @@ public class RemoveRoleCommand extends BotCommand implements Describable {
 		//apply roles
 		for (Member m :	users) {
 			try {
-				rm.removeRole(role,m);
+				rm.removeRole(role,m,event.getAuthor());
 				event.getChannel().sendMessage(String.format(
 						"Role %s successfully removed from %s",
 						role.getName(),

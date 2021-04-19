@@ -1,6 +1,7 @@
 package net.ranzer.grimco.rafflebot.util;
 
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -21,15 +22,58 @@ class StringUtilTest {
 		assertEquals(expected,StringUtil.arrayToString(testList," "));
 	}
 
-	@Test
-	@Disabled
-	void calcTime() {
-		fail("not yet implemented");
+	@Nested
+	class TimeTests{
+
+		@Test
+		void testSingularTime() {
+			String expected = "1 Hour 1 Minute 1 Second";
+			assertEquals(expected, StringUtil.calcTime(3661L));
+		}
+
+		@Test
+		void testPluralTime() {
+			String expected = "2 Hours 2 Minutes 2 Seconds";
+			assertEquals(expected, StringUtil.calcTime(7322L));
+		}
+
+		@Test
+		void testNoHours(){
+			String expected = "1 Minute 1 Second";
+			assertEquals(expected, StringUtil.calcTime(61L));
+		}
+
+		@Test
+		void testNoMinTime() {
+			String expected = "1 Hour 1 Second";
+			assertEquals(expected, StringUtil.calcTime(3601L));
+		}
+
+		@Test
+		void testNoSecondTime() {
+			String expected = "1 Hour 1 Minute";
+			assertEquals(expected, StringUtil.calcTime(3660L));
+		}
 	}
 
-	@Test
-	@Disabled
-	void truncate() {
-		fail("not yet implemented");
+	@Nested
+	class TruncateTests {
+
+		@Test
+		void longStringTrimming() {
+
+		String toBeTested = "This is a long string that needs to be trimmed";
+		String expected = "This is a long string";
+
+		assertEquals(expected, StringUtil.truncate(toBeTested,21));
+		}
+
+		@Test
+		void shortString(){
+			String toBeTested = "this is a short string";
+			String expected = "this is a short string";
+
+			assertEquals(expected,StringUtil.truncate(toBeTested,50));
+		}
 	}
 }

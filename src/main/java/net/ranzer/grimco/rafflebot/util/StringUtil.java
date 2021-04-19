@@ -41,10 +41,11 @@ public class StringUtil {
 			rtn.append(mins + " Minute ");
 		}
 		if (secs>1){
-			rtn.append(secs + " Seconds");
+			rtn.append(secs + " Seconds ");
 		} else if (secs==1){
-			rtn.append(secs + " Second");
+			rtn.append(secs + " Second ");
 		}
+		rtn.delete(rtn.length()-1,rtn.length());
 		return rtn.toString();
 	}
 	

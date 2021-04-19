@@ -6,8 +6,6 @@ plugins {
 
 group 'ranzer'
 
-sourceCompatibility = 1.8
-
 repositories {
     maven {
         name = 'ajoberstar-backup'

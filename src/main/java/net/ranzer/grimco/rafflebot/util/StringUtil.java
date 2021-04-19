@@ -28,7 +28,7 @@ public class StringUtil {
 		
 		long hrs = runtime / 3600;
 		long mins = (runtime % 3600)/60;
-		long secs = runtime % 60; 
+		long secs = runtime % 60;
 		
 		if(hrs >1){
 			rtn.append(hrs + " Hours ");

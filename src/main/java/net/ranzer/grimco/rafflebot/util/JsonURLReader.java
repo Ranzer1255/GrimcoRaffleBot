@@ -22,7 +22,6 @@ public class JsonURLReader {
 		try (InputStream is = new URL(url).openStream()) {
 			BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
 			String jsonText = readAll(rd);
-			System.out.println(jsonText);
 			return new JSONArray(jsonText);
 		}
 	}

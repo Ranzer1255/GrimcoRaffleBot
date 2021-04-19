@@ -13,7 +13,7 @@ import java.util.Calendar;
 
 public class Logging {
 
-	private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss Z");
+	private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
 	private static void log(LogLevel level, String message) {
 		BotConfiguration config = BotConfiguration.getInstance();

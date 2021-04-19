@@ -14,7 +14,6 @@ import net.ranzer.grimco.rafflebot.database.BotDB;
 import net.ranzer.grimco.rafflebot.config.BotConfiguration;
 import net.ranzer.grimco.rafflebot.util.Logging;
 
-@SuppressWarnings("ConstantConditions")
 public class GuildDB implements IGuildData { //TODO look at using activeJBDC or other ORM framework
 
 	private static final long DEFAULT_MESSAGE_TIMEOUT = 60000L;
@@ -601,7 +600,6 @@ public class GuildDB implements IGuildData { //TODO look at using activeJBDC or 
 			stmt.setString(2, guild.getId());
 			stmt.execute();
 
-
 		} catch (SQLException e) {
 			Logging.error("problem adding member");
 			Logging.log(e);
@@ -840,7 +838,7 @@ public class GuildDB implements IGuildData { //TODO look at using activeJBDC or 
 			}
 
 			@Override
-			public List<Member> getBannedUsers() { //todo add a command to see a list of banned users
+			public List<Member> getBannedUsers() {
 				try (ResultSet rs = BotDB.getConnection().prepareStatement(
 						String.format(GET_BANNED_USERS_SQL, guild.getId())
 				).executeQuery()) {

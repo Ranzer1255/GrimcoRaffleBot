@@ -21,8 +21,6 @@ import java.util.Optional;
 
 public class RaffleCommand extends AbstractRaffleCommand implements Describable {
 
-
-    //TODO grant Lyrium nuclear launch codes
     private static final List<BotCommand> subCommands;
 
     static {

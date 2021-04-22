@@ -48,7 +48,7 @@ public class InfoCommand extends BotCommand implements Describable{
 
 	static private EmbedBuilder statusEmbed(User bot) {
 		EmbedBuilder rtn = coreEmbed(bot);
-		//noinspection ConstantConditions
+	//noinspection ConstantConditions
 		rtn.addField("Guilds", String.valueOf(bot.getJDA().getGuilds().size()), false)
 		  .addField("Users", countNonBotUsers(bot.getJDA()), true)
 		  .addField("Bots", countBotUsers(bot.getJDA()), true)

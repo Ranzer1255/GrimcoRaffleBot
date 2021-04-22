@@ -21,11 +21,11 @@ dependencies {
     implementation ('net.dv8tion:JDA:4.2.0_179'){
         exclude module: 'opus-java'
     }
-    implementation ("org.apache.commons:commons-lang3:3.5")
-    implementation ("org.jsoup:jsoup:1.13.1")
-    implementation group: 'org.json', name: 'json', version: '20200518'
-
-    implementation files('libs/postgresql-42.2.5.jar')
+    implementation group: 'org.apache.commons', name: 'commons-lang3',  version: '3.5'
+    implementation group: 'org.jsoup',          name: 'jsoup',          version: '1.13.1'
+    implementation group: 'org.json',           name: 'json',           version: '20200518'
+    implementation group: 'org.hibernate',      name: 'hibernate-core', version: '5.4.30.Final'
+    implementation group: 'org.postgresql',     name: 'postgresql',     version: '42.2.19'
 }
 
 reckon{

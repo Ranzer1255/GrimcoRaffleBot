@@ -9,12 +9,10 @@ import net.ranzer.grimco.rafflebot.data.IGuildData;
 import net.ranzer.grimco.rafflebot.data.IMemberData;
 import net.ranzer.grimco.rafflebot.data.IRaffleData;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import java.util.ArrayList;
+import javax.persistence.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "guild")
@@ -31,7 +29,8 @@ public class GuildData implements IGuildData {
 	private int XPHighBound;
 
 	//TODO
-	private List<IMemberData> members;
+	@OneToMany(mappedBy = "MemberData",cascade = CascadeType.ALL)
+	private Map<User,MemberData> members = new HashMap<>();
 
 	//TODO ModRole list
 
@@ -74,22 +73,22 @@ public class GuildData implements IGuildData {
 
 	@Override
 	public IMemberData getMemberData(Member m) {
-		return null;
+		return members.get(m.getUser());
 	}
 
 	@Override
 	public IMemberData getMemberData(User u) {
-		return null;
+		return members.get(u);
 	}
 
 	@Override
 	public void addMember(Member m) {
-
+		members.put(m.getUser(),new MemberData(m));
 	}
 
 	@Override
 	public void deleteMember(Member m) {
-
+		members.remove(m.getUser());
 	}
 
 	@Override

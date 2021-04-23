@@ -1,78 +1,81 @@
 package net.ranzer.grimco.rafflebot.database.types;
 
 import net.dv8tion.jda.api.entities.Role;
-import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
-import org.hibernate.type.StringType;
-import org.hibernate.usertype.UserType;
+import net.ranzer.grimco.rafflebot.GrimcoRaffleBot;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.type.AbstractSingleColumnStandardBasicType;
+import org.hibernate.type.DiscriminatorType;
+import org.hibernate.type.descriptor.WrapperOptions;
+import org.hibernate.type.descriptor.java.AbstractTypeDescriptor;
+import org.hibernate.type.descriptor.java.ImmutableMutabilityPlan;
+import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
 
-import java.io.Serializable;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Objects;
+//TODO, Register this in the bootstrap.... when i do the boot strap.
 
-/*TODO, i have no frelling clue what i'm doing right now
- * filling out RoleType methods.... i'm still not even sure this is going to get used but i
- * *think* i'm on the right track here... i hope..
- * refferences:
+/* references:
  * https://docs.jboss.org/hibernate/stable/orm/userguide/html_single/Hibernate_User_Guide.html#basic-custom-type
- * https://www.baeldung.com/hibernate-persisting-maps
  * https://www.baeldung.com/hibernate-custom-types
  */
-public class RoleType implements UserType {
-	@Override
-	public int[] sqlTypes() {
-		return new int[] {StringType.INSTANCE.sqlType()};
+public class RoleType extends AbstractSingleColumnStandardBasicType<Role> implements DiscriminatorType<Role> {
+
+	public RoleType(){
+		super(VarcharTypeDescriptor.INSTANCE, RoleTypeDescriptor.INSTANCE);
 	}
 
 	@Override
-	public Class returnedClass() {
-		return Role.class;
+	public String getName() {
+		return "role";
 	}
 
 	@Override
-	public boolean equals(Object x, Object y) throws HibernateException {
-		return Objects.equals(x,y);
+	public Role stringToObject(String xml) throws Exception {
+		return fromString(xml);
 	}
 
 	@Override
-	public int hashCode(Object x) throws HibernateException {
-		return Objects.hashCode(x);
+	public String objectToSQLString(Role value, Dialect dialect) throws Exception {
+		return toString(value);
 	}
 
-	@Override
-	public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-		return null;
-	}
+	private static class RoleTypeDescriptor extends AbstractTypeDescriptor<Role> {
 
-	@Override
-	public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
+		public static final RoleTypeDescriptor INSTANCE = new RoleTypeDescriptor();
 
-	}
+		public RoleTypeDescriptor(){
+			super(Role.class, ImmutableMutabilityPlan.INSTANCE);
+		}
 
-	@Override
-	public Object deepCopy(Object value) throws HibernateException {
-		return null;
-	}
+		@Override
+		public String toString(Role value) {
+			return value.getId();
+		}
 
-	@Override
-	public boolean isMutable() {
-		return false;
-	}
+		@Override
+		public Role fromString(String string) {
+			return GrimcoRaffleBot.getJDA().getRoleById(string);
+		}
 
-	@Override
-	public Serializable disassemble(Object value) throws HibernateException {
-		return null;
-	}
+		@Override
+		@SuppressWarnings({"unchecked"})
+		public <X> X unwrap(Role value, Class<X> type, WrapperOptions options) {
+			if (value==null)
+				return null;
+			if (Role.class.isAssignableFrom(type))
+				return (X) value;
+			if (String.class.isAssignableFrom(type))
+				return (X) toString(value);
+			throw unknownUnwrap(type);
+		}
 
-	@Override
-	public Object assemble(Serializable cached, Object owner) throws HibernateException {
-		return null;
-	}
-
-	@Override
-	public Object replace(Object original, Object target, Object owner) throws HibernateException {
-		return null;
+		@Override
+		public <X> Role wrap(X value, WrapperOptions options) {
+			if (value==null)
+				return null;
+			if (value instanceof String)
+				return fromString((String) value);
+			if (value instanceof Role)
+				return (Role) value;
+			throw unknownWrap(value.getClass());
+		}
 	}
 }

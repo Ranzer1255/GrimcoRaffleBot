@@ -1,11 +1,16 @@
 package net.ranzer.grimco.rafflebot.database.entities;
 
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
+import net.ranzer.grimco.rafflebot.GrimcoRaffleBot;
 import net.ranzer.grimco.rafflebot.data.IMemberData;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -22,15 +27,36 @@ public class MemberData implements IMemberData {
 	@Column(name = "raffle_ban")
 	boolean raffleBan;
 
-	//TODO make Role a basic Type?
+	/* references:
+	 * https://www.baeldung.com/hibernate-persisting-maps
+	 */
+	//TODO check this
+	@ElementCollection
+	@CollectionTable(name = "timedrole")
+	@Column(name = "remove")
 	Map<Role,Long> timedRoles;
 
 	//TODO make Constructors with default values
+	public MemberData(Member member) {
+		this(member,0,false,new HashMap<>());
+	}
+	public MemberData(Member member, int xp, boolean raffleBan){
+		this(member,xp,raffleBan,new HashMap<>());
+	}
+	public MemberData(Member member, int xp, boolean raffleBan,Map<Role,Long> timedRoles){
+		memberPK = new MemberPK(member.getId(),member.getGuild().getId());
+		this.xp = xp;
+		this.timedRoles = timedRoles;
+		this.raffleBan = raffleBan;
 
+	}
 
 	@Override
 	public Member getMember() {
-		return null;
+		JDA jda = GrimcoRaffleBot.getJDA();
+		Guild g = jda.getGuildById(memberPK.guildID);
+		User u = jda.getUserById(memberPK.userID);
+		return Objects.requireNonNull(g).retrieveMember(Objects.requireNonNull(u)).complete();
 	}
 
 	@Override
@@ -74,12 +100,12 @@ public class MemberData implements IMemberData {
 
 	@Override
 	public void addTimedRole(Role role, long timeToRemoveRole) {
-
+		timedRoles.put(role,timeToRemoveRole);
 	}
 
 	@Override
 	public void removedTimedRole(Role role) {
-
+		timedRoles.remove(role);
 	}
 
 	@Embeddable
@@ -87,7 +113,9 @@ public class MemberData implements IMemberData {
 		//todo extract this?
 		//references:
 		//https://stackoverflow.com/questions/3585034/how-to-map-a-composite-key-with-jpa-and-hibernate
+		@Column(name = "user_id")
 		protected String userID;
+		@Column(name = "guild_id")
 		protected String guildID;
 
 		public MemberPK(String userID, String guildID){
@@ -107,12 +135,6 @@ public class MemberData implements IMemberData {
 		public int hashCode() {
 			return Objects.hash(userID, guildID);
 		}
-
-	}
-
-	@Entity
-	@Table(name = "timed_role")
-	public static class TimedRole{
 
 	}
 }

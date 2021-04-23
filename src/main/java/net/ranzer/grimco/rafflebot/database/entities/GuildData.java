@@ -13,6 +13,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,45 +23,53 @@ public class GuildData implements IGuildData {
 	@Basic
 	private String prefix;
 
+	@Column (name = "xp_timeout")
+	private long XPTimeout;
+	@Column (name="xp_low")
+	private int XPLowBound;
+	@Column (name="xp_high")
+	private int XPHighBound;
 
+	//TODO
+	private List<IMemberData> members;
+
+	//TODO ModRole list
+
+	//Prefix methods
 	@Override
 	public String getPrefix() {
 		return prefix;
 	}
-
 	@Override
 	public void setPrefix(String prefix) {
-
+		this.prefix = prefix;
 	}
-
 	@Override
 	public void removePrefix() {
 		prefix=null;
 	}
 
+	//XP Methods
 	@Override
 	public void setXPTimeout(long timeout) {
-
+		XPTimeout = timeout;
 	}
-
 	@Override
 	public long getXPTimeout() {
-		return 0;
+		return XPTimeout;
 	}
-
 	@Override
 	public int getXPLowBound() {
-		return 0;
+		return XPLowBound;
 	}
-
 	@Override
 	public int getXPHighBound() {
-		return 0;
+		return XPHighBound;
 	}
-
 	@Override
 	public void setXPBounds(int low, int high) {
-
+		XPLowBound = low;
+		XPHighBound = high;
 	}
 
 	@Override

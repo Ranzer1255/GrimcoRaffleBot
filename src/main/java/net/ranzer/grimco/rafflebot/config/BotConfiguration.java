@@ -174,7 +174,7 @@ public class BotConfiguration {
 	}
 
 	private void setVersion(String version) {
-		System.out.printf("[CaexConfig] setVersion: (%s)\n", version);
+//		System.out.printf("[CaexConfig] setVersion: (%s)\n", version);
 		this.version = version;
 	}
 

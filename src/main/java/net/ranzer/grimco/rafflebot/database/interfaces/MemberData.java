@@ -1,4 +1,4 @@
-package net.ranzer.grimco.rafflebot.database.entities;
+package net.ranzer.grimco.rafflebot.database.interfaces;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;

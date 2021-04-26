@@ -1,54 +1,63 @@
-package net.ranzer.grimco.rafflebot.database.entities;
+package net.ranzer.grimco.rafflebot.database.interfaces;
 
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
+import net.ranzer.grimco.rafflebot.config.BotConfiguration;
 import net.ranzer.grimco.rafflebot.data.IChannelData;
 import net.ranzer.grimco.rafflebot.data.IGuildData;
 import net.ranzer.grimco.rafflebot.data.IMemberData;
 import net.ranzer.grimco.rafflebot.data.IRaffleData;
-
-import javax.persistence.*;
+import net.ranzer.grimco.rafflebot.database.HibernateManager;
+import net.ranzer.grimco.rafflebot.database.model.GuildDataModel;
+import org.hibernate.Session;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Entity
-@Table(name = "guild")
 public class GuildData implements IGuildData {
 
-	@Basic
-	private String prefix;
+	GuildDataModel gdm;
 
-	@Column (name = "xp_timeout")
 	private long XPTimeout;
-	@Column (name="xp_low")
 	private int XPLowBound;
-	@Column (name="xp_high")
 	private int XPHighBound;
 
-	//TODO
-	@OneToMany(mappedBy = "MemberData",cascade = CascadeType.ALL)
+//	//TODO
+//	@OneToMany(mappedBy = "MemberData",cascade = CascadeType.ALL)
 	private Map<User,MemberData> members = new HashMap<>();
 
-	//TODO ModRole list
+	public GuildData(Guild g){
+
+		Session session = HibernateManager.getSessionFactory().openSession();
+		gdm = session.createQuery("select e " +
+				"from GuildDataModel e " +
+				"where e.guildID = :id",GuildDataModel.class)
+				.setParameter("id",g.getId()).getSingleResult();
+	}
 
 	//Prefix methods
 	@Override
 	public String getPrefix() {
-		return prefix;
+		String rtn = gdm.getPrefix();
+
+		if (rtn == null){
+			rtn = BotConfiguration.getInstance().getPrefix();
+		}
+		return gdm.getPrefix();
 	}
 	@Override
 	public void setPrefix(String prefix) {
-		this.prefix = prefix;
+		gdm.setPrefix(prefix);
+		save();
 	}
+
 	@Override
 	public void removePrefix() {
-		prefix=null;
+		gdm.setPrefix(null);
+		save();
 	}
 
 	//XP Methods
+
 	@Override
 	public void setXPTimeout(long timeout) {
 		XPTimeout = timeout;
@@ -70,7 +79,6 @@ public class GuildData implements IGuildData {
 		XPLowBound = low;
 		XPHighBound = high;
 	}
-
 	@Override
 	public IMemberData getMemberData(Member m) {
 		return members.get(m.getUser());
@@ -124,5 +132,11 @@ public class GuildData implements IGuildData {
 	@Override
 	public boolean removeModRole(Role r) {
 		return false;
+	}
+
+	private void save() {
+		Session s = HibernateManager.getSessionFactory().openSession();
+		s.beginTransaction();
+		s.persist(gdm);
 	}
 }

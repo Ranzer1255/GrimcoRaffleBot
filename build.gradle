@@ -17,6 +17,7 @@ repositories {
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
     implementation ('net.dv8tion:JDA:4.2.0_179'){
         exclude module: 'opus-java'

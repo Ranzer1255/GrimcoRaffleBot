@@ -2,17 +2,12 @@ package net.ranzer.grimco.rafflebot.database.interfaces;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.OnlineStatus;
-import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.utils.MemberCachePolicy;
-import net.ranzer.grimco.rafflebot.GrimcoRaffleBot;
 import net.ranzer.grimco.rafflebot.config.BotConfiguration;
 import net.ranzer.grimco.rafflebot.data.IGuildData;
 import net.ranzer.grimco.rafflebot.database.HibernateManager;
 import net.ranzer.grimco.rafflebot.database.model.GuildDataModel;
-import net.ranzer.grimco.rafflebot.functions.levels.LevelUpdater;
 import net.ranzer.grimco.rafflebot.util.Logging;
 import org.hibernate.Session;
 import org.junit.jupiter.api.AfterAll;
@@ -27,7 +22,6 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GuildDataTest {
-
 	static JDA jda;
 
 	@BeforeAll
@@ -62,8 +56,9 @@ class GuildDataTest {
 		Session s = HibernateManager.getSessionFactory().openSession();
 		s.beginTransaction();
 		for (Guild g : jda.getGuilds()){
-			s.persist(new GuildDataModel(g.getId()));
-			System.out.println(g.getName());
+			GuildDataModel gdm = new GuildDataModel(g.getId());
+			gdm.setPrefix("?");
+			s.persist(gdm);
 		}
 		s.getTransaction().commit();
 		s.close();
@@ -74,7 +69,7 @@ class GuildDataTest {
 	public void objectCreation(){
 
 		IGuildData g = new GuildData(Objects.requireNonNull(jda.getGuildById("530136980252786688")));
-	 	assertEquals("/", g.getPrefix());
+	 	assertEquals("?", g.getPrefix());
 
 	}
 

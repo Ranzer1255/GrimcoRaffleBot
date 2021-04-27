@@ -1,12 +1,16 @@
 package net.ranzer.grimco.rafflebot.database;
 
 import net.ranzer.grimco.rafflebot.config.BotConfiguration;
+import net.ranzer.grimco.rafflebot.util.Logging;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.boot.spi.BasicTypeRegistration;
+import org.hibernate.type.BasicTypeRegistry;
 
 import javax.persistence.EntityManager;
+import java.util.Arrays;
 
 public class HibernateManager {
 
@@ -35,6 +39,9 @@ public class HibernateManager {
 			} catch (Exception e) {
 				// The registry would be destroyed by the SessionFactory, but we had trouble building the SessionFactory
 				// so destroy it manually.
+				System.out.println(e);
+				Logging.log(e);
+
 				StandardServiceRegistryBuilder.destroy(registry);
 			}
 		}

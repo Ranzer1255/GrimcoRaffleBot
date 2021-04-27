@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GuildData implements IGuildData {
+public class GuildData extends AbstractData implements IGuildData {
 
 	GuildDataModel gdm;
 
@@ -32,6 +32,7 @@ public class GuildData implements IGuildData {
 				"from GuildDataModel e " +
 				"where e.guildID = :id",GuildDataModel.class)
 				.setParameter("id",g.getId()).getSingleResult();
+		session.close(); //DUMB ASS CLOSE YOUR FRELLING SESSIONS!
 	}
 
 	//Prefix methods
@@ -47,13 +48,12 @@ public class GuildData implements IGuildData {
 	@Override
 	public void setPrefix(String prefix) {
 		gdm.setPrefix(prefix);
-		save();
+		save(gdm);
 	}
-
 	@Override
 	public void removePrefix() {
 		gdm.setPrefix(null);
-		save();
+		save(gdm);
 	}
 
 	//XP Methods
@@ -61,6 +61,7 @@ public class GuildData implements IGuildData {
 	@Override
 	public void setXPTimeout(long timeout) {
 		XPTimeout = timeout;
+		save(gdm);
 	}
 	@Override
 	public long getXPTimeout() {
@@ -78,7 +79,10 @@ public class GuildData implements IGuildData {
 	public void setXPBounds(int low, int high) {
 		XPLowBound = low;
 		XPHighBound = high;
+		save(gdm);
 	}
+
+	//memberData methods
 	@Override
 	public IMemberData getMemberData(Member m) {
 		return members.get(m.getUser());
@@ -134,9 +138,4 @@ public class GuildData implements IGuildData {
 		return false;
 	}
 
-	private void save() {
-		Session s = HibernateManager.getSessionFactory().openSession();
-		s.beginTransaction();
-		s.persist(gdm);
-	}
 }

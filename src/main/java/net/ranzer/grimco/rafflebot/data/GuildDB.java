@@ -16,9 +16,9 @@ import net.ranzer.grimco.rafflebot.util.Logging;
 
 public class GuildDB implements IGuildData { //TODO look at using activeJBDC or other ORM framework
 
-	private static final long DEFAULT_MESSAGE_TIMEOUT = 60000L;
-	private final static int DEFAULT_XP_LOWBOUND = 15, DEFAULT_XP_HIGHBOUND = 25;
-	private static final int DEFAULT_RAFFLE_THRESHOLD = 0;
+//	private static final long DEFAULT_MESSAGE_TIMEOUT = 60000L;
+//	private final static int DEFAULT_XP_LOWBOUND = 15, DEFAULT_XP_HIGHBOUND = 25;
+//	private static final int DEFAULT_RAFFLE_THRESHOLD = 0;
 
 	//sql statements
 	//prefix commands

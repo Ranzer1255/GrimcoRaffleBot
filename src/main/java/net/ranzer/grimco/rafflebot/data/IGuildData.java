@@ -5,6 +5,10 @@ import net.dv8tion.jda.api.entities.*;
 import java.util.List;
 
 public interface IGuildData {
+
+    long DEFAULT_MESSAGE_TIMEOUT = 60000L;
+    int DEFAULT_XP_LOWBOUND = 15, DEFAULT_XP_HIGHBOUND = 25;
+
     //prefix methods
     String getPrefix();
     void setPrefix(String prefix);

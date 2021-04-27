@@ -7,134 +7,88 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.ranzer.grimco.rafflebot.GrimcoRaffleBot;
 import net.ranzer.grimco.rafflebot.data.IMemberData;
+import net.ranzer.grimco.rafflebot.database.HibernateManager;
+import net.ranzer.grimco.rafflebot.database.model.GuildDataModel;
+import net.ranzer.grimco.rafflebot.database.model.MemberDataModel;
+import org.hibernate.Session;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 @Entity
 @Table (name="member")
-public class MemberData implements IMemberData {
+public class MemberData extends AbstractData implements IMemberData {
 
-	@EmbeddedId
-	private MemberPK memberPK;
-	@Basic
-	int xp;
-	@Column(name = "last_xp")
-	long lastXP;
-	@Column(name = "raffle_ban")
-	boolean raffleBan;
-
-	/* references:
-	 * https://www.baeldung.com/hibernate-persisting-maps
-	 */
-	//TODO check this
-	@ElementCollection
-	@CollectionTable(name = "timedrole")
-	@Column(name = "remove")
-	Map<Role,Long> timedRoles;
+	MemberDataModel mdm;
 
 	//TODO make Constructors with default values
 	public MemberData(Member member) {
-		this(member,0,false,new HashMap<>());
+		Session session = HibernateManager.getSessionFactory().openSession();
+		mdm = session.createQuery("select e " +
+				"from MemberDataModel e " +
+				"where e.guildID = :guildId and " +
+				"e.userId = :userId", MemberDataModel.class)
+				.setParameter("guildId", member.getGuild().getId())
+				.setParameter("userId", member.getUser().getId()).getSingleResult();
 	}
-	public MemberData(Member member, int xp, boolean raffleBan){
-		this(member,xp,raffleBan,new HashMap<>());
-	}
-	public MemberData(Member member, int xp, boolean raffleBan,Map<Role,Long> timedRoles){
-		memberPK = new MemberPK(member.getId(),member.getGuild().getId());
-		this.xp = xp;
-		this.timedRoles = timedRoles;
-		this.raffleBan = raffleBan;
 
-	}
 
 	@Override
 	public Member getMember() {
 		JDA jda = GrimcoRaffleBot.getJDA();
-		Guild g = jda.getGuildById(memberPK.guildID);
-		User u = jda.getUserById(memberPK.userID);
+		Guild g = jda.getGuildById(mdm.getGuildId());
+		User u = jda.getUserById(mdm.getUserId());
 		return Objects.requireNonNull(g).retrieveMember(Objects.requireNonNull(u)).complete();
 	}
 
 	@Override
 	public int getXP() {
-		return xp;
+		return mdm.getXp();
 	}
 
 	@Override
 	public void addXP(int amount) {
-		xp+=amount;
-		lastXP=System.currentTimeMillis();
+		mdm.addXp(amount);
+		save(mdm);
 	}
 
 	@Override
 	public void removeXP(int amount) {
-		if (xp-amount<0)
-			xp=0;
-		else
-			xp-=amount;
+		mdm.removeXP(amount);
+		save(mdm);
 	}
 
 	@Override
 	public long lastXP() {
-		return lastXP;
+		return mdm.getLastXP();
 	}
 
 	@Override
 	public boolean isBannedFromRaffle() {
-		return raffleBan;
+		return mdm.getRaffleBan();
 	}
 
 	@Override
 	public void setBannedFromRaffle(boolean banned) {
-		raffleBan = banned;
+		mdm.setRaffleBan(banned);
 	}
 
 	@Override
 	public Map<Role, Long> getTimedRoles() {
-		return timedRoles;
+		return null;
 	}
 
 	@Override
 	public void addTimedRole(Role role, long timeToRemoveRole) {
-		timedRoles.put(role,timeToRemoveRole);
+//		timedRoles.put(role,timeToRemoveRole);
 	}
 
 	@Override
 	public void removedTimedRole(Role role) {
-		timedRoles.remove(role);
+//		timedRoles.remove(role);
 	}
 
-	@Embeddable
-	public static class MemberPK implements Serializable{
-		//todo extract this?
-		//references:
-		//https://stackoverflow.com/questions/3585034/how-to-map-a-composite-key-with-jpa-and-hibernate
-		@Column(name = "user_id")
-		protected String userID;
-		@Column(name = "guild_id")
-		protected String guildID;
 
-		public MemberPK(String userID, String guildID){
-			this.userID=userID;
-			this.guildID=guildID;
-		}
 
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (o == null || getClass() != o.getClass()) return false;
-			MemberPK memberPK = (MemberPK) o;
-			return userID.equals(memberPK.userID) && guildID.equals(memberPK.guildID);
-		}
-
-		@Override
-		public int hashCode() {
-			return Objects.hash(userID, guildID);
-		}
-
-	}
 }

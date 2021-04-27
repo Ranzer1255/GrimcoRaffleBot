@@ -1,6 +1,5 @@
 package net.ranzer.grimco.rafflebot.data;
 
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 
@@ -10,7 +9,7 @@ public interface IRaffleData {
 
     int DEFAULT_RAFFLE_THRESHOLD = 0;
 
-    Guild getGuild();
+//    Guild getGuild();
     List<Role> allowedRaffleRoles();
 
     int getRaffleXPThreshold();

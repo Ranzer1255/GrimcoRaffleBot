@@ -8,11 +8,11 @@ import net.dv8tion.jda.api.entities.User;
 import net.ranzer.grimco.rafflebot.GrimcoRaffleBot;
 import net.ranzer.grimco.rafflebot.data.IMemberData;
 import net.ranzer.grimco.rafflebot.database.HibernateManager;
-import net.ranzer.grimco.rafflebot.database.model.GuildDataModel;
 import net.ranzer.grimco.rafflebot.database.model.MemberDataModel;
 import org.hibernate.Session;
 
 import javax.persistence.*;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -22,13 +22,12 @@ public class MemberData extends AbstractData implements IMemberData {
 
 	MemberDataModel mdm;
 
-	//TODO make Constructors with default values
 	public MemberData(Member member) {
 		Session session = HibernateManager.getSessionFactory().openSession();
 		mdm = session.createQuery("select e " +
 				"from MemberDataModel e " +
-				"where e.guildID = :guildId and " +
-				"e.userId = :userId", MemberDataModel.class)
+				"where e.gdm.guildID = :guildId and " +
+				"e.userID = :userId", MemberDataModel.class)
 				.setParameter("guildId", member.getGuild().getId())
 				.setParameter("userId", member.getUser().getId()).getSingleResult();
 	}
@@ -72,21 +71,32 @@ public class MemberData extends AbstractData implements IMemberData {
 	@Override
 	public void setBannedFromRaffle(boolean banned) {
 		mdm.setRaffleBan(banned);
+		save(mdm);
 	}
 
 	@Override
 	public Map<Role, Long> getTimedRoles() {
-		return null;
+		Map<Role,Long> rtn = new HashMap<>();
+
+		for (Map.Entry<String,Long> role: mdm.getTimedRoles().entrySet()){
+			rtn.put(
+					GrimcoRaffleBot.getJDA().getRoleById(role.getKey()),
+					role.getValue());
+		}
+
+		return rtn;
 	}
 
 	@Override
 	public void addTimedRole(Role role, long timeToRemoveRole) {
-//		timedRoles.put(role,timeToRemoveRole);
+		mdm.getTimedRoles().put(role.getId(),timeToRemoveRole);
+		save(mdm);
 	}
 
 	@Override
 	public void removedTimedRole(Role role) {
-//		timedRoles.remove(role);
+		mdm.getTimedRoles().remove(role.getId());
+		save(mdm);
 	}
 
 

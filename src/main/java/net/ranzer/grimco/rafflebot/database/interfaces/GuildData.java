@@ -7,26 +7,21 @@ import net.ranzer.grimco.rafflebot.data.IGuildData;
 import net.ranzer.grimco.rafflebot.data.IMemberData;
 import net.ranzer.grimco.rafflebot.data.IRaffleData;
 import net.ranzer.grimco.rafflebot.database.HibernateManager;
+import net.ranzer.grimco.rafflebot.database.model.ChannelDataModel;
 import net.ranzer.grimco.rafflebot.database.model.GuildDataModel;
+import net.ranzer.grimco.rafflebot.database.model.MemberDataModel;
 import org.hibernate.Session;
-import java.util.HashMap;
+
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class GuildData extends AbstractData implements IGuildData {
 
-	GuildDataModel gdm;
-
-	private long XPTimeout;
-	private int XPLowBound;
-	private int XPHighBound;
-
-//	//TODO
-//	@OneToMany(mappedBy = "MemberData",cascade = CascadeType.ALL)
-	private Map<User,MemberData> members = new HashMap<>();
+	private final Guild guild;
+	private final GuildDataModel gdm;
 
 	public GuildData(Guild g){
-
+		this.guild = g;
 		Session session = HibernateManager.getSessionFactory().openSession();
 		gdm = session.createQuery("select e " +
 				"from GuildDataModel e " +
@@ -43,7 +38,7 @@ public class GuildData extends AbstractData implements IGuildData {
 		if (rtn == null){
 			rtn = BotConfiguration.getInstance().getPrefix();
 		}
-		return gdm.getPrefix();
+		return rtn;
 	}
 	@Override
 	public void setPrefix(String prefix) {
@@ -60,82 +55,177 @@ public class GuildData extends AbstractData implements IGuildData {
 
 	@Override
 	public void setXPTimeout(long timeout) {
-		XPTimeout = timeout;
+		gdm.setXPTimeout(timeout);
 		save(gdm);
 	}
 	@Override
 	public long getXPTimeout() {
-		return XPTimeout;
+		return gdm.getXPTimeout();
 	}
 	@Override
 	public int getXPLowBound() {
-		return XPLowBound;
+		return gdm.getXPLowBound();
 	}
 	@Override
 	public int getXPHighBound() {
-		return XPHighBound;
+		return gdm.getXPHighBound();
 	}
 	@Override
 	public void setXPBounds(int low, int high) {
-		XPLowBound = low;
-		XPHighBound = high;
+		gdm.setXPBounds(low,high);
 		save(gdm);
 	}
 
 	//memberData methods
 	@Override
 	public IMemberData getMemberData(Member m) {
-		return members.get(m.getUser());
+		return new MemberData(m);
 	}
-
 	@Override
 	public IMemberData getMemberData(User u) {
-		return members.get(u);
+		Member m = guild.retrieveMember(u).complete();
+		return getMemberData(m);
 	}
 
 	@Override
 	public void addMember(Member m) {
-		members.put(m.getUser(),new MemberData(m));
+		gdm.addMember(m);
+		save(gdm);
 	}
 
 	@Override
 	public void deleteMember(Member m) {
-		members.remove(m.getUser());
+		gdm.removeMember(new MemberDataModel(m,gdm));
+		save(gdm);
 	}
 
 	@Override
 	public IChannelData getChannel(TextChannel channel) {
-		return null;
+		Session s = HibernateManager.getSessionFactory().openSession();
+
+		ChannelDataModel cdm = s.bySimpleNaturalId(ChannelDataModel.class).load(channel.getId());
+
+		s.close();
+		return new IChannelData() {
+			@Override
+			public void setXPPerm(boolean earnEXP) {
+				cdm.setXpPerm(earnEXP);
+				save(cdm);
+			}
+
+			@Override
+			public boolean getXPPerm() {
+				return cdm.hasXpPerm();
+			}
+
+			@Override
+			public void setRaffle(boolean raffle) {
+				cdm.setRafflePerm(raffle);
+				save(cdm);
+			}
+
+			@Override
+			public boolean getRaffle() {
+				return cdm.hasRafflePerm();
+			}
+		};
 	}
 
 	@Override
 	public void deleteChannel(TextChannel channel) {
 
+		Session s = HibernateManager.getSessionFactory().openSession();
+
+		ChannelDataModel cdm = s.bySimpleNaturalId(ChannelDataModel.class).load(channel.getId());
+		s.remove(cdm);
+		s.close();
 	}
 
 	@Override
 	public void addChannel(TextChannel channel) {
-
+		ChannelDataModel cdm = new ChannelDataModel(channel,gdm);
+		save(cdm);
 	}
 
 	@Override
 	public IRaffleData getRaffleData() {
-		return null;
+
+		return new IRaffleData() {
+
+			@Override
+			public List<Role> allowedRaffleRoles() {
+				List<Role> rtn = new ArrayList<>();
+				for (String id: gdm.getRaffleRoleIDs()){
+					rtn.add(guild.getRoleById(id));
+				}
+				return rtn;
+			}
+
+			@Override
+			public int getRaffleXPThreshold() {
+				return gdm.getRaffleThreshold();
+			}
+
+			@Override
+			public void setRaffleXPThreshold(int threshold) {
+				gdm.setRaffleThreshold(threshold);
+				save(gdm);
+			}
+
+			@Override
+			public boolean addAllowedRole(Role r) {
+				if (gdm.addRaffleRole(r.getId())){
+					save(gdm);
+					return true;
+				}
+				return false;
+			}
+
+			@Override
+			public boolean removeAllowedRole(Role r) {
+				if (gdm.removeRaffleRole(r.getId())){
+					save(gdm);
+					return true;
+				}
+				return false;
+			}
+
+			//TODO
+			@Override
+			public List<Member> getBannedUsers() {
+				Session s = HibernateManager.getSessionFactory().openSession();
+
+				List<String> userIDs = s.createQuery(
+						"SELECT m.userID " +
+								"FROM MemberDataModel m " +
+								"where m.gdm = :guild and " +
+								"m.raffleBan = true",
+						String.class)
+						.setParameter(":guild",gdm)
+						.getResultList();
+
+				return null;
+			}
+		};
 	}
 
 	@Override
 	public List<Role> getModRoles() {
-		return null;
+		List<Role> rtn = new ArrayList<>();
+		for (String id : gdm.getModRoleIDs()){
+			rtn.add(guild.getRoleById(id));
+		}
+		return rtn;
 	}
 
 	@Override
 	public boolean addModRole(Role r) {
-		return false;
+		return gdm.addModRole(r.getId());
 	}
 
 	@Override
 	public boolean removeModRole(Role r) {
-		return false;
+		return gdm.removeModRole(r.getId());
 	}
 
 }

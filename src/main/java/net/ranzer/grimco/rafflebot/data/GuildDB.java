@@ -745,7 +745,7 @@ public class GuildDB implements IGuildData { //TODO look at using activeJBDC or 
 	@Override
 	public IRaffleData getRaffleData() {
 		return new IRaffleData() {
-			@Override
+//			@Override
 			public Guild getGuild() {
 				return guild;
 			}

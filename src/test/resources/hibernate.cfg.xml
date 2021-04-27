@@ -22,6 +22,7 @@
 
         <mapping class="net.ranzer.grimco.rafflebot.database.model.GuildDataModel"/>
         <mapping class="net.ranzer.grimco.rafflebot.database.model.MemberDataModel"/>
+        <mapping class="net.ranzer.grimco.rafflebot.database.model.ChannelDataModel"/>
 
     </session-factory>
 </hibernate-configuration>

@@ -16,22 +16,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-@Entity
-@Table (name="member")
 public class MemberData extends AbstractData implements IMemberData {
 
 	MemberDataModel mdm;
 
-	public MemberData(Member member) {
-		Session session = HibernateManager.getSessionFactory().openSession();
-		mdm = session.createQuery("select e " +
-				"from MemberDataModel e " +
-				"where e.gdm.guildID = :guildId and " +
-				"e.userID = :userId", MemberDataModel.class)
-				.setParameter("guildId", member.getGuild().getId())
-				.setParameter("userId", member.getUser().getId()).getSingleResult();
+	public MemberData(Member member,GuildData guildData) {
+		try(Session session = HibernateManager.getSessionFactory().openSession()){
+			mdm = session.createQuery("select e " +
+					"from MemberDataModel e " +
+					"where e.gdm.guildID = :guildId and " +
+					"e.userID = :userId", MemberDataModel.class)
+					.setParameter("guildId", member.getGuild().getId())
+					.setParameter("userId", member.getUser().getId()).getSingleResult();
 
-		session.close();
+		} catch (NoResultException e){
+
+			mdm = new MemberDataModel(member, guildData.getModel());
+			save(mdm);
+		}
 	}
 
 

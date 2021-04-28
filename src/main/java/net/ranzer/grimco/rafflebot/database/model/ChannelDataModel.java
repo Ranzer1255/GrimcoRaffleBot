@@ -1,8 +1,6 @@
 package net.ranzer.grimco.rafflebot.database.model;
 
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.ranzer.grimco.rafflebot.database.interfaces.GuildData;
-import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 
@@ -24,12 +22,14 @@ public class ChannelDataModel {
 	@Column(name = "perm_xp")
 	boolean xpPerm = true;
 
+	private ChannelDataModel(){}
+
 	public ChannelDataModel(TextChannel channel, GuildDataModel gdm) {
 		channelID = channel.getId();
 		this.gdm  = gdm;
 	}
 
-	public String getChannelID() {
+	public String getID() {
 		return channelID;
 	}
 

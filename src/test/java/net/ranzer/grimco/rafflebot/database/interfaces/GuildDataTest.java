@@ -52,30 +52,30 @@ class GuildDataTest {
 	}
 
 	@BeforeEach
-	public void setupDB(){
-		Session s = HibernateManager.getSessionFactory().openSession();
-		s.beginTransaction();
-
-//		Guild g = jda.getGuildById("530136980252786688");
-		GuildDataModel gdm = null;
-		for (Guild g: jda.getGuilds()) {
-			gdm = new GuildDataModel(g.getId());
-			Member m = g.retrieveMemberById("185046589381804032").complete();
-//			System.out.println(m.getUser().getId());
-			gdm.addMember(m);
-			gdm.setPrefix("?");
-			s.saveOrUpdate(gdm);
-		}
-
-		s.getTransaction().commit();
-		s.close();
-	}
+//	public void setupDB(){
+//		Session s = HibernateManager.getSessionFactory().openSession();
+//		s.beginTransaction();
+//
+////		Guild g = jda.getGuildById("530136980252786688");
+//		GuildDataModel gdm = null;
+//		for (Guild g: jda.getGuilds()) {
+//			gdm = new GuildDataModel(g.getId());
+//			Member m = g.retrieveMemberById("185046589381804032").complete();
+////			System.out.println(m.getUser().getId());
+//			gdm.addMember(m);
+//			gdm.setPrefix("?");
+//			s.saveOrUpdate(gdm);
+//		}
+//
+//		s.getTransaction().commit();
+//		s.close();
+//	}
 
 	@Test
 	public void objectCreation(){
 
 		IGuildData g = new GuildData(Objects.requireNonNull(jda.getGuildById("530136980252786688")));
-	 	assertEquals("?", g.getPrefix());
+	 	assertEquals(BotConfiguration.getInstance().getPrefix(), g.getPrefix());
 
 	}
 

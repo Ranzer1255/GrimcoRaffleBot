@@ -12,6 +12,7 @@ import net.ranzer.grimco.rafflebot.database.model.GuildDataModel;
 import net.ranzer.grimco.rafflebot.database.model.MemberDataModel;
 import org.hibernate.Session;
 
+import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,12 +24,18 @@ public class GuildData extends AbstractData implements IGuildData {
 
 	public GuildData(Guild g){
 		this.guild = g;
-		Session session = HibernateManager.getSessionFactory().openSession();
-		gdm = session.createQuery("select e " +
-				"from GuildDataModel e " +
-				"where e.guildID = :id",GuildDataModel.class)
-				.setParameter("id",g.getId()).getSingleResult();
-		session.close(); //DUMB ASS CLOSE YOUR FRELLING SESSIONS!
+		GuildDataModel retrieved;
+		try(Session session = HibernateManager.getSessionFactory().openSession()) {
+			retrieved = session.createQuery("select e " +
+					"from GuildDataModel e " +
+					"where e.guildID = :id", GuildDataModel.class)
+					.setParameter("id", g.getId()).getSingleResult();
+		} catch (NoResultException e){
+			retrieved = new GuildDataModel(g.getId());
+		}
+
+		gdm = retrieved;
+		save(gdm);
 	}
 
 	//Prefix methods
@@ -80,7 +87,7 @@ public class GuildData extends AbstractData implements IGuildData {
 	//memberData methods
 	@Override
 	public IMemberData getMemberData(Member m) {
-		return new MemberData(m);
+		return new MemberData(m,this);
 	}
 	@Override
 	public IMemberData getMemberData(User u) {
@@ -95,22 +102,28 @@ public class GuildData extends AbstractData implements IGuildData {
 	}
 
 	@Override
-	public void deleteMember(Member m) {
+	public void deleteMember(Member m) {//TODO test this
 		gdm.removeMember(new MemberDataModel(m,gdm));
 		save(gdm);
 	}
 
 	@Override
 	public IChannelData getChannel(TextChannel channel) {
-		Session s = HibernateManager.getSessionFactory().openSession();
 
-		ChannelDataModel cdm = s.createQuery("select e " +
-				"from ChannelDataModel e " +
-				"where e.channelID = :id",ChannelDataModel.class)
-				.setParameter("id",channel.getId()).getSingleResult();
-		s.close();
+		ChannelDataModel model;
+		try(Session s = HibernateManager.getSessionFactory().openSession()) {
 
-		return new IChannelData() {
+			model = s.createQuery("select e " +
+					"from ChannelDataModel e " +
+					"where e.channelID = :id", ChannelDataModel.class)
+					.setParameter("id", channel.getId()).getSingleResult();
+		} catch (NoResultException e){
+			model = new ChannelDataModel(channel,gdm);
+			save(model);
+		}
+
+		final ChannelDataModel cdm = model;
+		return new IChannelData() {//todo build tess for all of this
 			@Override
 			public void setXPPerm(boolean earnEXP) {
 				cdm.setXpPerm(earnEXP);
@@ -138,14 +151,13 @@ public class GuildData extends AbstractData implements IGuildData {
 	@Override
 	public void deleteChannel(TextChannel channel) {
 
-		Session s = HibernateManager.getSessionFactory().openSession();
-
-		ChannelDataModel cdm = s.createQuery("select e " +
-				"from ChannelDataModel e " +
-				"where e.channelID = :id",ChannelDataModel.class)
-				.setParameter("id",channel.getId()).getSingleResult();
-		s.remove(cdm);
-		s.close();
+		try (Session s = HibernateManager.getSessionFactory().openSession()) {
+			ChannelDataModel cdm = s.createQuery("select e " +
+					"from ChannelDataModel e " +
+					"where e.channelID = :id", ChannelDataModel.class)
+					.setParameter("id", channel.getId()).getSingleResult();
+			s.remove(cdm);
+		}
 	}
 
 	@Override
@@ -234,4 +246,7 @@ public class GuildData extends AbstractData implements IGuildData {
 		return gdm.removeModRole(r.getId());
 	}
 
+	public GuildDataModel getModel() {
+		return gdm;
+	}
 }

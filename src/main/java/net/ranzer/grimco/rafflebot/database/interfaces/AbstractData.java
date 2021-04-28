@@ -14,4 +14,6 @@ public abstract class AbstractData {
 		s.getTransaction().commit();
 		s.close();
 	}
+
+
 }

@@ -1,6 +1,7 @@
 package net.ranzer.grimco.rafflebot.database.model;
 
 import net.dv8tion.jda.api.entities.Member;
+import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -31,7 +32,7 @@ public class MemberDataModel {
 	 * https://www.baeldung.com/hibernate-persisting-maps
 	 */
 
-	@ElementCollection
+	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "timedrole")
 	@MapKeyColumn(name = "role_id")
 	@Column(name = "remove")
@@ -66,6 +67,10 @@ public class MemberDataModel {
 			xp=0;
 		else
 			xp-=amount;
+	}
+
+	public void removeAllXP(){
+		xp=0;
 	}
 
 	public long getLastXP(){

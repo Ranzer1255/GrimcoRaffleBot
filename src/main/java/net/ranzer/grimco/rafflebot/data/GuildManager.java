@@ -3,6 +3,8 @@ package net.ranzer.grimco.rafflebot.data;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.ranzer.grimco.rafflebot.GrimcoRaffleBot;
 import net.ranzer.grimco.rafflebot.database.BotDB;
+import net.ranzer.grimco.rafflebot.database.HibernateManager;
+import net.ranzer.grimco.rafflebot.database.interfaces.GuildData;
 import net.ranzer.grimco.rafflebot.util.Logging;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -12,6 +14,7 @@ import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.hibernate.Session;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
@@ -58,24 +61,26 @@ public class GuildManager extends ListenerAdapter{
 	}
 
 	public static IGuildData getGuildData(Guild key){
-		return new GuildDB(key);
+		return new GuildData(key);
 	}
 
 
 	//convenience pass through methods
 	public static String getPrefix(Guild key){
-		return new GuildDB(key).getPrefix();
+		return new GuildData(key).getPrefix();
 	}
 	public static void setPrefix(Guild key, String prefix){
-		new GuildDB(key).setPrefix(prefix);
+		new GuildData(key).setPrefix(prefix);
 	}
 	public static void removePrefix(Guild key){
-		new GuildDB(key).removePrefix();
+		new GuildData(key).removePrefix();
 	}
 
 	//DB update methods
-	private static void addNewGuilds() {
+	private static void addNewGuilds() { //TODO
 
+		Session s = HibernateManager.getSessionFactory().openSession();
+		
 		try {
 			Connection con = BotDB.getConnection();
 			con.setAutoCommit(false);
@@ -95,7 +100,7 @@ public class GuildManager extends ListenerAdapter{
 		}
 	}
 
-	private static void removeOldGuilds() {
+	private static void removeOldGuilds() { //TODO
 		try (ResultSet rs = BotDB.getConnection().prepareStatement(
 					"SELECT guild_id FROM grimcodb.guild" ,ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_UPDATABLE
 			).executeQuery()){
@@ -111,7 +116,7 @@ public class GuildManager extends ListenerAdapter{
 		}
 	}
 
-	private static void updateTextChannels(){
+	private static void updateTextChannels(){ //TODO
 		//add new text channels
 		try {
 			Connection con = BotDB.getConnection();
@@ -136,7 +141,7 @@ public class GuildManager extends ListenerAdapter{
 		}
 
 
-		//delete old text channels
+		//delete old text channels//TODO
 		try (ResultSet rs = BotDB.getConnection().prepareStatement(
 				"select text_channel_id from grimcodb.text_channel" ,ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_UPDATABLE
 		).executeQuery()){
@@ -150,7 +155,7 @@ public class GuildManager extends ListenerAdapter{
 		}
 	}
 
-	private static void updateMembers() {
+	private static void updateMembers() {//TODO
 
 		//add new members
 		try {
@@ -212,7 +217,7 @@ public class GuildManager extends ListenerAdapter{
 
 	}
 
-	@Override
+	@Override //TODO
 	public void onGuildLeave(@NotNull GuildLeaveEvent event) {// TODO: 12/26/2018 extract removeGuild(Guild guild) as its own method
 		super.onGuildLeave(event);
 
@@ -234,12 +239,12 @@ public class GuildManager extends ListenerAdapter{
 		}
 	}
 
-	@Override
+	@Override //TODO
 	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
 		getGuildData(event.getGuild()).addMember(event.getMember());
 	}
 
-	@Override
+	@Override //TODO
 	public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
 
 		//remove leaver's xp
@@ -253,12 +258,12 @@ public class GuildManager extends ListenerAdapter{
 
 	}
 
-	@Override
+	@Override //TODO
 	public void onTextChannelDelete(TextChannelDeleteEvent event) {
 		getGuildData(event.getGuild()).deleteChannel(event.getChannel());
 	}
 
-	@Override
+	@Override //TODO
 	public void onTextChannelCreate(TextChannelCreateEvent event) {
 		getGuildData(event.getGuild()).addChannel(event.getChannel());
 	}

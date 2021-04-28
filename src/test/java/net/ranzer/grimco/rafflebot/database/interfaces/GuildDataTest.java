@@ -42,12 +42,6 @@ class GuildDataTest {
 		//set token
 		build = JDABuilder.create(config.getTestToken(),intents);
 
-//		build.enableIntents(GatewayIntent.GUILD_MEMBERS);
-//		build.setMemberCachePolicy(MemberCachePolicy.ALL);
-		//add Listeners
-		//TODO setup each module as its own command listener
-
-		//build
 		try {
 			jda = build.build().awaitReady();
 		} catch (LoginException | IllegalArgumentException | InterruptedException e) {

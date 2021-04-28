@@ -30,6 +30,8 @@ public class MemberData extends AbstractData implements IMemberData {
 				"e.userID = :userId", MemberDataModel.class)
 				.setParameter("guildId", member.getGuild().getId())
 				.setParameter("userId", member.getUser().getId()).getSingleResult();
+
+		session.close();
 	}
 
 

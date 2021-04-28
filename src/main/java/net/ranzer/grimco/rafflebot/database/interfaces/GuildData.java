@@ -14,6 +14,7 @@ import org.hibernate.Session;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GuildData extends AbstractData implements IGuildData {
 
@@ -103,9 +104,12 @@ public class GuildData extends AbstractData implements IGuildData {
 	public IChannelData getChannel(TextChannel channel) {
 		Session s = HibernateManager.getSessionFactory().openSession();
 
-		ChannelDataModel cdm = s.bySimpleNaturalId(ChannelDataModel.class).load(channel.getId());
-
+		ChannelDataModel cdm = s.createQuery("select e " +
+				"from ChannelDataModel e " +
+				"where e.channelID = :id",ChannelDataModel.class)
+				.setParameter("id",channel.getId()).getSingleResult();
 		s.close();
+
 		return new IChannelData() {
 			@Override
 			public void setXPPerm(boolean earnEXP) {
@@ -136,7 +140,10 @@ public class GuildData extends AbstractData implements IGuildData {
 
 		Session s = HibernateManager.getSessionFactory().openSession();
 
-		ChannelDataModel cdm = s.bySimpleNaturalId(ChannelDataModel.class).load(channel.getId());
+		ChannelDataModel cdm = s.createQuery("select e " +
+				"from ChannelDataModel e " +
+				"where e.channelID = :id",ChannelDataModel.class)
+				.setParameter("id",channel.getId()).getSingleResult();
 		s.remove(cdm);
 		s.close();
 	}
@@ -190,7 +197,6 @@ public class GuildData extends AbstractData implements IGuildData {
 				return false;
 			}
 
-			//TODO
 			@Override
 			public List<Member> getBannedUsers() {
 				Session s = HibernateManager.getSessionFactory().openSession();
@@ -201,10 +207,10 @@ public class GuildData extends AbstractData implements IGuildData {
 								"where m.gdm = :guild and " +
 								"m.raffleBan = true",
 						String.class)
-						.setParameter(":guild",gdm)
+						.setParameter("guild",gdm)
 						.getResultList();
 
-				return null;
+				return userIDs.stream().map(id -> guild.retrieveMemberById(id).complete()).collect(Collectors.toList());
 			}
 		};
 	}

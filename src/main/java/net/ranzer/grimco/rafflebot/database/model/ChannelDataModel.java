@@ -11,7 +11,6 @@ import javax.persistence.*;
 public class ChannelDataModel {
 
 	@Id
-	@NaturalId
 	@Column(name = "text_channel_id")
 	private String channelID;
 

@@ -173,11 +173,14 @@ public class GuildData extends AbstractData implements IGuildData {
 
 			@Override
 			public List<Role> allowedRaffleRoles() {
-				List<Role> rtn = new ArrayList<>();
-				for (String id: gdm.getRaffleRoleIDs()){
-					rtn.add(guild.getRoleById(id));
+				try (Session s = HibernateManager.getSessionFactory().openSession()) {
+					s.load(gdm,gdm.getId());
+					List<Role> rtn = new ArrayList<>();
+					for (String id : gdm.getRaffleRoleIDs()) {
+						rtn.add(guild.getRoleById(id));
+					}
+					return rtn;
 				}
-				return rtn;
 			}
 
 			@Override

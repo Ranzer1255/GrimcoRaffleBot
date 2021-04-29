@@ -32,7 +32,7 @@ public class MemberDataModel {
 	 * https://www.baeldung.com/hibernate-persisting-maps
 	 */
 
-	@ElementCollection(fetch = FetchType.EAGER)
+	@ElementCollection
 	@CollectionTable(name = "timedrole")
 	@MapKeyColumn(name = "role_id")
 	@Column(name = "remove")
@@ -87,5 +87,9 @@ public class MemberDataModel {
 
 	public void setRaffleBan(boolean banned) {
 		this.raffleBan = banned;
+	}
+
+	public GuildDataModel getGdm(){
+		return gdm;
 	}
 }

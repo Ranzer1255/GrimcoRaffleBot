@@ -1,6 +1,8 @@
 package net.ranzer.grimco.rafflebot.database.model;
 
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.ranzer.grimco.rafflebot.data.IChannelData;
+import net.ranzer.grimco.rafflebot.data.IRaffleData;
 
 import javax.persistence.*;
 
@@ -17,7 +19,7 @@ public class ChannelDataModel {
 	private GuildDataModel gdm;
 
 	@Column(name = "perm_raffle")
-	boolean rafflePerm = false;
+	boolean rafflePerm = IChannelData.DEFAULT_RAFFLE_SETTING;
 
 	@Column(name = "perm_xp")
 	boolean xpPerm = true;

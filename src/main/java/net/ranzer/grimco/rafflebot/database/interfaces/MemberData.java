@@ -9,7 +9,9 @@ import net.ranzer.grimco.rafflebot.GrimcoRaffleBot;
 import net.ranzer.grimco.rafflebot.data.IMemberData;
 import net.ranzer.grimco.rafflebot.database.HibernateManager;
 import net.ranzer.grimco.rafflebot.database.model.MemberDataModel;
+import net.ranzer.grimco.rafflebot.database.model.MemberPK;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -80,15 +82,18 @@ public class MemberData extends AbstractData implements IMemberData {
 
 	@Override
 	public Map<Role, Long> getTimedRoles() {
-		Map<Role,Long> rtn = new HashMap<>();
+		try (Session s = HibernateManager.getSessionFactory().openSession()) {
+			Map<Role, Long> rtn = new HashMap<>();
 
-		for (Map.Entry<String,Long> role: mdm.getTimedRoles().entrySet()){
-			rtn.put(
-					GrimcoRaffleBot.getJDA().getRoleById(role.getKey()),
-					role.getValue());
+			s.load(mdm,new MemberPK(mdm.getUserId(),mdm.getGdm()));
+			for (Map.Entry<String, Long> role : mdm.getTimedRoles().entrySet()) {
+				rtn.put(
+						GrimcoRaffleBot.getJDA().getRoleById(role.getKey()),
+						role.getValue());
+			}
+
+			return rtn;
 		}
-
-		return rtn;
 	}
 
 	@Override

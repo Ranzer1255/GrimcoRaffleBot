@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.ranzer.grimco.rafflebot.config.BotConfiguration;
 import net.ranzer.grimco.rafflebot.data.IGuildData;
@@ -96,7 +97,11 @@ class GuildDataTest {
 	public void testGetBannedUsers(){
 		IGuildData g = new GuildData(jda.getGuildById("530136980252786688"));
 
-		g.getMemberData(jda.getUserById(185046589381804032L)).setBannedFromRaffle(true);
+		User u = jda.getUserById(185046589381804032L);
+
+		assertNotNull(u);
+
+		g.getMemberData(u).setBannedFromRaffle(true);
 
 		assertEquals(1,g.getRaffleData().getBannedUsers().size());
 

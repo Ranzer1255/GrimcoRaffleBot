@@ -1,55 +1,24 @@
 package net.ranzer.grimco.rafflebot.database.interfaces;
 
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.ranzer.grimco.rafflebot.JDATest;
 import net.ranzer.grimco.rafflebot.config.BotConfiguration;
 import net.ranzer.grimco.rafflebot.data.IGuildData;
 import net.ranzer.grimco.rafflebot.database.HibernateManager;
-import net.ranzer.grimco.rafflebot.database.model.GuildDataModel;
-import net.ranzer.grimco.rafflebot.util.Logging;
-import org.hibernate.Session;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
-import javax.security.auth.login.LoginException;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class GuildDataTest {
 	static JDA jda;
 
 	@BeforeAll
 	static void setupAPI(){
-		BotConfiguration config = BotConfiguration.getInstance();
-
-		JDABuilder build;
-
-		//setup intents
-		Collection<GatewayIntent> intents = Arrays.asList(
-//				GatewayIntent.GUILD_MEMBERS, //privileged
-				GatewayIntent.DIRECT_MESSAGES,
-				GatewayIntent.GUILD_MESSAGES
-		);
-
-		//set token
-		build = JDABuilder.create(config.getTestToken(),intents);
-
-		try {
-			jda = build.build().awaitReady();
-		} catch (LoginException | IllegalArgumentException | InterruptedException e) {
-			Logging.error(e.getMessage());
-			Logging.log(e);
-		}
-
+		jda = JDATest.getJDA();
 	}
 
 	@BeforeEach
@@ -105,6 +74,10 @@ class GuildDataTest {
 
 		assertEquals(1,g.getRaffleData().getBannedUsers().size());
 
+	}
+
+	@AfterEach
+	public void resetDB(){
 	}
 
 	@AfterAll

@@ -11,7 +11,6 @@ import net.ranzer.grimco.rafflebot.database.HibernateManager;
 import net.ranzer.grimco.rafflebot.database.model.MemberDataModel;
 import net.ranzer.grimco.rafflebot.database.model.MemberPK;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -98,13 +97,23 @@ public class MemberData extends AbstractData implements IMemberData {
 
 	@Override
 	public void addTimedRole(Role role, long timeToRemoveRole) {
+		Session s = HibernateManager.getSessionFactory().openSession();
+		s.load(mdm, new MemberPK(mdm.getUserId(), mdm.getGdm()));
+
 		mdm.getTimedRoles().put(role.getId(),timeToRemoveRole);
-		save(mdm);
+		s.beginTransaction();
+		s.update(mdm);
+		s.flush();
+		s.close();
 	}
 
 	@Override
 	public void removedTimedRole(Role role) {
+		Session s = HibernateManager.getSessionFactory().openSession();
+		s.load(mdm, new MemberPK(mdm.getUserId(), mdm.getGdm()));
 		mdm.getTimedRoles().remove(role.getId());
+		s.close();
+
 		save(mdm);
 	}
 

@@ -12,6 +12,7 @@ import net.ranzer.grimco.rafflebot.data.GuildManager;
 import net.ranzer.grimco.rafflebot.util.StringUtil;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ModRoleCommand extends BotCommand implements Describable {
@@ -27,16 +28,17 @@ public class ModRoleCommand extends BotCommand implements Describable {
 			List<Role> roles = GuildManager.getGuildData(event.getGuild()).getModRoles();
 			StringBuilder sb = new StringBuilder();
 
-			for (Role r :
-					roles) {
-				sb.append(r.getName()).append(" ,");
+			String message;
+			if(roles.isEmpty()){
+				message = "no roles on the list, only members with *ADMINISTRATOR* permission may use moderation commands";
+			} else {
+				for (Role r : roles) {
+					sb.append(r.getName()).append(" ,");
+				}
+				sb.delete(sb.length() - 1, sb.length());
+				message = String.format("Allowed Roles: %s", sb);
 			}
-			sb.delete(sb.length() - 1, sb.length());
-
-			event.getChannel().sendMessage(String.format(
-					"Allowed Roles: %s",
-					sb.toString()
-			)).queue();
+			event.getChannel().sendMessage(message).queue();
 		} else {
 			switch (args[0]) {
 				case "add":
@@ -110,7 +112,7 @@ public class ModRoleCommand extends BotCommand implements Describable {
 
 	@Override
 	public List<String> getAlias() {
-		return Arrays.asList("modrole");
+		return Collections.singletonList("modrole");
 	}
 
 	@Override

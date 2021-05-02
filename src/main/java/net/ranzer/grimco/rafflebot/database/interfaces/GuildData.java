@@ -196,20 +196,30 @@ public class GuildData extends AbstractData implements IGuildData {
 
 			@Override
 			public boolean addAllowedRole(Role r) {
-				if (gdm.addRaffleRole(r.getId())){
-					save(gdm);
-					return true;
+				try (Session s = HibernateManager.getSessionFactory().openSession()) {
+					s.load(gdm,gdm.getId());
+					if (gdm.addRaffleRole(r.getId())) {
+						s.beginTransaction();
+						s.update(gdm);
+						s.flush();
+						return true;
+					}
+					return false;
 				}
-				return false;
 			}
 
 			@Override
 			public boolean removeAllowedRole(Role r) {
-				if (gdm.removeRaffleRole(r.getId())){
-					save(gdm);
-					return true;
+				try (Session s = HibernateManager.getSessionFactory().openSession()) {
+					s.load(gdm, gdm.getId());
+					if (gdm.removeRaffleRole(r.getId())) {
+						s.beginTransaction();
+						s.update(gdm);
+						s.flush();
+						return true;
+					}
+					return false;
 				}
-				return false;
 			}
 
 			@Override
@@ -233,20 +243,37 @@ public class GuildData extends AbstractData implements IGuildData {
 	@Override
 	public List<Role> getModRoles() {
 		List<Role> rtn = new ArrayList<>();
-		for (String id : gdm.getModRoleIDs()){
-			rtn.add(guild.getRoleById(id));
+		try (Session s = HibernateManager.getSessionFactory().openSession()) {
+			s.load(gdm, gdm.getId());
+			for (String id : gdm.getModRoleIDs()) {
+				rtn.add(guild.getRoleById(id));
+			}
+			return rtn;
 		}
-		return rtn;
 	}
 
 	@Override
 	public boolean addModRole(Role r) {
-		return gdm.addModRole(r.getId());
+		try(Session s = HibernateManager.getSessionFactory().openSession()) {
+			s.load(gdm,gdm.getId());
+			s.beginTransaction();
+			boolean rtn = gdm.addModRole(r.getId());
+			s.update(gdm);
+			s.flush();
+			return rtn;
+		}
 	}
 
 	@Override
 	public boolean removeModRole(Role r) {
-		return gdm.removeModRole(r.getId());
+		try(Session s =HibernateManager.getSessionFactory().openSession()) {
+			s.load(gdm,gdm.getId());
+			s.beginTransaction();
+			boolean rtn = gdm.removeModRole(r.getId());
+			s.update(gdm);
+			s.flush();
+			return rtn;
+		}
 	}
 
 	public GuildDataModel getModel() {

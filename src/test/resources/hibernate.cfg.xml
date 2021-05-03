@@ -1,0 +1,19 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQL82Dialect</property>
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+
+        <property name="connection_pool_size">1</property>
+        <property name="hbm2ddl.auto">create</property>
+<!--        <property name="show_sql">true</property>-->
+
+        <mapping class="net.ranzer.grimco.rafflebot.database.model.GuildDataModel"/>
+        <mapping class="net.ranzer.grimco.rafflebot.database.model.MemberDataModel"/>
+        <mapping class="net.ranzer.grimco.rafflebot.database.model.ChannelDataModel"/>
+
+    </session-factory>
+</hibernate-configuration>

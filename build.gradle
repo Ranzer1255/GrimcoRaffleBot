@@ -13,19 +13,28 @@ repositories {
     }
     mavenCentral()
     jcenter()
+    maven {
+        name 'm2-dv8tion'
+        url 'https://m2.dv8tion.net/releases'
+    }
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
-    implementation ('net.dv8tion:JDA:4.2.0_179'){
+
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api',    version: '5.7.1'
+    testRuntimeOnly    group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.1'
+
+    implementation ('net.dv8tion:JDA:4.2.1_261'){
         exclude module: 'opus-java'
     }
-    implementation ("org.apache.commons:commons-lang3:3.5")
-    implementation ("org.jsoup:jsoup:1.13.1")
-    implementation group: 'org.json', name: 'json', version: '20200518'
+    implementation group: 'org.apache.commons', name: 'commons-lang3',  version: '3.5'
+    implementation group: 'org.jsoup',          name: 'jsoup',          version: '1.13.1'
+    implementation group: 'org.json',           name: 'json',           version: '20200518'
+    implementation group: 'org.hibernate',      name: 'hibernate-core', version: '5.4.30.Final'
+    implementation group: 'org.postgresql',     name: 'postgresql',     version: '42.2.19'
+    implementation group: 'org.slf4j',          name: 'slf4j-simple',   version: '1.7.30'
+//    implementation group: 'org.slf4j',          name: 'slf4j-api',      version: '1.7.5'
 
-    implementation files('libs/postgresql-42.2.5.jar')
 }
 
 reckon{

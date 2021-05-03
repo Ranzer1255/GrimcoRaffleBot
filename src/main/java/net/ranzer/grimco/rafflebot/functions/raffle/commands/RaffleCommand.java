@@ -1,5 +1,9 @@
 package net.ranzer.grimco.rafflebot.functions.raffle.commands;
 
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.Describable;
 import net.ranzer.grimco.rafflebot.data.GuildManager;
@@ -9,10 +13,6 @@ import net.ranzer.grimco.rafflebot.functions.raffle.commands.manage.ChannelEnabl
 import net.ranzer.grimco.rafflebot.functions.raffle.commands.manage.ModifyRolesCommand;
 import net.ranzer.grimco.rafflebot.functions.raffle.commands.run.*;
 import net.ranzer.grimco.rafflebot.util.Logging;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;

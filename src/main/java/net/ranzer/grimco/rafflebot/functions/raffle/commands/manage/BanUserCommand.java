@@ -1,15 +1,15 @@
 package net.ranzer.grimco.rafflebot.functions.raffle.commands.manage;
 
-import net.ranzer.grimco.rafflebot.commands.Describable;
-import net.ranzer.grimco.rafflebot.data.GuildManager;
-import net.ranzer.grimco.rafflebot.data.IGuildData;
-import net.ranzer.grimco.rafflebot.functions.raffle.commands.AbstractRaffleCommand;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
+import net.ranzer.grimco.rafflebot.commands.Describable;
+import net.ranzer.grimco.rafflebot.data.GuildManager;
+import net.ranzer.grimco.rafflebot.data.IGuildData;
+import net.ranzer.grimco.rafflebot.functions.raffle.commands.AbstractRaffleCommand;
 
 import java.util.Arrays;
 import java.util.List;

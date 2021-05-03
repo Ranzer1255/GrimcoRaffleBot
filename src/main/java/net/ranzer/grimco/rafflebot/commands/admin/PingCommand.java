@@ -1,14 +1,14 @@
 package net.ranzer.grimco.rafflebot.commands.admin;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.Category;
 import net.ranzer.grimco.rafflebot.commands.Describable;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 public class PingCommand extends BotCommand implements  Describable{
 

@@ -1,6 +1,6 @@
 package net.ranzer.grimco.rafflebot.commands;
 
-import java.awt.Color;
+import java.awt.*;
 
 public enum Category {
 			

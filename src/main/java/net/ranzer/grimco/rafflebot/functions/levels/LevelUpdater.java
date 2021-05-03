@@ -1,11 +1,11 @@
 package net.ranzer.grimco.rafflebot.functions.levels;
 
-import java.util.concurrent.ThreadLocalRandom;
-
-import net.ranzer.grimco.rafflebot.data.GuildManager;
-import net.ranzer.grimco.rafflebot.data.IGuildData;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.ranzer.grimco.rafflebot.data.GuildManager;
+import net.ranzer.grimco.rafflebot.data.IGuildData;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 //todo add xp decay
 //todo change alert system to PM Member once they reach the xp threshold for Raffle participation

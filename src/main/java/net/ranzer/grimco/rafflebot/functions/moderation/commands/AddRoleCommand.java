@@ -13,7 +13,6 @@ import net.ranzer.grimco.rafflebot.commands.Describable;
 import net.ranzer.grimco.rafflebot.data.GuildManager;
 import net.ranzer.grimco.rafflebot.functions.moderation.RoleManager;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 

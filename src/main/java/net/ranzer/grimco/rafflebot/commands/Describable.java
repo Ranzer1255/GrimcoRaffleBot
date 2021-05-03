@@ -1,9 +1,9 @@
 package net.ranzer.grimco.rafflebot.commands;
 
-import java.util.List;
-
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
+
+import java.util.List;
 
 public interface Describable {
 

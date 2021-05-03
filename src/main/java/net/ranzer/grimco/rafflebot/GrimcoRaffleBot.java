@@ -1,12 +1,12 @@
 package net.ranzer.grimco.rafflebot;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collection;
-
-import javax.security.auth.login.LoginException;
-
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.ShutdownEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.ranzer.grimco.rafflebot.config.BotConfiguration;
@@ -14,13 +14,12 @@ import net.ranzer.grimco.rafflebot.data.GuildManager;
 import net.ranzer.grimco.rafflebot.functions.levels.LevelUpdater;
 import net.ranzer.grimco.rafflebot.functions.listeners.CommandListener;
 import net.ranzer.grimco.rafflebot.util.Logging;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.OnlineStatus;
-import net.dv8tion.jda.api.events.ReadyEvent;
-import net.dv8tion.jda.api.events.ShutdownEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+
+import javax.security.auth.login.LoginException;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  *

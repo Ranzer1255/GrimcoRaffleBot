@@ -1,8 +1,8 @@
 package net.ranzer.grimco.rafflebot.util;
 
+import net.dv8tion.jda.api.entities.PrivateChannel;
 import net.ranzer.grimco.rafflebot.GrimcoRaffleBot;
 import net.ranzer.grimco.rafflebot.config.BotConfiguration;
-import net.dv8tion.jda.api.entities.PrivateChannel;
 
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;

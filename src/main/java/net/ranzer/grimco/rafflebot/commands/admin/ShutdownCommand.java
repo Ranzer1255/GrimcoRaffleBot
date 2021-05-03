@@ -1,11 +1,11 @@
 package net.ranzer.grimco.rafflebot.commands.admin;
 
-import java.util.Collections;
-import java.util.List;
-
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.config.BotConfiguration;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+
+import java.util.Collections;
+import java.util.List;
 
 public class ShutdownCommand extends BotCommand {
 	

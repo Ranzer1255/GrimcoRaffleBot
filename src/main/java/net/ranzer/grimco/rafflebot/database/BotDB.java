@@ -1,11 +1,11 @@
 package net.ranzer.grimco.rafflebot.database;
 
+import net.ranzer.grimco.rafflebot.config.BotConfiguration;
+import net.ranzer.grimco.rafflebot.util.Logging;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
-import net.ranzer.grimco.rafflebot.config.BotConfiguration;
-import net.ranzer.grimco.rafflebot.util.Logging;
 
 
 public class BotDB {

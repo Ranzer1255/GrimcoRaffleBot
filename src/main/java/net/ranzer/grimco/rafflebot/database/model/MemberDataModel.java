@@ -1,7 +1,6 @@
 package net.ranzer.grimco.rafflebot.database.model;
 
 import net.dv8tion.jda.api.entities.Member;
-import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
 import java.util.HashMap;

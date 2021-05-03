@@ -1,18 +1,18 @@
 package net.ranzer.grimco.rafflebot.functions.draconic.commands;
 
-import java.awt.Color;
-import java.util.Arrays;
-import java.util.List;
-
-import net.ranzer.grimco.rafflebot.commands.BotCommand;
-import net.ranzer.grimco.rafflebot.commands.Describable;
-import net.ranzer.grimco.rafflebot.commands.Category;
-import net.ranzer.grimco.rafflebot.functions.draconic.DraconicTranslator;
-import net.ranzer.grimco.rafflebot.util.StringUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.ranzer.grimco.rafflebot.commands.BotCommand;
+import net.ranzer.grimco.rafflebot.commands.Category;
+import net.ranzer.grimco.rafflebot.commands.Describable;
+import net.ranzer.grimco.rafflebot.functions.draconic.DraconicTranslator;
+import net.ranzer.grimco.rafflebot.util.StringUtil;
+
+import java.awt.*;
+import java.util.Arrays;
+import java.util.List;
 
 public class DraconicTranslateCommand extends BotCommand implements Describable{
 

@@ -3,10 +3,11 @@ package net.ranzer.grimco.rafflebot.database.model;
 import net.dv8tion.jda.api.entities.Member;
 import net.ranzer.grimco.rafflebot.data.IGuildData;
 import net.ranzer.grimco.rafflebot.data.IRaffleData;
-import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "guild")

@@ -1,13 +1,13 @@
 package net.ranzer.grimco.rafflebot.commands;
 
-import java.util.List;
-
-import net.ranzer.grimco.rafflebot.config.BotConfiguration;
-import net.ranzer.grimco.rafflebot.data.GuildManager;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.ranzer.grimco.rafflebot.config.BotConfiguration;
+import net.ranzer.grimco.rafflebot.data.GuildManager;
+
+import java.util.List;
 
 public abstract class BotCommand {
 

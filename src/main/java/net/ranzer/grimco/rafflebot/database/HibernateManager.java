@@ -6,11 +6,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.boot.spi.BasicTypeRegistration;
-import org.hibernate.type.BasicTypeRegistry;
-
-import javax.persistence.EntityManager;
-import java.util.Arrays;
 
 public class HibernateManager {
 

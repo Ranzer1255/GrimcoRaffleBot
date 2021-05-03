@@ -12,7 +12,7 @@ import net.ranzer.grimco.rafflebot.database.model.MemberDataModel;
 import net.ranzer.grimco.rafflebot.database.model.MemberPK;
 import org.hibernate.Session;
 
-import javax.persistence.*;
+import javax.persistence.NoResultException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;

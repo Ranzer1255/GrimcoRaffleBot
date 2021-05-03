@@ -2,7 +2,6 @@ package net.ranzer.grimco.rafflebot.database.model;
 
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.ranzer.grimco.rafflebot.data.IChannelData;
-import net.ranzer.grimco.rafflebot.data.IRaffleData;
 
 import javax.persistence.*;
 

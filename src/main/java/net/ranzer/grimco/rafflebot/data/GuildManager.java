@@ -1,29 +1,25 @@
 package net.ranzer.grimco.rafflebot.data;
 
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.channel.text.TextChannelCreateEvent;
+import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent;
+import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.ranzer.grimco.rafflebot.GrimcoRaffleBot;
-import net.ranzer.grimco.rafflebot.database.BotDB;
 import net.ranzer.grimco.rafflebot.database.HibernateManager;
 import net.ranzer.grimco.rafflebot.database.interfaces.GuildData;
 import net.ranzer.grimco.rafflebot.database.model.ChannelDataModel;
 import net.ranzer.grimco.rafflebot.database.model.GuildDataModel;
 import net.ranzer.grimco.rafflebot.database.model.MemberDataModel;
 import net.ranzer.grimco.rafflebot.util.Logging;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.events.channel.text.TextChannelCreateEvent;
-import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent;
-import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
-import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.hibernate.Session;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 
 /**

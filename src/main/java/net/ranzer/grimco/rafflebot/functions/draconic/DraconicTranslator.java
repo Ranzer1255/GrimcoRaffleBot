@@ -1,5 +1,12 @@
 package net.ranzer.grimco.rafflebot.functions.draconic;
 
+import net.ranzer.grimco.rafflebot.util.LogLevel;
+import net.ranzer.grimco.rafflebot.util.Logging;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -7,13 +14,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
-import net.ranzer.grimco.rafflebot.util.LogLevel;
-import net.ranzer.grimco.rafflebot.util.Logging;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 /**
  * 

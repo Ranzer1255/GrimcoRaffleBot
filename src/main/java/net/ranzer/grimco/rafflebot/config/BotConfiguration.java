@@ -1,17 +1,10 @@
 package net.ranzer.grimco.rafflebot.config;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.Properties;
-import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 public class BotConfiguration {

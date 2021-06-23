@@ -2,6 +2,8 @@ package net.ranzer.grimco.rafflebot.database.model;
 
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.ranzer.grimco.rafflebot.data.IChannelData;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -13,7 +15,8 @@ public class ChannelDataModel {
 	@Column(name = "text_channel_id")
 	private String channelID;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "guild_id")
 	private GuildDataModel gdm;
 

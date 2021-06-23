@@ -1,6 +1,8 @@
 package net.ranzer.grimco.rafflebot.database.model;
 
 import net.dv8tion.jda.api.entities.Member;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -17,6 +19,7 @@ public class MemberDataModel {
 
 	@Id
 	@ManyToOne
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "guild_id")
 	private GuildDataModel gdm;
 

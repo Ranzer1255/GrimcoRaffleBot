@@ -3,6 +3,8 @@ package net.ranzer.grimco.rafflebot.database.model;
 import net.dv8tion.jda.api.entities.Member;
 import net.ranzer.grimco.rafflebot.data.IGuildData;
 import net.ranzer.grimco.rafflebot.data.IRaffleData;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -34,12 +36,14 @@ public class GuildDataModel {
 	private int raffleThreshold = IRaffleData.DEFAULT_RAFFLE_THRESHOLD;
 	@ElementCollection
 	@CollectionTable(name = "raffle_roles")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "guild_id")
 	@Column(name = "role_id")
 	private Set<String> raffleRoleIDs;
 
 	@ElementCollection
 	@CollectionTable(name = "moderation_roles")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "guild_id")
 	@Column(name= "role_id")
 	private Set<String> modRoleIDs;

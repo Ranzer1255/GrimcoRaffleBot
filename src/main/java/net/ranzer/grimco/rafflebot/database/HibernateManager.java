@@ -20,7 +20,8 @@ public class HibernateManager {
 			String DBMS = config.getDatabaseManagementSystem();
 			String host = config.getDatabaseHostname();
 			Integer port = config.getDatabasePort();
-			String DB = config.getDatabaseName();
+
+			String DB = config.isDebug()?config.getTestDatabaseName():config.getDatabaseName();
 
 			// A SessionFactory is set up once for an application!
 			final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()

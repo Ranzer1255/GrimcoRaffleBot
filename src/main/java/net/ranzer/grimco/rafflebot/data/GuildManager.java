@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.ranzer.grimco.rafflebot.GrimcoRaffleBot;
 import net.ranzer.grimco.rafflebot.database.HibernateManager;
@@ -113,11 +114,16 @@ public class GuildManager extends ListenerAdapter{
 			s.beginTransaction();
 			List<MemberDataModel> members = loadAllData(MemberDataModel.class, s);
 			for (MemberDataModel member : members) {
-				//noinspection ConstantConditions
-				if (jda.getGuildById(member.getGuildId())
-						.retrieveMemberById(Long.parseLong(member.getUserId()))
-						.complete() == null) {
-					member.removeAllXP();
+				try{
+					Guild g = jda.getGuildById(member.getGuildId());
+					if (g == null) continue; //this should never happen
+					g.retrieveMemberById(Long.parseLong(member.getUserId())).complete();
+				} catch (ErrorResponseException e){
+					switch (e.getErrorResponse()){
+						case UNKNOWN_MEMBER:
+						case UNKNOWN_USER:
+							member.removeAllXP();
+					}
 				}
 			}
 			s.getTransaction().commit();

@@ -33,7 +33,7 @@ public class ModRoleCommand extends BotCommand implements Describable {
 				message = "no roles on the list, only members with *ADMINISTRATOR* permission may use moderation commands";
 			} else {
 				for (Role r : roles) {
-					sb.append(r.getName()).append(" ,");
+					sb.append(r.getName()).append(", ");
 				}
 				sb.delete(sb.length() - 1, sb.length());
 				message = String.format("Allowed Roles: %s", sb);
@@ -51,11 +51,7 @@ public class ModRoleCommand extends BotCommand implements Describable {
 					}
 					Role r = roles.get(0);
 
-					if (GuildManager.getGuildData(event.getGuild()).addModRole(r)) {
-						roleAdd(event.getChannel(), r, true);
-					} else {
-						roleAdd(event.getChannel(), r, false);
-					}
+					roleAdd(event.getChannel(), r, GuildManager.getGuildData(event.getGuild()).addModRole(r));
 					break;
 				case "remove":
 					roles = event.getJDA().getRolesByName(

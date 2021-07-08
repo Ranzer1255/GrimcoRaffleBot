@@ -25,7 +25,7 @@ public class ModifyRolesCommand extends AbstractRaffleCommand implements Describ
 
             for (Role r :
                     roles) {
-                sb.append(r.getName()).append(" ,");
+                sb.append(r.getName()).append(", ");
             }
             sb.delete(sb.length()-1,sb.length());
 

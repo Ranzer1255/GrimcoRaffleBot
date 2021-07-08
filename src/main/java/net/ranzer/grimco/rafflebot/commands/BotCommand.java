@@ -66,7 +66,7 @@ public abstract class BotCommand {
 	}
 
 	private boolean checkRoleRequirements(MessageReceivedEvent event) {
-		for(Role role : event.getGuild().getMember(event.getAuthor()).getRoles()){
+		for(Role role : event.getMember().getRoles()){
 			if(getRoleRequirements(event.getGuild()).contains(role))
 				return true;
 		}

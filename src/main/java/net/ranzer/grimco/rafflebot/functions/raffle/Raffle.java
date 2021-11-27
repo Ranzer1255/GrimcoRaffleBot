@@ -22,6 +22,7 @@ public class Raffle {
     public static final String ID_CONFIRM_END =   RAFFLE_BUTTON_PREFIX + "confirm_end";
     public static final String ID_CONFIRM_LOCK =  RAFFLE_BUTTON_PREFIX + "confirm_lock";
     public static final String ID_CONFIRM_DRAW =  RAFFLE_BUTTON_PREFIX + "confirm_draw";
+    public static final String ID_DRAW_AGAIN =    RAFFLE_BUTTON_PREFIX + "draw_again";
 
     public static final List<ActionRow> RAFFLE_BUTTONS_OPEN = Arrays.asList(
             ActionRow.of(
@@ -45,7 +46,8 @@ public class Raffle {
     );
 
 
-    private boolean isOpen;
+
+	private boolean isOpen;
     private final String prize;
     private final List<Member> entries = new ArrayList<>();
     private Message activeMessage;
@@ -80,13 +82,6 @@ public class Raffle {
      */
     public boolean removeEntry(Member entrant){
         return entries.remove(entrant);
-    }
-
-    /**
-     * clears the List of all entrants
-     */
-    public void clearEntries(){
-        entries.clear();
     }
 
     /**

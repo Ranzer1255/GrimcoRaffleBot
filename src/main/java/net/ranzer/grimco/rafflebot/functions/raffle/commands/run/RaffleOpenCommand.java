@@ -17,6 +17,14 @@ public class RaffleOpenCommand extends AbstractRaffleCommand implements Describa
 
     @Override
     public void process(String[] args, MessageReceivedEvent event) {
+
+        //Active raffle in channel. block start of a new one
+        if (raffles.containsKey(event.getChannel().getId())){
+            event.getChannel().sendMessage("There is already an active raffle in this channel. " +
+                    "You cannot start a new one until the previous one has been Ended").queue();
+            return;
+        }
+
         Raffle raffle;
         if (args.length==0){
             raffle = new Raffle("");
@@ -24,7 +32,7 @@ public class RaffleOpenCommand extends AbstractRaffleCommand implements Describa
             raffle = new Raffle(StringUtil.arrayToString(args," "));
         }
 
-        raffles.put(event.getTextChannel().getId(),raffle);
+        raffles.put(event.getChannel().getId(),raffle);
 
         event.getChannel().sendMessageEmbeds(raffle.getEmbed())
                 .setActionRows(Raffle.RAFFLE_BUTTONS_OPEN)
@@ -45,7 +53,9 @@ public class RaffleOpenCommand extends AbstractRaffleCommand implements Describa
     }
     @Override
     public String getLongDescription() {
-        return getShortDescription();
+        return getShortDescription() + "\n\n" +
+                "you can include an optional title or prize for your raffle by including it at the end of the command\n\n" +
+                "ie: `raffle open Grand Prize` or `raffle open Game Key`";
     }
 
     @Override
@@ -61,7 +71,7 @@ public class RaffleOpenCommand extends AbstractRaffleCommand implements Describa
     @Override
     public String getUsage(Guild g) {
         return String.format(
-                "`%sraffle %s`",
+                "`%sraffle %s [<title or prize of raffle>]`",
                 BotCommand.getPrefix(g),
                 getName()
         );

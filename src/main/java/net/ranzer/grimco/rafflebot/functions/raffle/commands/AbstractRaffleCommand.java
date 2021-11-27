@@ -15,7 +15,6 @@ import net.ranzer.grimco.rafflebot.config.BotConfiguration;
 import net.ranzer.grimco.rafflebot.data.GuildManager;
 import net.ranzer.grimco.rafflebot.data.IRaffleData;
 import net.ranzer.grimco.rafflebot.functions.raffle.Raffle;
-import net.ranzer.grimco.rafflebot.functions.raffle.commands.run.RaffleEnterCommand;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -24,6 +23,11 @@ import java.util.Map;
 
 public abstract class AbstractRaffleCommand extends BotCommand implements Describable {
 
+    public static final String BARRED_MESSAGE = "sorry %s, but you have been barred from entry";
+    public static final String INACTIVE_MESSAGE = "Sorry %s, but you haven't been active enough in the community to be eligible for raffles";
+    public static final String RAFFLE_EXISTS_MESSAGE = "%s, You've already entered. call %swithdraw if you would like to be removed.";
+    public static final String RAFFLE_CLOSED_MESSAGE = "sorry %s, but the raffle's been closed and a drawing is about to happen.";
+    public static final String NO_RAFFLE_MESSAGE = "I'm sorry, but there isn't a raffle currently";
     protected static final Map<String, Raffle> raffles = new HashMap<>();
 
     @Override
@@ -67,17 +71,18 @@ public abstract class AbstractRaffleCommand extends BotCommand implements Descri
             switch (event.getComponentId()) {
                 case Raffle.ID_ENTER:
                     if (barred(event.getMember())) {
-                        event.reply(String.format(RaffleEnterCommand.BARRED_MESSAGE,
+                        event.reply(String.format(AbstractRaffleCommand.BARRED_MESSAGE,
                                 event.getMember().getEffectiveName()))
                                 .setEphemeral(true).queue();
                     } else if (notActive(event.getMember())) {
-                        event.reply(String.format(RaffleEnterCommand.INACTIVE_MESSAGE,
+                        event.reply(String.format(AbstractRaffleCommand.INACTIVE_MESSAGE,
                                 event.getMember().getEffectiveName())).setEphemeral(true).queue();
                     } else {
                         switch (r.addEntry(event.getMember())){
                             case added:
                                 event.reply("You have been entered into the raffle").setEphemeral(true).queue();
                                 r.updateActiveMessage();
+                                event.getChannel().sendMessage(event.getMember().getEffectiveName() + " has entered the raffle!").queue();
                                 break;
                             case exists:
                                 event.reply("Hey! you're already in! you can't have two tickets, sorry!")
@@ -91,6 +96,7 @@ public abstract class AbstractRaffleCommand extends BotCommand implements Descri
                         event.reply("You have been Withdrawn from the Raffle. Better luck next time")
                                 .setEphemeral(true).queue();
                         r.updateActiveMessage();
+                        event.getChannel().sendMessage(event.getMember().getEffectiveName() + " has Withdrawn their name from the raffle...").queue();
                     } else {
                         event.reply("You were not in the raffle.").setEphemeral(true).queue();
                     }
@@ -139,7 +145,8 @@ public abstract class AbstractRaffleCommand extends BotCommand implements Descri
                         }
 
                         if (r.isOpen()) {
-                            event.reply("This will lock the raffle and not allow any further entries, are you sure?")
+                            event.reply("This will lock the raffle and not allow any further entries, are you sure?\n" +
+                                    "Dismiss this message to cancel")
                                     .setEphemeral(true)
                                     .addActionRow(
                                             Button.danger(Raffle.ID_CONFIRM_DRAW, "Yes! lock the raffle and Draw!")
@@ -153,7 +160,9 @@ public abstract class AbstractRaffleCommand extends BotCommand implements Descri
                                     winner.getAsMention())).queue();
                             if (r.getNumEntries() != 0) {
                                 event.reply("There are still more entries, if you would like to draw an additional name" +
-                                        " you may").setEphemeral(true).addActionRows(Raffle.RAFFLE_BUTTONS_CLOSED).queue();
+                                        " you may").setEphemeral(true).addActionRow(
+                                                Button.danger(Raffle.ID_DRAW_AGAIN, "Draw Again!")
+                                ).queue();
                             } else {
                                 event.deferEdit().queue();
                             }
@@ -176,8 +185,15 @@ public abstract class AbstractRaffleCommand extends BotCommand implements Descri
                         event.deferEdit().queue();
                     }
                     break;
+                case Raffle.ID_DRAW_AGAIN:
+                    winner = r.draw();
+                    r.updateActiveMessage();
+                    event.getChannel().sendMessage(String.format("Congratulations %s, you have won!!!!! " +
+                                    "A member of the Moderation team will be reaching out to you shortly to handle the details!",
+                            winner.getAsMention())).queue();
+                    break;
                 default:
-                    event.reply("ranzer forgot to handle this button. yell at him").setEphemeral(true).queue();
+                    event.reply("ranzer forgot to handle the " + event.getComponentId() +" button. yell at him").queue();
             }
         }
     };

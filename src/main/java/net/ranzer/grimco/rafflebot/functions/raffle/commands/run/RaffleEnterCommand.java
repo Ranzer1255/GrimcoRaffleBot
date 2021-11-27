@@ -1,21 +1,13 @@
 package net.ranzer.grimco.rafflebot.functions.raffle.commands.run;
 
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.ranzer.grimco.rafflebot.commands.Describable;
-import net.ranzer.grimco.rafflebot.data.GuildManager;
 import net.ranzer.grimco.rafflebot.functions.raffle.commands.AbstractRaffleCommand;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class RaffleEnterCommand extends AbstractRaffleCommand implements Describable {
-
-    public static final String BARRED_MESSAGE = "sorry %s, but you have been barred from entry";
-    public static final String INACTIVE_MESSAGE = "Sorry %s, but you haven't been active enough in the community to be eligible for raffles";
-    public static final String RAFFLE_EXISTS_MESSAGE = "%s, You've already entered. call %swithdraw if you would like to be removed.";
-    public static final String RAFFLE_CLOSED_MESSAGE = "sorry %s, but the raffle's been closed and a drawing is about to happen.";
-    public static final String NO_RAFFLE_MESSAGE = "I'm sorry, but there isn't a raffle currently";
 
     @Override
     public void process(String[] args, MessageReceivedEvent event) {
@@ -63,7 +55,7 @@ public class RaffleEnterCommand extends AbstractRaffleCommand implements Describ
 
     @Override
     public List<String> getAlias() {
-        return Arrays.asList("enter");
+        return Collections.singletonList("enter");
     }
 
     @Override

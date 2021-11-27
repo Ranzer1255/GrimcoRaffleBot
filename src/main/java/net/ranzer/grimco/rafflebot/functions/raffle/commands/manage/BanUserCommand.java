@@ -41,7 +41,7 @@ public class BanUserCommand extends AbstractRaffleCommand implements Describable
 
             event.getChannel().sendMessage(
                     "Banned users:\n" +
-                            sb.toString()
+                            sb
             ).queue();
             return;
         }

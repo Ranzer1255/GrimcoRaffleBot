@@ -18,8 +18,8 @@ public class RaffleWithdrawCommand extends AbstractRaffleCommand implements Desc
     @Override
     public void process(String[] args, MessageReceivedEvent event) {
         if (args.length==0){//remove the calling user
-            if (raffles.containsKey(event.getTextChannel())){
-                raffles.get(event.getTextChannel()).removeEntry(event.getMember());
+            if (raffles.containsKey(event.getTextChannel().getId())){
+                raffles.get(event.getTextChannel().getId()).removeEntry(event.getMember());
                 event.getChannel().sendMessage(String.format(
                         "%s, you have been removed from the raffle",
                         event.getMember().getAsMention()
@@ -33,7 +33,7 @@ public class RaffleWithdrawCommand extends AbstractRaffleCommand implements Desc
             for (Role r: event.getMember().getRoles()){
                 if (r.getPermissions().contains(Permission.ADMINISTRATOR) || getAllowedManagementRoles(event.getGuild()).contains(r)){
                     for (Member m: event.getMessage().getMentionedMembers()) {
-                        raffles.get(event.getTextChannel()).removeEntry(m);
+                        raffles.get(event.getTextChannel().getId()).removeEntry(m);
                         event.getChannel().sendMessage(String.format(
                                 "%s has been removed from the raffle",
                                 m.getEffectiveName()

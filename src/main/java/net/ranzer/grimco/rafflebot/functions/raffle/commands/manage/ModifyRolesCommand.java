@@ -23,6 +23,10 @@ public class ModifyRolesCommand extends AbstractRaffleCommand implements Describ
             List<Role> roles = GuildManager.getGuildData(event.getGuild()).getRaffleData().allowedRaffleRoles();
             StringBuilder sb = new StringBuilder();
 
+            if(roles.isEmpty()) {
+                event.getChannel().sendMessage("There are no Roles configured").queue();
+                return;
+            }
             for (Role r :
                     roles) {
                 sb.append(r.getName()).append(" ,");

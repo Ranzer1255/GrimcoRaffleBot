@@ -8,6 +8,7 @@ import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.Describable;
 import net.ranzer.grimco.rafflebot.functions.raffle.Raffle;
 import net.ranzer.grimco.rafflebot.functions.raffle.commands.AbstractRaffleCommand;
+import net.ranzer.grimco.rafflebot.util.StringUtil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,10 +17,21 @@ public class RaffleOpenCommand extends AbstractRaffleCommand implements Describa
 
     @Override
     public void process(String[] args, MessageReceivedEvent event) {
-        Raffle raffle = new Raffle();
-        raffles.put(event.getTextChannel(),raffle);
+        Raffle raffle;
+        if (args.length==0){
+            raffle = new Raffle("");
+        } else {
+            raffle = new Raffle(StringUtil.arrayToString(args," "));
+        }
 
-        event.getChannel().sendMessage("The raffle is now Open, to enter type `"+getPrefix(event.getGuild())+"enter`").queue();
+        raffles.put(event.getTextChannel().getId(),raffle);
+
+        event.getChannel().sendMessageEmbeds(raffle.getEmbed())
+                .setActionRows(Raffle.RAFFLE_BUTTONS_OPEN)
+                .queue(raffle::setActiveMessage);
+
+        if(!event.getJDA().getEventManager().getRegisteredListeners().contains(raffleButtonListener))
+            event.getJDA().addEventListener(raffleButtonListener);
     }
 
     @Override

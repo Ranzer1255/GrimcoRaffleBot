@@ -26,11 +26,11 @@ public class RaffleCommand extends AbstractRaffleCommand implements Describable 
     static {
         subCommands=new ArrayList<>();
         subCommands.add(new RaffleOpenCommand());
-        subCommands.add(new RaffleEnterCommand());
+//        subCommands.add(new RaffleEnterCommand());
         subCommands.add(new RaffleWithdrawCommand());
-        subCommands.add(new RaffleCloseCommand());
-        subCommands.add(new RaffleDrawCommand());
-        subCommands.add(new RaffleEndCommand());
+//        subCommands.add(new RaffleCloseCommand());
+//        subCommands.add(new RaffleDrawCommand());
+//        subCommands.add(new RaffleEndCommand());
         subCommands.add(new ModifyRolesCommand());
         subCommands.add(new BanUserCommand());
         subCommands.add(new ChannelEnableCommand());
@@ -41,8 +41,9 @@ public class RaffleCommand extends AbstractRaffleCommand implements Describable 
     public void process(String[] args, MessageReceivedEvent event) {
 
        if (args.length == 0) {
-            if(raffles.containsKey(event.getTextChannel())) {
-                event.getChannel().sendMessage(statusEmbed(raffles.get(event.getTextChannel()))).queue();
+            if(raffles.containsKey(event.getTextChannel().getId())) {
+                Raffle r = raffles.get(event.getTextChannel().getId());
+                event.getChannel().sendMessageEmbeds(r.getEmbed()).queue(r::setActiveMessage);
             }
             return;
         }

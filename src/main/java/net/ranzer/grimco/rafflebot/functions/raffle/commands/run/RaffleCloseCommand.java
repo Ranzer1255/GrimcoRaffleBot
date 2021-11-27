@@ -14,8 +14,8 @@ import java.util.List;
 public class RaffleCloseCommand extends AbstractRaffleCommand implements Describable {
     @Override
     public void process(String[] args, MessageReceivedEvent event) {
-        if (raffles.containsKey(event.getTextChannel())&&raffles.get(event.getTextChannel()).isOpen()){
-            raffles.get(event.getTextChannel()).close();
+        if (raffles.containsKey(event.getTextChannel().getId())&&raffles.get(event.getTextChannel().getId()).isOpen()){
+            raffles.get(event.getTextChannel().getId()).close();
             event.getChannel().sendMessage("The Raffle is now Closed to further Entries").queue();
         } else {
             event.getChannel().sendMessage("There is no open raffle at this time").queue();

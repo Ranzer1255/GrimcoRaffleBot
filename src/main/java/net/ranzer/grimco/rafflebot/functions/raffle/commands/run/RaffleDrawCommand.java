@@ -15,8 +15,8 @@ import java.util.List;
 public class RaffleDrawCommand extends AbstractRaffleCommand implements Describable {
     @Override
     public void process(String[] args, MessageReceivedEvent event) {
-        if (raffles.containsKey(event.getTextChannel())){
-            Raffle r = raffles.get(event.getTextChannel());
+        if (raffles.containsKey(event.getTextChannel().getId())){
+            Raffle r = raffles.get(event.getTextChannel().getId());
             if(r.getNumEntries()<=0){
                 event.getChannel().sendMessage(
                         "there are no entries in the raffle"

@@ -15,8 +15,9 @@ public class RaffleEndCommand extends AbstractRaffleCommand implements Describab
 
     @Override
     public void process(String[] args, MessageReceivedEvent event) {
-        if (raffles.containsKey(event.getTextChannel())) {
-            raffles.remove(event.getTextChannel());
+        if (raffles.containsKey(event.getTextChannel().getId())) {
+            raffles.get(event.getTextChannel().getId()).clearActiveMessage();
+            endRaffle(event.getTextChannel().getId());
             event.getChannel().sendMessage("raffle is now ended.").queue();
         } //silent ignore of command if no active raffle
     }

@@ -130,7 +130,7 @@ public abstract class AbstractRaffleCommand extends BotCommand implements Descri
                             String.format("%s has ended the Raffle",event.getMember().getEffectiveName())).queue();
                     event.editMessage("The Raffle is now ended").setActionRows().queue();
                     break;
-                case Raffle.ID_DRAW: //TODO add a confirm button for when the Raffle is still "open"
+                case Raffle.ID_DRAW:
                     if(manager) {
                         if (r.getNumEntries() == 0) {
                             event.reply(r.isOpen() ? "Sorry, but there are no Entries yet..." : "There are no further entries")
@@ -163,7 +163,7 @@ public abstract class AbstractRaffleCommand extends BotCommand implements Descri
                         event.deferEdit().queue();
                     break;
                 case Raffle.ID_CONFIRM_DRAW:
-//                    r.close();
+                    r.close();
                     Member winner = r.draw();
                     r.updateActiveMessage();
                     event.getChannel().sendMessage(String.format("Congratulations %s, you have won!!!!! " +

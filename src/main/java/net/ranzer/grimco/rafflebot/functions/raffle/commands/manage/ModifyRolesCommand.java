@@ -23,6 +23,10 @@ public class ModifyRolesCommand extends AbstractRaffleCommand implements Describ
             List<Role> roles = GuildManager.getGuildData(event.getGuild()).getRaffleData().allowedRaffleRoles();
             StringBuilder sb = new StringBuilder();
 
+            if(roles.isEmpty()) {
+                event.getChannel().sendMessage("There are no Roles configured").queue();
+                return;
+            }
             for (Role r :
                     roles) {
                 sb.append(r.getName()).append(", ");
@@ -31,7 +35,7 @@ public class ModifyRolesCommand extends AbstractRaffleCommand implements Describ
 
             event.getChannel().sendMessage(String.format(
                     "Allowed Roles: %s",
-                    sb.toString()
+                    sb
             )).queue();
         } else {
             switch (args[0]){
@@ -45,11 +49,7 @@ public class ModifyRolesCommand extends AbstractRaffleCommand implements Describ
                     }
                     Role r = roles.get(0);
 
-                    if (GuildManager.getGuildData(event.getGuild()).getRaffleData().addAllowedRole(r)){
-                        roleAdd(event.getChannel(), r, true);
-                    } else {
-                        roleAdd(event.getChannel(), r, false);
-                    }
+                    roleAdd(event.getChannel(), r, GuildManager.getGuildData(event.getGuild()).getRaffleData().addAllowedRole(r));
                     break;
                 case "remove":
                     roles = event.getJDA().getRolesByName(
@@ -61,14 +61,10 @@ public class ModifyRolesCommand extends AbstractRaffleCommand implements Describ
                     }
                     r = roles.get(0);
 
-                    if (GuildManager.getGuildData(event.getGuild()).getRaffleData().removeAllowedRole(r)){
-                        roleRemove(event.getChannel(),r,true);
-                    } else {
-                        roleRemove(event.getChannel(),r,false);
-                    }
+                    roleRemove(event.getChannel(),r, GuildManager.getGuildData(event.getGuild()).getRaffleData().removeAllowedRole(r));
                     break;
                 default:
-                    event.getChannel().sendMessage(HelpCommand.getDescription(this/*,event.getGuild()*/)).queue();
+                    event.getChannel().sendMessageEmbeds(HelpCommand.getDescription(this/*,event.getGuild()*/)).queue();
                     break;
             }
         }

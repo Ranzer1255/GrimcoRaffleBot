@@ -42,6 +42,7 @@ reckon{
 }
 
 tasks.named('jar'){
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes (
                 "Main-Class": "net.ranzer.grimco.rafflebot.GrimcoRaffleBot",

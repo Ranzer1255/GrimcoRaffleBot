@@ -12,7 +12,6 @@ repositories {
         url = 'https://ajoberstar.github.io/bintray-backup/'
     }
     mavenCentral()
-    jcenter()
     maven {
         name 'm2-dv8tion'
         url 'https://m2.dv8tion.net/releases'
@@ -42,11 +41,11 @@ reckon{
     stageFromProp('dev', 'final')
 }
 
-jar {
+tasks.named('jar'){
     manifest {
         attributes (
                 "Main-Class": "net.ranzer.grimco.rafflebot.GrimcoRaffleBot",
-                "version"   : project.version
+                "archiveVersion"   : project.version
         )
     }
 

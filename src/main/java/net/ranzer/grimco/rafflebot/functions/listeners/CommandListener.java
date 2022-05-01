@@ -59,8 +59,8 @@ public class CommandListener extends ListenerAdapter {
 
 		List<CommandData> slashCmds = new ArrayList<>();
 		for(BotCommand cmd:cmds){
-			if(cmd.getCommandData()!=null){
-				slashCmds.add(cmd.getCommandData());
+			if(cmd.getSlashCommandData()!=null){
+				slashCmds.add(cmd.getSlashCommandData());
 			}
 		}
 

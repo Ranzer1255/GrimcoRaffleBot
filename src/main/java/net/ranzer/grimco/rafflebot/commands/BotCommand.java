@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.ranzer.grimco.rafflebot.config.BotConfiguration;
 import net.ranzer.grimco.rafflebot.data.GuildManager;
 
@@ -132,7 +132,7 @@ public abstract class BotCommand {
 		return list.get(0);
 	}
 
-	public CommandData getCommandData() {
+	public SlashCommandData getSlashCommandData() {
 		return null;
 	}
 }

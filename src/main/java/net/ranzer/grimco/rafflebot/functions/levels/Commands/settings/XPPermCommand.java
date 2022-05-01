@@ -14,7 +14,7 @@ import java.util.List;
 public class XPPermCommand extends AbstractLevelCommand implements Describable{
 
 	@Override
-	public void process(String[] args,  MessageReceivedEvent event) {
+	public void processPrefix(String[] args, MessageReceivedEvent event) {
 		// TODO: 12/24/2018 rewrite this as a switch statement.. it should look cleaner that way
 
 		if (args.length==0){

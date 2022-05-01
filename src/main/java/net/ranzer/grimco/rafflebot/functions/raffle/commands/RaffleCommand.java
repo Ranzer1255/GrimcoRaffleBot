@@ -32,7 +32,7 @@ public class RaffleCommand extends AbstractRaffleCommand implements Describable 
     }
 
     @Override
-    public void process(String[] args, MessageReceivedEvent event) {
+    public void processPrefix(String[] args, MessageReceivedEvent event) {
 
        if (args.length == 0) {
             if(raffles.containsKey(event.getTextChannel().getId())) {
@@ -56,7 +56,7 @@ public class RaffleCommand extends AbstractRaffleCommand implements Describable 
                 return;
             }
         }
-        c.get().runCommand(Arrays.copyOfRange(args, 1, args.length), event);
+        c.get().runPrefixCommand(Arrays.copyOfRange(args, 1, args.length), event);
 
     }
 

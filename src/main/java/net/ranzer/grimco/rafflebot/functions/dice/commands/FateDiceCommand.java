@@ -18,7 +18,7 @@ public class FateDiceCommand extends BotCommand {
 	}
 
 	@Override
-	protected void process(String[] args, MessageReceivedEvent event) {
+	protected void processPrefix(String[] args, MessageReceivedEvent event) {
 		DiceRoll diceRoll = DiceRollBuilder.newDiceRoll("4dF");
 
 		diceRoll.roll();

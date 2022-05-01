@@ -16,7 +16,7 @@ import java.util.List;
 public class RaffleOpenCommand extends AbstractRaffleCommand implements Describable {
 
     @Override
-    public void process(String[] args, MessageReceivedEvent event) {
+    public void processPrefix(String[] args, MessageReceivedEvent event) {
 
         //Active raffle in channel. block start of a new one
         if (raffles.containsKey(event.getChannel().getId())){

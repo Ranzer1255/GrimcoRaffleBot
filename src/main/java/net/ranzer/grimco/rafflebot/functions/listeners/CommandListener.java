@@ -1,7 +1,12 @@
 package net.ranzer.grimco.rafflebot.functions.listeners;
 
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.ranzer.grimco.rafflebot.GrimcoRaffleBot;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.admin.*;
 import net.ranzer.grimco.rafflebot.functions.dice.commands.DiceCommand;
@@ -14,6 +19,8 @@ import net.ranzer.grimco.rafflebot.functions.moderation.commands.manage.ModRoleC
 import net.ranzer.grimco.rafflebot.functions.raffle.commands.RaffleCommand;
 import net.ranzer.grimco.rafflebot.functions.raffle.commands.run.RaffleEnterCommand;
 import net.ranzer.grimco.rafflebot.functions.raffle.commands.run.RaffleWithdrawCommand;
+import net.ranzer.grimco.rafflebot.util.Logging;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,13 +56,47 @@ public class CommandListener extends ListenerAdapter {
 			.addCommand(new RaffleEnterCommand())
 			.addCommand(new RaffleWithdrawCommand())
 			.addCommand(new FoldingAtHomeStatsCommand());
+
+		List<CommandData> slashCmds = new ArrayList<>();
+		for(BotCommand cmd:cmds){
+			if(cmd.getCommandData()!=null){
+				slashCmds.add(cmd.getCommandData());
+			}
+		}
+
+		for(Guild g: GrimcoRaffleBot.getJDA().getGuilds()){
+			g.updateCommands().addCommands(slashCmds).queue();
+		}
 	}
 	
 	private CommandListener addCommand(BotCommand cmd){
 		this.cmds.add(cmd);
 		return this;
 	}
-	
+
+	@Override
+	public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+		Logging.debug("looking for a slash command");
+		Optional<BotCommand> c = cmds.stream().filter(cmd -> cmd.getName().equals(event.getName())).findFirst();
+		if (c.isPresent()) {
+			Logging.debug("found one");
+			for (OptionMapping o: event.getOptions()){
+				Logging.debug(String.format("%s: %s",o.getName(),o.getAsString()));
+			}
+		}
+		c.ifPresent(botCommand -> callSlashCommand(event,botCommand));
+	}
+
+	private void callSlashCommand(SlashCommandInteractionEvent event, BotCommand cmd) {
+		new Thread(){
+			@Override
+			public void run() {
+				cmd.runSlashCommand(event);
+				interrupt();
+			}
+		}.start();
+	}
+
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
 		
@@ -128,7 +169,7 @@ public class CommandListener extends ListenerAdapter {
 		new Thread() {
 			@Override
 			public void run(){
-				cmd.runCommand(finalArgs, event);
+				cmd.runPrefixCommand(finalArgs, event);
 				interrupt();
 			}
 		}.start();

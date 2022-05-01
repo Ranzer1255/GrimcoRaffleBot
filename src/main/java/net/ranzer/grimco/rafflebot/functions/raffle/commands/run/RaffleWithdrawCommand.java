@@ -16,7 +16,7 @@ public class RaffleWithdrawCommand extends AbstractRaffleCommand implements Desc
 
 
     @Override
-    public void process(String[] args, MessageReceivedEvent event) {
+    public void processPrefix(String[] args, MessageReceivedEvent event) {
         if (args.length==0){//remove the calling user
             if (raffles.containsKey(event.getTextChannel().getId())){
                 raffles.get(event.getTextChannel().getId()).removeEntry(event.getMember());

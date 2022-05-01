@@ -26,7 +26,7 @@ public class XPSettingsCommand extends AbstractLevelCommand implements Describab
     }
 
     @Override
-    public void process(String[] args, MessageReceivedEvent event) {
+    public void processPrefix(String[] args, MessageReceivedEvent event) {
 
         if (args.length == 0) {
 
@@ -42,7 +42,7 @@ public class XPSettingsCommand extends AbstractLevelCommand implements Describab
             return;
         }
         Logging.debug("xp-settings Subcommand: "+c.get().getName());
-        c.get().runCommand(Arrays.copyOfRange(args, 1, args.length), event);
+        c.get().runPrefixCommand(Arrays.copyOfRange(args, 1, args.length), event);
     }
 
     private MessageEmbed currentSettingsEmbed(Guild g) {

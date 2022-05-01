@@ -13,7 +13,7 @@ public class XPThresholdCommand extends AbstractLevelCommand implements Describa
 
 
     @Override
-    public void process(String[] args, MessageReceivedEvent event) {
+    public void processPrefix(String[] args, MessageReceivedEvent event) {
 
         try {
             if (args.length != 1) throw new IllegalArgumentException();

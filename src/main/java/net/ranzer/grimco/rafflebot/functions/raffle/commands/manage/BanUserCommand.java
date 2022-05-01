@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class BanUserCommand extends AbstractRaffleCommand implements Describable {
     @Override
-    public void process(String[] args, MessageReceivedEvent event) {
+    public void processPrefix(String[] args, MessageReceivedEvent event) {
         if (args.length==0){
             List<Member> banned = GuildManager.getGuildData(event.getGuild()).getRaffleData().getBannedUsers();
 

@@ -15,7 +15,7 @@ import java.util.List;
 public class PrefixCommand extends BotCommand implements Describable{
 
 	@Override
-	public void process(String[] args,  MessageReceivedEvent event) {
+	public void processPrefix(String[] args, MessageReceivedEvent event) {
 		
 		switch (args.length){
 		case 0:

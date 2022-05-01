@@ -13,7 +13,7 @@ import java.util.List;
 
 public class XPEarningCommand extends AbstractLevelCommand implements Describable {
     @Override
-    public void process(String[] args, MessageReceivedEvent event) {
+    public void processPrefix(String[] args, MessageReceivedEvent event) {
 
         IGuildData gd = GuildManager.getGuildData(event.getGuild());
         try {

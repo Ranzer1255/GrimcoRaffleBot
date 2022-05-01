@@ -29,7 +29,7 @@ public class RemoveRoleCommand extends BotCommand implements Describable {
 	}
 
 	@Override
-	protected void process(String[] args, MessageReceivedEvent event) {
+	protected void processPrefix(String[] args, MessageReceivedEvent event) {
 
 		if (args.length<2){
 			return;

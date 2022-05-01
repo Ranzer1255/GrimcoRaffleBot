@@ -15,7 +15,7 @@ import java.util.List;
 
 public class ChannelEnableCommand extends AbstractRaffleCommand implements Describable {
     @Override
-    public void process(String[] args, MessageReceivedEvent event) {
+    public void processPrefix(String[] args, MessageReceivedEvent event) {
 
         IChannelData channel = GuildManager.getGuildData(event.getGuild()).getChannel(event.getTextChannel());
         channel.setRaffle(!channel.getRaffle());

@@ -23,7 +23,7 @@ public class DiceCommand extends BotCommand implements Describable{
 	private static final int MAX_MESSAGE_LENGTH = 1000;
 
 	@Override
-	public void process(String[] args,  MessageReceivedEvent event) {
+	public void processPrefix(String[] args, MessageReceivedEvent event) {
 
 		if(args.length<1){
 			if(event.isFromGuild()){

@@ -10,7 +10,7 @@ import java.util.List;
 public class RaffleEnterCommand extends AbstractRaffleCommand implements Describable {
 
     @Override
-    public void process(String[] args, MessageReceivedEvent event) {
+    public void processPrefix(String[] args, MessageReceivedEvent event) {
         if (raffles.containsKey(event.getTextChannel().getId())) {
 
             //check entrant's eligibility

@@ -13,7 +13,7 @@ import java.util.List;
 public class PingCommand extends BotCommand implements  Describable{
 
 	@Override
-	public void process(String[] args, MessageReceivedEvent event) {
+	public void processPrefix(String[] args, MessageReceivedEvent event) {
 		Date startTime = new Date();
 		Message pong = event.getChannel().sendMessage("pong!").complete();
 		Date endTime = new Date();

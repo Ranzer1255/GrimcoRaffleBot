@@ -18,7 +18,7 @@ public class DraconicTranslateCommand extends BotCommand implements Describable{
 
 		
 	@Override
-	public void process(String[] args,  MessageReceivedEvent event) {
+	public void processPrefix(String[] args, MessageReceivedEvent event) {
 		
 		if (args[0].equals("com")){
 			fromDraconic(StringUtil.arrayToString(Arrays.asList(Arrays.copyOfRange(args, 1,args.length))," "), event);

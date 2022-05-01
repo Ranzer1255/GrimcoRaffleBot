@@ -30,7 +30,6 @@ public class DraconicTranslateCommand extends BotCommand implements Describable{
 	
 	private void fromDraconic(String phrase, MessageReceivedEvent event) {
 		EmbedBuilder eb = new EmbedBuilder();
-		MessageBuilder mb = new MessageBuilder();
 		
 		eb.setAuthor("Draconic Translation", "http://draconic.twilightrealm.com/", null);
 		eb.setFooter("Powered by Draconic Translator from Twilight Realm", null);
@@ -38,12 +37,11 @@ public class DraconicTranslateCommand extends BotCommand implements Describable{
 		eb.addField("Draconic:", phrase, false);
 		eb.addField("Common:", DraconicTranslator.translate(phrase, false), false);
 		
-		event.getChannel().sendMessage(mb.setEmbed(eb.build()).build()).queue();
+		event.getChannel().sendMessageEmbeds(eb.build()).queue();
 	}
 
 	private void toDraconic(String phrase, MessageReceivedEvent event) {
 		EmbedBuilder eb = new EmbedBuilder();
-		MessageBuilder mb = new MessageBuilder();
 		
 		eb.setAuthor("Draconic Translation", "http://draconic.twilightrealm.com/", null);
 		eb.setFooter("Powered by Draconic Translator from Twilight Realm", null);
@@ -51,7 +49,7 @@ public class DraconicTranslateCommand extends BotCommand implements Describable{
 		eb.addField("Common:", phrase, false);
 		eb.addField("Draconic", DraconicTranslator.translate(phrase, true), false);
 		
-		event.getChannel().sendMessage(mb.setEmbed(eb.build()).build()).queue();
+		event.getChannel().sendMessageEmbeds(eb.build()).queue();
 	}
 
 	@Override

@@ -24,7 +24,6 @@ public class InfoCommand extends BotCommand implements Describable{
 	public void process(String[] args, MessageReceivedEvent event) {
 
 		EmbedBuilder eb;
-		MessageBuilder mb = new MessageBuilder();
 		User bot = event.getJDA().getSelfUser();
 
 		// 1 argument !info stats
@@ -42,7 +41,7 @@ public class InfoCommand extends BotCommand implements Describable{
 			eb.setColor(m.getColor());
 		}
 
-		event.getChannel().sendMessage(mb.setEmbed(eb.build()).build()).queue();
+		event.getChannel().sendMessageEmbeds(eb.build()).queue();
 
 	}
 

@@ -1,9 +1,10 @@
 package net.ranzer.grimco.rafflebot.data;
 
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.events.channel.text.TextChannelCreateEvent;
-import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent;
+import net.dv8tion.jda.api.events.channel.ChannelCreateEvent;
+import net.dv8tion.jda.api.events.channel.ChannelDeleteEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
@@ -178,12 +179,16 @@ public class GuildManager extends ListenerAdapter{
 //	}
 
 	@Override
-	public void onTextChannelDelete(TextChannelDeleteEvent event) {
-		getGuildData(event.getGuild()).deleteChannel(event.getChannel());
+	public void onChannelDelete(@NotNull ChannelDeleteEvent event) {
+		if(event.isFromType(ChannelType.TEXT)){
+			getGuildData(event.getGuild()).deleteChannel(event.getGuild().getTextChannelById(event.getChannel().getId()));
+		}
 	}
 
 	@Override
-	public void onTextChannelCreate(TextChannelCreateEvent event) {
-		getGuildData(event.getGuild()).addChannel(event.getChannel());
+	public void onChannelCreate(ChannelCreateEvent event) {
+		if(event.isFromType(ChannelType.TEXT)) {
+			getGuildData(event.getGuild()).addChannel(event.getGuild().getTextChannelById(event.getChannel().getId()));
+		}
 	}
 }

@@ -57,7 +57,7 @@ public class FoldingAtHomeStatsCommand extends BotCommand implements Describable
 
 			eb.setFooter("Join us by clicking the team number",null);
 
-			event.getChannel().sendMessage(eb.build()).queue();
+			event.getChannel().sendMessageEmbeds(eb.build()).queue();
 
 		} catch (IOException e) {
 			event.getChannel().sendMessage("There was an issue reaching the Folding@Home API. please try again later.").queue();

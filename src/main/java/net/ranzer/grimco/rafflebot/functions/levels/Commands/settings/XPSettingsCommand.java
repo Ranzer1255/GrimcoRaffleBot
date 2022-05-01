@@ -30,7 +30,7 @@ public class XPSettingsCommand extends AbstractLevelCommand implements Describab
 
         if (args.length == 0) {
 
-            event.getChannel().sendMessage(currentSettingsEmbed(event.getGuild())).queue();
+            event.getChannel().sendMessageEmbeds(currentSettingsEmbed(event.getGuild())).queue();
             return;
         }
 

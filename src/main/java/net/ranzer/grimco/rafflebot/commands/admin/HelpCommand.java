@@ -30,7 +30,7 @@ public class HelpCommand extends BotCommand implements Describable{
 					.contains(args[0].toLowerCase())).findFirst();
 			if(opt.isPresent()){
 				Describable d = opt.get();
-				event.getAuthor().openPrivateChannel().complete().sendMessage(mb.setEmbed(getDescription(d/*,event.getGuild()*/)).build()).queue();
+				event.getAuthor().openPrivateChannel().complete().sendMessageEmbeds(getDescription(d/*,event.getGuild()*/)).queue();
 			}
 		}else if(args.length == 2){
 			Optional<Describable> opt = getDescribables(cmds.getCommands()).stream().filter(cc -> cc.getAlias()
@@ -40,8 +40,8 @@ public class HelpCommand extends BotCommand implements Describable{
 				Optional<Describable> subOpt = getDescribables(baseCommand.getSubcommands()).stream()
 						.filter(cc -> cc.getAlias().contains(args[1].toLowerCase())).findFirst();
 				subOpt.ifPresent(describable -> event.getAuthor().openPrivateChannel().complete()
-						.sendMessage(new MessageBuilder().setEmbed(
-								getDescription(describable/*, event.getGuild()*/)).build()).queue());
+						.sendMessageEmbeds(
+								getDescription(describable/*, event.getGuild()*/)).queue());
 			}
 		//full command list	
 		}else{
@@ -68,7 +68,7 @@ public class HelpCommand extends BotCommand implements Describable{
 			sb.append("\n");
 			});
 			eb.setDescription(sb.toString());
-			mb.setEmbed(eb.build());
+			mb.setEmbeds(eb.build());
 
 			event.getAuthor().openPrivateChannel().complete().sendMessage(mb.build()).queue();
 		}

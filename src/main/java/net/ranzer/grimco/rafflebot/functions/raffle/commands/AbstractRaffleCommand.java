@@ -4,9 +4,9 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.Button;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.ranzer.grimco.rafflebot.GrimcoRaffleBot;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.Category;
@@ -55,7 +55,7 @@ public abstract class AbstractRaffleCommand extends BotCommand implements Descri
 
     protected ListenerAdapter raffleButtonListener = new ListenerAdapter() {
         @Override
-        public void onButtonClick(@NotNull ButtonClickEvent event) {
+        public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
             //not a raffle button, ignore
             if (!event.getComponentId().startsWith(Raffle.RAFFLE_BUTTON_PREFIX)) return;
 

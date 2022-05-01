@@ -1,9 +1,14 @@
 package net.ranzer.grimco.rafflebot.functions.levels;
 
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.ranzer.grimco.rafflebot.data.GuildManager;
 import net.ranzer.grimco.rafflebot.data.IGuildData;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -25,33 +30,34 @@ delete old rows according to decay time
 public class LevelUpdater extends ListenerAdapter{
 
 
-	
 	@Override
-	public void onGuildMessageReceived(GuildMessageReceivedEvent event){
-		IGuildData gd = GuildManager.getGuildData(event.getGuild());
+	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+		if (event.isFromType(ChannelType.TEXT)){
+			IGuildData gd = GuildManager.getGuildData(event.getGuild());
 
-		if (isXPChannel(event, gd)) {
-			if (isNotBot(event)) {
-				if (isNotTimedOut(event, gd)) {
-					gd.getMemberData(event.getMember()).addXP(getRandomXP(gd));
+			if (isXPChannel(event.getTextChannel(), gd)) {
+				if (isNotBot(event.getAuthor())) {
+					if (isNotTimedOut(event.getMember(), gd)) {
+						gd.getMemberData(event.getMember()).addXP(getRandomXP(gd));
+					}
 				}
-			} 
+			}
+
 		}
+	}
+	
+	private boolean isNotTimedOut(Member member, IGuildData gd) {
 		
+		return gd.getMemberData(member)==null
+				||(System.currentTimeMillis()- gd.getMemberData(member).lastXP()) > gd.getXPTimeout();
 	}
 	
-	private boolean isNotTimedOut(GuildMessageReceivedEvent event, IGuildData gd) {
-		
-		return gd.getMemberData(event.getMember())==null
-				||(System.currentTimeMillis()- gd.getMemberData(event.getMember()).lastXP()) > gd.getXPTimeout();
+	private boolean isNotBot(User user) {
+		return (user != user.getJDA().getSelfUser()) && !user.isBot();
 	}
 	
-	private boolean isNotBot(GuildMessageReceivedEvent event) {
-		return (event.getAuthor() != event.getJDA().getSelfUser()) && !event.getAuthor().isBot();
-	}
-	
-	private boolean isXPChannel(GuildMessageReceivedEvent event, IGuildData gd) {
-		return gd.getChannel(event.getChannel()).getXPPerm();
+	private boolean isXPChannel(TextChannel channel, IGuildData gd) {
+		return gd.getChannel(channel).getXPPerm();
 	}
 	
 	private int getRandomXP(IGuildData gd) {

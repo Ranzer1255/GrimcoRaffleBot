@@ -1,5 +1,6 @@
 package net.ranzer.grimco.rafflebot.functions.moderation.commands.manage;
 
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.Role;
@@ -130,5 +131,10 @@ public class ModRoleCommand extends BotCommand implements Describable {
 				getPrefix(g),
 				getName()
 		);
+	}
+
+	@Override
+	public Permission getPermissionRequirements() {
+		return Permission.ADMINISTRATOR;
 	}
 }

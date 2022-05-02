@@ -44,7 +44,7 @@ tasks.named('jar'){
     manifest {
         attributes (
                 "Main-Class": "net.ranzer.grimco.rafflebot.GrimcoRaffleBot",
-                "archiveVersion"   : project.version
+                "version"   : project.version
         )
     }
 

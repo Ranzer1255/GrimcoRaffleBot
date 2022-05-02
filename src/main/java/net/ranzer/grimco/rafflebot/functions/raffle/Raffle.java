@@ -33,7 +33,7 @@ public class Raffle {
                     Button.danger(ID_DRAW, "Draw!")
             ),
             ActionRow.of(
-                    Button.danger(ID_LOCK, "Lock"),
+                    Button.danger(ID_LOCK, "Lock Entries"),
                     Button.danger(ID_END, "End")
             )
     );

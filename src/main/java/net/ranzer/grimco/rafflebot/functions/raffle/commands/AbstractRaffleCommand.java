@@ -6,6 +6,9 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.ranzer.grimco.rafflebot.GrimcoRaffleBot;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
@@ -28,6 +31,9 @@ public abstract class AbstractRaffleCommand extends BotCommand implements Descri
     public static final String RAFFLE_EXISTS_MESSAGE = "%s, You've already entered. call %swithdraw if you would like to be removed.";
     public static final String RAFFLE_CLOSED_MESSAGE = "sorry %s, but the raffle's been closed and a drawing is about to happen.";
     public static final String NO_RAFFLE_MESSAGE = "I'm sorry, but there isn't a raffle currently";
+    public static final String ENTER_RAFFLE = "%s you have been entered into the Raffle";
+    public static final String USER_WITHDRAW = "%s, you have been removed from the raffle";
+    public static final String MOD_WITHDRAW = "%s has been removed from the raffle";
     protected static final Map<String, Raffle> raffles = new HashMap<>();
 
     @Override
@@ -46,7 +52,17 @@ public abstract class AbstractRaffleCommand extends BotCommand implements Descri
      * @return a List<Role> of all the Roles allowed to manage raffles
      */
     protected static List<Role> getAllowedManagementRoles(Guild guild) {
-       return GuildManager.getGuildData(guild).getRaffleData().allowedRaffleRoles();
+
+        List<Role> rtn = GuildManager.getGuildData(guild).getRaffleData().allowedRaffleRoles();
+        List<Command> cmds = guild.retrieveCommands().complete();
+        Command c = cmds.stream().filter(cmd -> cmd.getName().equals("raffle")).findFirst().get();
+        List<CommandPrivilege> commandPrivileges = c.retrievePrivileges(guild).complete();
+        for(CommandPrivilege cp: commandPrivileges){
+            if(cp.getType() == CommandPrivilege.Type.ROLE && cp.isEnabled()) {
+                rtn.add(guild.getRoleById(cp.getId()));
+            }
+        }
+        return rtn;
     }
 
     protected IRaffleData getRaffleData(Guild g){
@@ -78,16 +94,15 @@ public abstract class AbstractRaffleCommand extends BotCommand implements Descri
                         event.reply(String.format(AbstractRaffleCommand.INACTIVE_MESSAGE,
                                 event.getMember().getEffectiveName())).setEphemeral(true).queue();
                     } else {
-                        switch (r.addEntry(event.getMember())){
-                            case added:
+                        switch (r.addEntry(event.getMember())) {
+                            case added -> {
                                 event.reply("You have been entered into the raffle").setEphemeral(true).queue();
                                 r.updateActiveMessage();
-                                event.getChannel().sendMessage(event.getMember().getEffectiveName() + " has entered the raffle!").queue();
-                                break;
-                            case exists:
-                                event.reply("Hey! you're already in! you can't have two tickets, sorry!")
-                                        .setEphemeral(true).queue();
-                                break;
+                                event.getChannel().sendMessage(
+                                        event.getMember().getEffectiveName() + " has entered the raffle!").queue();
+                            }
+                            case exists -> event.reply("Hey! you're already in! you can't have two tickets, sorry!")
+                                    .setEphemeral(true).queue();
                         }
                     }
                     break;
@@ -206,6 +221,7 @@ public abstract class AbstractRaffleCommand extends BotCommand implements Descri
     private boolean isRaffleManager(Member m, List<Role> allowedRoles) {
         if (BotConfiguration.getInstance().getOwner().equals(m.getId())) return true; //bot owner bypass
 
+
         //check the roles for allowed roles or administrator perm
         for (Role role : m.getRoles()) {
             if (allowedRoles.contains(role)) return true;
@@ -223,5 +239,9 @@ public abstract class AbstractRaffleCommand extends BotCommand implements Descri
 
     protected boolean barred(Member member) {
         return GuildManager.getGuildData(member.getGuild()).getMemberData(member).isBannedFromRaffle();
+    }
+
+    protected SubcommandData getSubcommandData(){
+        return null;
     }
 }

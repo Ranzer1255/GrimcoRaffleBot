@@ -96,7 +96,7 @@ public class RemoveRoleCommand extends BotCommand implements Describable {
 	}
 
 	@Override
-	protected List<Role> getRoleRequirements(Guild guild) {
+	public List<Role> getRoleRequirements(Guild guild) {
 		return GuildManager.getGuildData(guild).getModRoles();
 	}
 

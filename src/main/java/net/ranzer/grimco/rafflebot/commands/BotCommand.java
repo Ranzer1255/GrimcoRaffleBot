@@ -83,7 +83,7 @@ public abstract class BotCommand {
 		return false;
 	}
 
-	protected List<Role> getRoleRequirements(Guild guild) {
+	public List<Role> getRoleRequirements(Guild guild) {
 		return null;
 	}
 

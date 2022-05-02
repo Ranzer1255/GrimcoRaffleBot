@@ -64,11 +64,7 @@ public class ModRoleCommand extends BotCommand implements Describable {
 					}
 					r = roles.get(0);
 
-					if (GuildManager.getGuildData(event.getGuild()).removeModRole(r)) {
-						roleRemove(event.getChannel(), r, true);
-					} else {
-						roleRemove(event.getChannel(), r, false);
-					}
+					roleRemove(event.getChannel(), r, GuildManager.getGuildData(event.getGuild()).removeModRole(r));
 					break;
 				default:
 					event.getChannel().sendMessageEmbeds(HelpCommand.getDescription(this/*, event.getGuild()*/)).queue();

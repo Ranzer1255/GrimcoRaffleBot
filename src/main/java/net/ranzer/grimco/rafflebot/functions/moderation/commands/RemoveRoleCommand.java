@@ -4,9 +4,13 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.Category;
 import net.ranzer.grimco.rafflebot.commands.Describable;
@@ -26,6 +30,30 @@ public class RemoveRoleCommand extends BotCommand implements Describable {
 	@Override
 	protected boolean isApplicableToPM() {
 		return false;
+	}
+
+	@Override
+	protected void processSlash(SlashCommandInteractionEvent event) {
+
+		Member m = event.getOption("user").getAsMember();
+		Role role = event.getOption("role").getAsRole();
+		try {
+			rm.removeRole(role,m,event.getUser());
+			event.reply(String.format(
+					"Role %s successfully removed from %s",
+					role.getName(),
+					m.getEffectiveName()
+			)).queue();
+		} catch (InsufficientPermissionException pe) {
+			event.reply(
+					String.format("i'm sorry but i lack the `%s` permission in the server settings to do this",
+							pe.getPermission().getName())).setEphemeral(true).queue();
+		}catch (HierarchyException he){
+			event.reply(
+					"That role is above my pay-grade and I cannot Modify it! sorry..."
+			).setEphemeral(true).queue();
+		}
+
 	}
 
 	@Override
@@ -103,5 +131,16 @@ public class RemoveRoleCommand extends BotCommand implements Describable {
 	@Override
 	public String getUsage(Guild g) {
 		return String.format("`%s%s <role> <mentioned user/s>`",getPrefix(g),getName());
+	}
+
+	@Override
+	public SlashCommandData getSlashCommandData() {
+		SlashCommandData rtn = Commands.slash(getName(),getShortDescription());
+
+		rtn.setDefaultEnabled(false);
+		rtn.addOption(OptionType.ROLE,"role","Role to remove",true);
+		rtn.addOption(OptionType.USER,"user", "user to remove role from", true);
+
+		return rtn;
 	}
 }

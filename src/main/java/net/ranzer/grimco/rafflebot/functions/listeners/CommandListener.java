@@ -67,7 +67,6 @@ public class CommandListener extends ListenerAdapter {
 			}
 		}
 
-		//sync role privlages to discord privlage api
 		for (Guild g : GrimcoRaffleBot.getJDA().getGuilds()) {
 			g.updateCommands().addCommands(slashCmds).queue();
 		}

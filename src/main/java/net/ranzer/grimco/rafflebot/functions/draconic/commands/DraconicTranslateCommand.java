@@ -1,9 +1,14 @@
 package net.ranzer.grimco.rafflebot.functions.draconic.commands;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.Category;
 import net.ranzer.grimco.rafflebot.commands.Describable;
@@ -16,19 +21,30 @@ import java.util.List;
 
 public class DraconicTranslateCommand extends BotCommand implements Describable{
 
-		
+	@Override
+	protected void processSlash(SlashCommandInteractionEvent event) {
+		if(event.getOption("reverse")!=null && event.getOption("reverse", OptionMapping::getAsBoolean)){
+			event.replyEmbeds(fromDraconic(event.getOption("prase",OptionMapping::getAsString))).queue();
+		} else {
+			event.replyEmbeds(toDraconic(event.getOption("phrase",OptionMapping::getAsString))).queue();
+		}
+	}
+
 	@Override
 	public void processPrefix(String[] args, MessageReceivedEvent event) {
 		
 		if (args[0].equals("com")){
-			fromDraconic(StringUtil.arrayToString(Arrays.asList(Arrays.copyOfRange(args, 1,args.length))," "), event);
-			return;
+			event.getChannel().sendMessageEmbeds(
+					fromDraconic(StringUtil.arrayToString(Arrays.asList(Arrays.copyOfRange(args, 1,args.length))," ")
+			)).queue();
+		} else {
+			event.getChannel().sendMessageEmbeds(
+					toDraconic(StringUtil.arrayToString(Arrays.asList(args), " "))
+			).queue();
 		}
-		
-		toDraconic(StringUtil.arrayToString(Arrays.asList(args)," "), event);
 	}
 	
-	private void fromDraconic(String phrase, MessageReceivedEvent event) {
+	private MessageEmbed fromDraconic(String phrase) {
 		EmbedBuilder eb = new EmbedBuilder();
 		
 		eb.setAuthor("Draconic Translation", "http://draconic.twilightrealm.com/", null);
@@ -36,11 +52,11 @@ public class DraconicTranslateCommand extends BotCommand implements Describable{
 		eb.setColor(new Color(0xa0760a));
 		eb.addField("Draconic:", phrase, false);
 		eb.addField("Common:", DraconicTranslator.translate(phrase, false), false);
-		
-		event.getChannel().sendMessageEmbeds(eb.build()).queue();
+
+		return eb.build();
 	}
 
-	private void toDraconic(String phrase, MessageReceivedEvent event) {
+	private MessageEmbed toDraconic(String phrase) {
 		EmbedBuilder eb = new EmbedBuilder();
 		
 		eb.setAuthor("Draconic Translation", "http://draconic.twilightrealm.com/", null);
@@ -48,8 +64,8 @@ public class DraconicTranslateCommand extends BotCommand implements Describable{
 		eb.setColor(new Color(0xa0760a));
 		eb.addField("Common:", phrase, false);
 		eb.addField("Draconic", DraconicTranslator.translate(phrase, true), false);
-		
-		event.getChannel().sendMessageEmbeds(eb.build()).queue();
+
+		return eb.build();
 	}
 
 	@Override
@@ -84,5 +100,14 @@ public class DraconicTranslateCommand extends BotCommand implements Describable{
 	@Override
 	protected boolean isApplicableToPM() {
 		return true;
+	}
+
+	@Override
+	public SlashCommandData getSlashCommandData() {
+		SlashCommandData rtn = Commands.slash(getName(),getShortDescription());
+
+		rtn.addOption(OptionType.STRING,"phrase","phrase to translate",true);
+		rtn.addOption(OptionType.BOOLEAN,"reverse","translate from draconic back to english",false);
+		return rtn;
 	}
 }

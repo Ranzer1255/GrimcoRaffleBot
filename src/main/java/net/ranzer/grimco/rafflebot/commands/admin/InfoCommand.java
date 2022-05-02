@@ -6,7 +6,12 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.ranzer.grimco.rafflebot.GrimcoRaffleBot;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.Category;
@@ -19,6 +24,29 @@ import java.util.Arrays;
 import java.util.List;
 
 public class InfoCommand extends BotCommand implements Describable{
+
+	@Override
+	protected void processSlash(SlashCommandInteractionEvent event) {
+		EmbedBuilder eb;
+		User bot = event.getJDA().getSelfUser();
+
+		// 1 argument !info stats
+		if (event.getOption("stats")!=null) {
+			eb = statusEmbed(bot);
+		}
+		// no arguments !info
+		else {
+			eb = infoEmbed(bot);
+		}
+
+		//color the embed
+		if (event.isFromGuild()) {
+			Member m = event.getGuild().retrieveMember(bot).complete();
+			eb.setColor(m.getColor());
+		}
+
+		event.getChannel().sendMessageEmbeds(eb.build()).queue();
+	}
 
 	@Override
 	public void processPrefix(String[] args, MessageReceivedEvent event) {
@@ -170,4 +198,11 @@ public class InfoCommand extends BotCommand implements Describable{
 		return true;
 	}
 
+	@Override
+	public SlashCommandData getSlashCommandData() {
+		SlashCommandData rtn = Commands.slash(getName(),getShortDescription());
+		rtn.addOption(OptionType.STRING,"stats", "do you want the stats?");
+
+		return rtn;
+	}
 }

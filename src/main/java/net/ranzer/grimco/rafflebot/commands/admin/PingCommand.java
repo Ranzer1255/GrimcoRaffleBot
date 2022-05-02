@@ -1,7 +1,10 @@
 package net.ranzer.grimco.rafflebot.commands.admin;
 
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.Category;
 import net.ranzer.grimco.rafflebot.commands.Describable;
@@ -11,6 +14,16 @@ import java.util.Date;
 import java.util.List;
 
 public class PingCommand extends BotCommand implements  Describable{
+
+	@Override
+	protected void processSlash(SlashCommandInteractionEvent event) {
+		Date startTime = new Date();
+		event.deferReply().queue(reply->{
+				Date endTime = new Date();
+				long lag = endTime.getTime()-startTime.getTime();
+				reply.editOriginal("pong! `"+lag+"ms`").queue();
+			});
+		}
 
 	@Override
 	public void processPrefix(String[] args, MessageReceivedEvent event) {
@@ -24,7 +37,7 @@ public class PingCommand extends BotCommand implements  Describable{
 
 	@Override
 	public List<String> getAlias() {
-		return Arrays.asList("ping");
+		return List.of("ping");
 	}
 
 	@Override
@@ -48,5 +61,8 @@ public class PingCommand extends BotCommand implements  Describable{
 		return true;
 	}
 
-
+	@Override
+	public SlashCommandData getSlashCommandData() {
+		return Commands.slash(getName(),getShortDescription());
+	}
 }

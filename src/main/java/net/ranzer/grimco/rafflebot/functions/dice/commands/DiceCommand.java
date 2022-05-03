@@ -96,18 +96,19 @@ public class DiceCommand extends BotCommand implements Describable{
 	public String getLongDescription() {
 		return """
 				Rolls dice using the standard RPG dice format
+								
+				example: !roll 1d20 + 5 [to hit]
 				
-				Usage: ![roll|dice] [expression]
-				for example: !roll 1d20 + 5 [to hit]
-				[comment]: this is ignored
-				2d20khX: keep the X highest dice
-				2d20klX: keep the X lowest dice
-				4d6r<X: reroll every die lower than X
-				4d6ro<X: reroll every die lower than X, but only once
-				1d10!: exploding die - every time you roll a critical, add an extra die
-				5d6tX: roll Dice and count the number of results above X
-				**note: this mode is incompatible with non-target rolls, weird things happen if you combine the two
-				5d6!!: Shadowrun/Manapunk style compound exploding""";
+				__further examples of other mechanics__
+				**[comment]:** this is used to leave notes in your roll
+				**2d20__kh__X:** keep the __**X**__ highest dice
+				**2d20__kl__X:** keep the __**X**__ lowest dice
+				**4d6__r<__X:** reroll every die lower than __**X**__
+				**4d6__ro<__X:** reroll every die lower than __**X**__, but only once
+				**1d10__!__:** exploding die - every time you roll a critical, add an extra die
+				**5d6__t__X:** roll Dice and count the number of results above __**X**__
+				(note: the target mechanic is incompatible with additive (ie: 1d20+5) based expressions, weird things happen if you combine the two)
+				**5d6__!!__:** Shadowrun/Manapunk style compound exploding""";
 	}
 	
 	@Override

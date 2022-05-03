@@ -38,7 +38,7 @@ public class BanUserCommand extends AbstractRaffleCommand implements Describable
         if(event.getOptions().isEmpty()){
 
             if (banned.isEmpty()){
-                event.getChannel().sendMessage("No baned users").queue();
+                event.reply("No baned users").setEphemeral(true).queue();
                 return;
             }
 
@@ -126,7 +126,7 @@ public class BanUserCommand extends AbstractRaffleCommand implements Describable
 
     @Override
     public List<String> getAlias() {
-        return Arrays.asList("user","users","manage");
+        return Arrays.asList("ban","users","manage");
     }
 
     @Override

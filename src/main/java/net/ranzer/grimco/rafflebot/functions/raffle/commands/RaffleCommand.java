@@ -21,7 +21,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-//TODO add Audit log entries for raffles
+/*
+ * Audit log entries for raffles
+ * While an interesting thought, this is, unfortunately, not possible. Discord Audit Logs are
+ * only on specific moderation based interactions (delete chat message, change roles, ect) so,
+ * before i have this thought again and run down this rabbit hole a 3rd time, I'm going to leave
+ * this note here so that i dont!
+*/
 public class RaffleCommand extends AbstractRaffleCommand implements Describable {
 
     private static final List<BotCommand> subCommands;

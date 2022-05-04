@@ -3,6 +3,7 @@ package net.ranzer.grimco.rafflebot.commands;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -13,8 +14,9 @@ import java.util.List;
 
 public abstract class BotCommand {
 
-	//todo rebrand this to something *less* caex and more Grimco
-	private static final String NO_PERMISSION_MESSAGE = "You're not my player! You can't tell me what to do!";
+	private static final String NO_PERMISSION_MESSAGE =
+			"HR Says you cannot do that. if this is in error. please fill out form g-547-pm." +
+					" which can be obtained by filling out form x-987584 on floor 5";
 
 	public static String getPrefix(Guild guild) {
 		if (guild==null){
@@ -30,7 +32,7 @@ public abstract class BotCommand {
 	public void runPrefixCommand(String[] args, MessageReceivedEvent event){
 		if (!event.getAuthor().getId().equals(BotConfiguration.getInstance().getOwner())) { //override all permission checks if its me
 			if (!hasPermissionToRun(event)) {
-				noPermission(event);
+				event.getChannel().sendMessage(noPermission(event.getAuthor())).queue();
 				return;
 			} 
 		}
@@ -91,9 +93,8 @@ public abstract class BotCommand {
 		return null;
 	}
 
-	protected void noPermission(MessageReceivedEvent event) {
-		//TODO rename this to noPermissionMessage and refactor to require a User object instead of event and return a string. handle the *actual* responce one level up.
-		event.getChannel().sendMessage(event.getAuthor().getAsMention()+" "+NO_PERMISSION_MESSAGE).queue();
+	protected String noPermission(User user) {
+		return user.getAsMention()+" "+NO_PERMISSION_MESSAGE;
 
 	}
 

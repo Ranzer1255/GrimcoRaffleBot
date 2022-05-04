@@ -12,7 +12,7 @@ public class ShutdownCommand extends BotCommand {
 	@Override
 	public void processPrefix(String[] args, MessageReceivedEvent event) {
 		if (!event.getAuthor().getId().equals(BotConfiguration.getInstance().getOwner())){
-			noPermission(event);
+			event.getChannel().sendMessage(noPermission(event.getAuthor())).queue();
 			return;
 		}
 		event.getChannel().sendMessage("if you insist boss.... *blerg*").complete();

@@ -60,8 +60,8 @@ public class BanUserCommand extends AbstractRaffleCommand implements Describable
             Member m = event.getOption(USER,OptionMapping::getAsMember);
             if(event.getOption(MODE)==null){
                 event.reply(banned.contains(m)?
-                                    m.getEffectiveName()+" is Banned from raffles.":
-                                    m.getEffectiveName()+" is not banned.").setEphemeral(true).queue();
+                                    m.getEffectiveName()+" is currently Banned from raffles.":
+                                    m.getEffectiveName()+" is not currently banned.").setEphemeral(true).queue();
             } else {
                 IGuildData gd = GuildManager.getGuildData(event.getGuild());
                 switch (event.getOption(MODE, OptionMapping::getAsString)) {

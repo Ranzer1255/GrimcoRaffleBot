@@ -113,6 +113,11 @@ public class Raffle {
         } else {
             eb.setTitle("Raffle for " + prize);
         }
+        eb.setDescription("""
+                Enter the raffle using the buttons below.
+                
+                you may also use `/enter` and `/withdraw`
+                """);
         eb.addField("Status",isOpen()?"Open to entries":"Closed to new entries",true);
         eb.addField("Entries",Integer.toString(getNumEntries()),true);
 

@@ -27,9 +27,9 @@ public class ChannelEnableCommand extends AbstractRaffleCommand implements Descr
             channel.setRaffle(event.getOption(ENABLE).getAsBoolean());
         }
         event.reply(channel.getRaffle()?
-                            "raffles are Allowed in this channel":
-                            "Raffles are No longer Allowed in this channel"
-                   ).queue();
+                            "Raffles are Allowed in this channel":
+                            "Raffles are Not Allowed in this channel"
+                   ).setEphemeral(true).queue();
     }
 
     @Override

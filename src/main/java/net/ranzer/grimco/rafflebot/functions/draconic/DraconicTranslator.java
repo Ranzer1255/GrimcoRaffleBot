@@ -2,7 +2,7 @@ package net.ranzer.grimco.rafflebot.functions.draconic;
 
 import net.ranzer.grimco.rafflebot.util.LogLevel;
 import net.ranzer.grimco.rafflebot.util.Logging;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;

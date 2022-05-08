@@ -1,42 +1,42 @@
 plugins {
     id 'java'
-    id 'org.ajoberstar.grgit' version '4.1.0'
-    id "org.ajoberstar.reckon" version "0.13.1"
+    id 'org.ajoberstar.grgit' version '5.0.0'
+    id "org.ajoberstar.reckon" version "0.16.1"
 }
 
 group 'ranzer'
 
 repositories {
-    maven {
-        name = 'ajoberstar-backup'
-        url = 'https://ajoberstar.github.io/bintray-backup/'
-    }
     mavenCentral()
-    maven {
-        name 'm2-dv8tion'
-        url 'https://m2.dv8tion.net/releases'
-    }
+//    maven {
+//        name 'm2-dv8tion'
+//        url 'https://m2.dv8tion.net/releases'
+//    }
 }
 
 dependencies {
 
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api',    version: '5.7.1'
-    testRuntimeOnly    group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.1'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api',    version: '5.8.2'
+    testRuntimeOnly    group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.2'
 
     implementation group: 'net.dv8tion',         name: 'JDA',           version: '5.0.0-alpha.11'
-    implementation group: 'org.apache.commons', name: 'commons-lang3',  version: '3.5'
-    implementation group: 'org.jsoup',          name: 'jsoup',          version: '1.13.1'
-    implementation group: 'org.json',           name: 'json',           version: '20200518'
+    implementation group: 'org.apache.commons', name: 'commons-lang3',  version: '3.12.0'
+    implementation group: 'org.jsoup',          name: 'jsoup',          version: '1.14.3'
+    implementation group: 'org.json',           name: 'json',           version: '20220320'
     implementation group: 'org.hibernate',      name: 'hibernate-core', version: '5.4.30.Final'
-    implementation group: 'org.postgresql',     name: 'postgresql',     version: '42.2.19'
-    implementation group: 'org.slf4j',          name: 'slf4j-simple',   version: '1.7.30'
+    implementation group: 'org.postgresql',     name: 'postgresql',     version: '42.3.4'
+    implementation group: 'org.slf4j',          name: 'slf4j-simple',   version: '1.7.36'
 //    implementation group: 'org.slf4j',          name: 'slf4j-api',      version: '1.7.5'
 
 }
 
 reckon{
-    scopeFromProp()
-    stageFromProp('dev', 'final')
+    stages('dev','final')
+
+    scopeCalc = calcScopeFromProp().or(calcScopeFromCommitMessages()) // fall back to commit message (see below) if no explicit prop set
+    stageCalc = calcStageFromProp()
+
+    defaultInferredScope = 'patch'
 }
 
 tasks.named('jar'){

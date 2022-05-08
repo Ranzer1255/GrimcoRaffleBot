@@ -45,7 +45,7 @@ public class InfoCommand extends BotCommand implements Describable{
 			eb.setColor(m.getColor());
 		}
 
-		event.getChannel().sendMessageEmbeds(eb.build()).queue();
+		event.replyEmbeds(eb.build()).queue();
 	}
 
 	@Override

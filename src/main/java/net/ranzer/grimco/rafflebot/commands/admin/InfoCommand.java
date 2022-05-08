@@ -179,7 +179,7 @@ public class InfoCommand extends BotCommand implements Describable{
 	@Override
 	public String getShortDescription() {
 
-		return "Information about Caex and Author";
+		return "Information about GrimcoAi and Author";
 	}
 
 	@Override

@@ -14,6 +14,8 @@ public abstract class Expression {
 
 	public ArrayList<Lexer.Token> tokens;
 	protected int value;
+	protected int fails;
+
 	protected StringBuilder description = new StringBuilder();
 
 	public Expression(ArrayList<Lexer.Token> tokens) {
@@ -26,5 +28,9 @@ public abstract class Expression {
 
 	public int getValue() {
 		return value;
+	}
+
+	public int getFails() {
+		return fails;
 	}
 }

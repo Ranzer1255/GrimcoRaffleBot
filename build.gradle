@@ -28,6 +28,7 @@ dependencies {
 reckon{
     stages('dev','final')
 
+
     scopeCalc = calcScopeFromProp().or(calcScopeFromCommitMessages()) // fall back to commit message (see below) if no explicit prop set
     stageCalc = calcStageFromProp()
 

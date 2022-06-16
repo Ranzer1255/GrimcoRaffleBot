@@ -26,6 +26,7 @@ public class Addition extends Expression {
 		if (!twoAdditions) {
 			Multiplication multiplication = new Multiplication(tokens);
 			value = multiplication.value;
+			fails = multiplication.fails;
 			description = multiplication.description;
 		}
 	}

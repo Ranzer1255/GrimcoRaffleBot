@@ -1,6 +1,7 @@
 package net.ranzer.grimco.rafflebot.functions.dice;
 
 import net.ranzer.grimco.rafflebot.functions.dice.expressions.Addition;
+import net.ranzer.grimco.rafflebot.functions.dice.expressions.Expression;
 
 import java.util.ArrayList;
 
@@ -10,6 +11,7 @@ public abstract class DiceRoll {
 	protected String input;
 	protected final ArrayList<Lexer.Token> tokens;
 	protected String breakdown;
+	protected Expression expr;
 	private boolean hasRolled = false;
 
 	public DiceRoll(String input, ArrayList<Lexer.Token> tokens) {
@@ -30,7 +32,7 @@ public abstract class DiceRoll {
 	public abstract String getTotal();
 
 	public void roll() {
-		Addition expr = new Addition(tokens);
+		this.expr = new Addition(tokens);
 		breakdown = expr.getDescription();
 		total = expr.getValue();
 	}

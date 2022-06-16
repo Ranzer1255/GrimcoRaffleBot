@@ -24,6 +24,7 @@ public class Multiplication extends Expression {
 		if (!twoMultiplications) {
 			Negation negation = new Negation(tokens);
 			value = negation.value;
+			fails = negation.fails;
 			description = negation.description;
 		}
 

@@ -81,10 +81,12 @@ public class Die extends Expression {
 			}
 
 			if (compounding && roll>= critSuccessNumber){
+				int timesRerolled = 0;
 				while (roll%numberOfFaces==0) {
+					timesRerolled++;
 					roll += random.nextInt(numberOfFaces) + 1;
 				}
-				rollDescription = roll +"!!";
+				rollDescription = roll + "!".repeat(Math.max(0, timesRerolled));
 			}
 
 			// Roll is crit success
@@ -173,12 +175,10 @@ public class Die extends Expression {
 			value = 0;
 			for (int roll : rolls){
 				if (roll>=targetNumber) value++;
+				if (roll<=critFailNumber) fails++;
 			}
 		} else { //sum roll
-			value = 0;
-			for (int roll : rolls) {
-				value += roll;
-			}
+			value = rolls.stream().reduce(0,Integer::sum);
 		}
 
 		description.append(" (");

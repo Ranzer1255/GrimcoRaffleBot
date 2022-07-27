@@ -1,14 +1,11 @@
 package net.ranzer.grimco.rafflebot.functions.listeners;
 
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 import net.ranzer.grimco.rafflebot.GrimcoRaffleBot;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.admin.*;
@@ -19,6 +16,7 @@ import net.ranzer.grimco.rafflebot.functions.foldingathome.commands.FoldingAtHom
 import net.ranzer.grimco.rafflebot.functions.moderation.commands.AddRoleCommand;
 import net.ranzer.grimco.rafflebot.functions.moderation.commands.RemoveRoleCommand;
 import net.ranzer.grimco.rafflebot.functions.moderation.commands.manage.ModRoleCommand;
+import net.ranzer.grimco.rafflebot.functions.music.commands.MusicCommand;
 import net.ranzer.grimco.rafflebot.functions.raffle.commands.RaffleCommand;
 import net.ranzer.grimco.rafflebot.functions.raffle.commands.run.RaffleEnterCommand;
 import net.ranzer.grimco.rafflebot.functions.raffle.commands.run.RaffleWithdrawCommand;
@@ -58,7 +56,8 @@ public class CommandListener extends ListenerAdapter {
 			.addCommand(new RaffleCommand())
 			.addCommand(new RaffleEnterCommand())
 			.addCommand(new RaffleWithdrawCommand())
-			.addCommand(new FoldingAtHomeStatsCommand());
+			.addCommand(new FoldingAtHomeStatsCommand())
+			.addCommand(new MusicCommand());
 
 		List<CommandData> slashCmds = new ArrayList<>();
 		for (BotCommand cmd : cmds) {

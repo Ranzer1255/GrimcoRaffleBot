@@ -43,7 +43,8 @@ public class GrimcoRaffleBot {
 		Collection<GatewayIntent> intents = Arrays.asList(
 			GatewayIntent.GUILD_MEMBERS, //privileged
 			GatewayIntent.DIRECT_MESSAGES,
-			GatewayIntent.GUILD_MESSAGES
+			GatewayIntent.GUILD_MESSAGES,
+			GatewayIntent.GUILD_VOICE_STATES
 		);
 		
 		//set token

@@ -22,7 +22,7 @@ public class XPPermCommand extends AbstractLevelCommand implements Describable{
 					GuildManager.getGuildData(event.getGuild()).getChannel(event.getTextChannel()).getXPPerm()).queue();
 			return;
 		}
-		if (args.length!=1||!(args[0].toLowerCase().equals("true")||args[0].toLowerCase().equals("false"))){
+		if (args.length!=1||!(args[0].equalsIgnoreCase("true") || args[0].equalsIgnoreCase("false"))){
 			event.getChannel().sendMessage("I'm sorry i didn't understand that please follow the usage\n"
 								+getUsage(event.getGuild())).queue();
 			return;

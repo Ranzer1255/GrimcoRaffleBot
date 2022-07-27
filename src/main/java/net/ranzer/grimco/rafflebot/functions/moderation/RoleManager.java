@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RoleManager {
 	private static RoleManager instance;
-	private ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
+	private final ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
 
 	private RoleManager(){//TODO fix this to use the non-cached version of get.member
 		for (Guild guild : GrimcoRaffleBot.getJDA().getGuilds()) {

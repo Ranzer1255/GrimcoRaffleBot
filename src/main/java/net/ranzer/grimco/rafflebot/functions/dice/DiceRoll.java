@@ -12,7 +12,7 @@ public abstract class DiceRoll {
 	protected final ArrayList<Lexer.Token> tokens;
 	protected String breakdown;
 	protected Expression expr;
-	private boolean hasRolled = false;
+	private final boolean hasRolled = false;
 
 	public DiceRoll(String input, ArrayList<Lexer.Token> tokens) {
 		this.input = input;

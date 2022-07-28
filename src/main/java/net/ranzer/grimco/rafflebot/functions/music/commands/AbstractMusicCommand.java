@@ -34,15 +34,21 @@ public abstract class AbstractMusicCommand extends BotCommand implements Describ
 		return false;
 	}
 
-	protected boolean notInSameAudioChannel(MessageReceivedEvent event) {
+	protected boolean notInSameAudioChannel(Member member) {
 
-		AudioChannel requesterChannel = getAudioChannel(Objects.requireNonNull(event.getMember()));
-		AudioChannel botChannel = getAudioChannel(event.getGuild().getSelfMember());
+		AudioChannel requesterChannel = getAudioChannel(member);
+		AudioChannel botChannel = getAudioChannel(member.getGuild().getSelfMember());
 
 		return !Objects.equals(requesterChannel, botChannel);
 	}
 
 	protected AudioChannel getAudioChannel(Member m){
 		return m.getVoiceState().getChannel();
+	}
+
+	protected static class NoAudioChannelException extends IllegalArgumentException {
+		public NoAudioChannelException(String s) {
+			super(s);
+		}
 	}
 }

@@ -26,8 +26,7 @@ public class InsertCommand extends AbstractMusicSubCommand implements Describabl
 
 	@Override
 	public void processSlash(SlashCommandInteractionEvent event) {
-
-		event.deferReply().queue();
+		event.reply("processing...").setEphemeral(true).queue();
 		GuildPlayer gp = GuildPlayerManager.getPlayer(event.getGuild());
 		OptionMapping searchOption = event.getOption(SCO_ID_SEARCH);
 		if(searchOption ==null || searchOption.getAsBoolean()){

@@ -12,7 +12,7 @@ public class SkipCommand extends AbstractMusicCommand implements Describable{
 	@Override
 	public void processPrefix(String[] args, MessageReceivedEvent event) {
 
-		if(notInSameAudioChannel(event)){
+		if(notInSameAudioChannel(event.getMember())){
 			event.getChannel().sendMessage("You must be listening to skip a song.").queue();
 			return;
 		}

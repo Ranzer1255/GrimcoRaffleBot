@@ -13,7 +13,7 @@ public class StopCommand extends AbstractMusicCommand implements Describable{
 	@Override
 	public void processPrefix(String[] args, MessageReceivedEvent event) {
 
-		if (args.length>0&&args[0].equals("keep")|| notInSameAudioChannel(event)){
+		if (args.length>0&&args[0].equals("keep")|| notInSameAudioChannel(event.getMember())){
 			GuildPlayerManager.getPlayer(event.getGuild()).stop(false);
 			return;
 		}

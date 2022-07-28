@@ -1,9 +1,10 @@
 package net.ranzer.grimco.rafflebot.functions.music.commands;
 
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.ranzer.grimco.rafflebot.commands.Describable;
 import net.ranzer.grimco.rafflebot.functions.music.GuildPlayer;
 import net.ranzer.grimco.rafflebot.functions.music.GuildPlayerManager;
@@ -12,62 +13,33 @@ import net.ranzer.grimco.rafflebot.util.StringUtil;
 import java.util.Arrays;
 import java.util.List;
 
-public class QueueCommand extends AbstractMusicCommand implements Describable {
+public class QueueCommand extends AbstractMusicSubCommand implements Describable {
 
-	private static final int SHOW_QUEUE_LENGTH = 10;
+	public static final int SHOW_QUEUE_LENGTH = 10;
+	public final String SONG_ID = "song_id";
+
+	@Override
+	protected void processSlash(SlashCommandInteractionEvent event) {
+		String songID = event.getOption(SONG_ID, OptionMapping::getAsString);
+		GuildPlayer gp = GuildPlayerManager.getPlayer(event.getGuild());
+		if(songID==null){
+			event.replyEmbeds(gp.getQueueEmbed(SHOW_QUEUE_LENGTH)).queue();
+		} else {
+			event.reply("processing...").setEphemeral(true).queue();
+			gp.queueID(songID);
+		}
+	}
 
 	@Override
 	public void processPrefix(String[] args, net.dv8tion.jda.api.events.message.MessageReceivedEvent event) {
+		GuildPlayer gp = GuildPlayerManager.getPlayer(event.getGuild());
 		if (args.length<1) {
-			GuildPlayer gp = GuildPlayerManager.getPlayer(event.getGuild());
-			event.getChannel().sendMessageEmbeds(getQueueEmbed(gp)).queue();
-			
+			event.getChannel().sendMessageEmbeds(gp.getQueueEmbed(SHOW_QUEUE_LENGTH)).queue();
+
 		} else {
-			GuildPlayerManager.getPlayer(event.getGuild()).queueID(StringUtil.arrayToString(Arrays.asList(args), " "));
+			gp.queueID(StringUtil.arrayToString(Arrays.asList(args), " "));
 		}
 	
-	}
-
-	public static MessageEmbed getQueueEmbed(GuildPlayer gp) {
-		EmbedBuilder eb = new EmbedBuilder();
-
-		eb.setAuthor("Currently Playing", null, null);
-		if(gp.getPlayingTrack()!=null){
-			eb.setTitle(
-					String.format("%s\n"
-									+  "by %s",
-							gp.getPlayingTrack().getInfo().title,
-							gp.getPlayingTrack().getInfo().author),
-					gp.getPlayingTrack().getInfo().uri);
-		} else {
-			eb.setTitle("Nothing Playing",null);
-		}
-
-		if(gp.getQueue().getQueue().isEmpty()){
-
-			eb.setDescription("Nothing in Queue!");
-
-		} else {
-			StringBuilder sb = new StringBuilder();
-			sb.append("Queue:\n");
-			int i = 1;
-			long runtime = 0;
-			for (AudioTrack track : gp.getQueue().getQueue()) {
-				if(i>SHOW_QUEUE_LENGTH) break;
-				sb.append(String.format("%d: [%s](%s)\n", i++, track.getInfo().title, track.getInfo().uri));
-			}
-			eb.setDescription(sb.toString());
-
-			for(AudioTrack track:gp.getQueue().getQueue()){
-				runtime += track.getDuration();
-			}
-			if (gp.getPlayingTrack()!=null) {
-				runtime += gp.getPlayingTrack().getDuration();
-			}
-			eb.setFooter("Estimated Runtime: "+StringUtil.calcTime(runtime/1000), null);
-
-		}
-		return eb.build();
 	}
 
 	@Override
@@ -89,5 +61,14 @@ public class QueueCommand extends AbstractMusicCommand implements Describable {
 	@Override
 	public String getUsage(Guild g) {
 		return String.format("`%smusic %s [<search string>]`", getPrefix(g),getName());
+	}
+
+	@Override
+	public SlashCommandData getSlashCommandData() {
+		SlashCommandData rtn = super.getSlashCommandData();
+
+		rtn.addOption(OptionType.STRING,SONG_ID,"the ID or URL of the song you want to add to the end of the queue",false);
+
+		return rtn;
 	}
 }

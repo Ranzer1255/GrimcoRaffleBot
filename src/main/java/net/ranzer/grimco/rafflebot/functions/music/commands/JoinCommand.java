@@ -21,19 +21,31 @@ public class JoinCommand extends AbstractMusicSubCommand implements Describable{
 
 	@Override
 	public void processSlash(SlashCommandInteractionEvent event) {
-		process(event.getMember(),event.getGuild());
+		try {
+			process(event.getMember(), event.getGuild());
+			event.reply("joining...").setEphemeral(true).queue();
+		} catch (NoAudioChannelException e ){
+			event.reply(e.getMessage()).setEphemeral(true).queue();
+		}
 	}
 
 	@Override
 	public void processPrefix(String[] args, MessageReceivedEvent event) {
-		process(event.getMember(),event.getGuild());
+		try {
+			process(event.getMember(),event.getGuild());
+		} catch (NoAudioChannelException e){
+			event.getChannel().sendMessage(e.getMessage()).queue();
+		}
 	}
 
 	private void process(Member member, Guild guild){
 		AudioChannel join = getAudioChannel(member);
 
-		if(join!=null)
+		if(join!=null) {
 			GuildPlayerManager.getPlayer(guild).join(join);
+		} else {
+			throw new NoAudioChannelException("you must be in a voice channel before i can do anything");
+		}
 	}
 
 	@Override

@@ -1,7 +1,12 @@
 package net.ranzer.grimco.rafflebot.functions.music.commands;
 
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.ranzer.grimco.rafflebot.commands.Describable;
 import net.ranzer.grimco.rafflebot.functions.music.GuildPlayer;
 import net.ranzer.grimco.rafflebot.functions.music.GuildPlayerManager;
@@ -9,25 +14,45 @@ import net.ranzer.grimco.rafflebot.util.StringUtil;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
-public class PlayCommand extends AbstractMusicCommand implements Describable{
+public class PlayCommand extends AbstractMusicSubCommand implements Describable{
+
+	private final String SONG_ID = "song_id";
+
+	@Override
+	protected void processSlash(SlashCommandInteractionEvent event) {
+		try {
+			String songID = event.getOption(SONG_ID, OptionMapping::getAsString);
+			process(songID,event.getMember(),event.getGuild());
+			event.reply("now playing!").setEphemeral(true).queue();
+		} catch (NoAudioChannelException e){
+			event.reply(e.getMessage()).setEphemeral(true).queue();
+		}
+	}
 
 	@Override
 	public void processPrefix(String[] args, MessageReceivedEvent event) {
 
-		if(getAudioChannel(event.getMember())==null){
-			event.getChannel().sendMessage("you must be in a voice channel before i can do anyting").queue();
+		try{
+			process(args.length>0?StringUtil.arrayToString(Arrays.asList(args), " "):null, event.getMember(),event.getGuild());
+		} catch (NoAudioChannelException e){
+			event.getChannel().sendMessage(e.getMessage()).queue();
 		}
-		GuildPlayer player = GuildPlayerManager.getPlayer(event.getGuild());
-		if(args.length>0){
-			player.queueID(StringUtil.arrayToString(Arrays.asList(args), " "));
+	}
+
+	private void process(String songID, Member member, Guild guild) {
+		if(getAudioChannel(member) == null){
+			throw new NoAudioChannelException("you must be in a voice channel before i can do anything");
 		}
-		
+		GuildPlayer player = GuildPlayerManager.getPlayer(guild);
+		if(songID!=null){
+			player.queueID(songID);
+		}
+
 		if(!player.isConnected()){
-			player.join(getAudioChannel(Objects.requireNonNull(event.getMember())));
+			player.join(getAudioChannel(member));
 		}
-		
+
 		player.start();
 	}
 
@@ -54,5 +79,12 @@ public class PlayCommand extends AbstractMusicCommand implements Describable{
 	@Override
 	public String getUsage(Guild g) {
 		return String.format("`%smusic %s [<search string>]`", getPrefix(g), getName());
+	}
+
+	@Override
+	protected SubcommandData getSubCommandData() {
+		SubcommandData rtn = super.getSubCommandData();
+		rtn.addOption(OptionType.STRING,SONG_ID,"Youtube ID or URL of the song",false);
+		return rtn;
 	}
 }

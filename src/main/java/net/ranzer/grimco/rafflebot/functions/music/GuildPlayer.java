@@ -9,9 +9,11 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
@@ -19,6 +21,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
 import net.ranzer.grimco.rafflebot.functions.music.events.*;
 import net.ranzer.grimco.rafflebot.util.Logging;
+import net.ranzer.grimco.rafflebot.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
@@ -138,6 +141,48 @@ public class GuildPlayer extends AudioEventAdapter implements AudioSendHandler {
 		return queue;
 	}
 
+	public MessageEmbed getQueueEmbed(int queueLength) {
+		EmbedBuilder eb = new EmbedBuilder();
+
+		eb.setAuthor("Currently Playing", null, null);
+		if(this.getPlayingTrack()!=null){
+			eb.setTitle(
+					String.format("%s\n"
+					              +  "by %s",
+					              this.getPlayingTrack().getInfo().title,
+					              this.getPlayingTrack().getInfo().author),
+					this.getPlayingTrack().getInfo().uri);
+		} else {
+			eb.setTitle("Nothing Playing",null);
+		}
+
+		if(this.getQueue().getQueue().isEmpty()){
+
+			eb.setDescription("Nothing in Queue!");
+
+		} else {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Queue:\n");
+			int i = 1;
+			long runtime = 0;
+			for (AudioTrack track : this.getQueue().getQueue()) {
+				if(i>queueLength) break;
+				sb.append(String.format("%d: [%s](%s)\n", i++, track.getInfo().title, track.getInfo().uri));
+			}
+			eb.setDescription(sb.toString());
+
+			for(AudioTrack track:this.getQueue().getQueue()){
+				runtime += track.getDuration();
+			}
+			if (this.getPlayingTrack()!=null) {
+				runtime += this.getPlayingTrack().getDuration();
+			}
+			eb.setFooter("Estimated Runtime: " + StringUtil.calcTime(runtime / 1000), null);
+
+		}
+		return eb.build();
+	}
+
 	// music controls
 	/**
 	 * start the queue
@@ -199,14 +244,14 @@ public class GuildPlayer extends AudioEventAdapter implements AudioSendHandler {
 			}
 		}.start();
 	}
-
-	public void vol() {
-		notifyOfEvent(new VolumeChangeEvent(player.getVolume()));
-	}
 	
-	public void vol(int vol) {
+	public void setVol(int vol) {
+		if(vol <1 || vol > 150) throw new IllegalArgumentException("volume must be between 1 and 150");
 		player.setVolume(vol);
-		notifyOfEvent(new VolumeChangeEvent(player.getVolume()));
+	}
+
+	public int getVol(){
+		return player.getVolume();
 	}
 
 	public void pause() {

@@ -99,7 +99,8 @@ public class MusicListener implements MusicEventListener{
 					case ID_QUEUE -> {
 						Logging.debug("Queue clicked");
 						event.replyEmbeds(
-								QueueCommand.getQueueEmbed(GuildPlayerManager.getPlayer(event.getGuild()))).queue();
+								GuildPlayerManager.getPlayer(event.getGuild())
+										.getQueueEmbed(QueueCommand.SHOW_QUEUE_LENGTH)).queue();
 						return;
 					}
 					default -> {
@@ -185,21 +186,6 @@ public class MusicListener implements MusicEventListener{
 
 		}
 
-		else if (event instanceof VolumeChangeEvent) {
-			MessageBuilder mb = new MessageBuilder();
-
-			mb.append(String.format("Volume set to %d\n",((VolumeChangeEvent) event).getVol()))
-			.append("```\n")
-			.append("*-------------------------*--boost---*\n")
-			.append(volumeBar(((VolumeChangeEvent) event).getVol())).append("\n")
-			.append("*-------------------------*----------*\n")
-			.append("```");
-
-
-			getMusicChannel().sendMessage(mb.build()).queue();
-
-		}
-
 		else if (event instanceof ShuffleEvent){
 			getMusicChannel().sendMessage("*throws all the tracks up in the air....*").queue();
 		}
@@ -247,42 +233,5 @@ public class MusicListener implements MusicEventListener{
 			message.editMessageEmbeds(message.getEmbeds()).setActionRows().queue();
 	}
 
-	private CharSequence volumeBar(int vol) {
-		StringBuilder rtn = new StringBuilder();
-		rtn.append("*|");
 
-		//not boosted
-		if (vol<=100) {
-
-			//number of bars to add (if the math comes out to neg set to 0
-			int volBars = Math.max(((vol / 4) - 2), 0);
-
-			//add bars
-			rtn.append("=".repeat(volBars));
-			rtn.append('|');
-
-			//add blank space
-			rtn.append(" ".repeat(23 - volBars));
-
-			//fill out blank boost space
-			rtn.append("*          *");
-
-		//boosted volume
-		} else {
-			int boost = vol-100;
-			int boostBars = boost/5;
-
-			//fill in full standard bar
-			rtn.append("========================*");
-
-			//add boost bars
-			rtn.append("=".repeat(Math.max(0, boostBars - 1)));
-			rtn.append("|");
-
-			//add blank space
-			rtn.append(" ".repeat(Math.max(0, 10 - boostBars)));
-			rtn.append('*');
-		}
-		return rtn.toString();
-	}
 }

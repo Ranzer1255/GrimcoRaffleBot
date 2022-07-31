@@ -51,7 +51,7 @@ class StringUtilTest {
 
 		@Test
 		void testNoSecondTime() {
-			String expected = "1 Hour 1 Minute";
+			String expected = "1 Hour 1 Minute ";
 			assertEquals(expected, StringUtil.calcTime(3660L));
 		}
 	}

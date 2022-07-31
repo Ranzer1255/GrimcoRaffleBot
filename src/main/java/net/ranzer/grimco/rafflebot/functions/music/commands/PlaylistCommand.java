@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.ranzer.grimco.rafflebot.commands.Describable;
 import net.ranzer.grimco.rafflebot.functions.music.GuildPlayerManager;
@@ -14,13 +15,16 @@ import java.util.List;
 
 public class PlaylistCommand extends AbstractMusicSubCommand implements Describable {
 
-	private final String PLAYLIST_ID = "playlist_id";
-	private final String INSERT =  "insert";
+	private final OptionData PLAYLIST_ID = new OptionData(
+			OptionType.STRING, "playlist_id",
+			"ID or URL of the song Playlist",
+			true
+	);
 
 	@Override
 	protected void processSlash(SlashCommandInteractionEvent event) {
-		boolean insert = event.getOption(INSERT, false, OptionMapping::getAsBoolean);
-		String playlistID = event.getOption(PLAYLIST_ID,OptionMapping::getAsString);
+		boolean insert = event.getOption(INSERT.getName(), false, OptionMapping::getAsBoolean);
+		String playlistID = event.getOption(PLAYLIST_ID.getName(),OptionMapping::getAsString);
 
 		if (insert){
 			GuildPlayerManager.getPlayer(event.getGuild()).insertID(playlistID);
@@ -75,8 +79,7 @@ public class PlaylistCommand extends AbstractMusicSubCommand implements Describa
 	@Override
 	protected SubcommandData getSubCommandData() {
 		SubcommandData rtn = super.getSubCommandData();
-		rtn.addOption(OptionType.STRING, PLAYLIST_ID,"ID or URL of the song Playlist",true);
-		rtn.addOption(OptionType.BOOLEAN, INSERT,"Insert ahead of the current queue",false);
+		rtn.addOptions(PLAYLIST_ID,INSERT);
 		return rtn;
 	}
 }

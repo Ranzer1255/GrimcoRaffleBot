@@ -3,8 +3,8 @@ package net.ranzer.grimco.rafflebot.functions.music.commands;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.ranzer.grimco.rafflebot.commands.Describable;
 import net.ranzer.grimco.rafflebot.functions.music.GuildPlayer;
 import net.ranzer.grimco.rafflebot.functions.music.GuildPlayerManager;
@@ -16,17 +16,32 @@ import java.util.List;
 public class QueueCommand extends AbstractMusicSubCommand implements Describable {
 
 	public static final int SHOW_QUEUE_LENGTH = 10;
-	public final String SONG_ID = "song_id";
 
 	@Override
 	protected void processSlash(SlashCommandInteractionEvent event) {
-		String songID = event.getOption(SONG_ID, OptionMapping::getAsString);
 		GuildPlayer gp = GuildPlayerManager.getPlayer(event.getGuild());
+
+		String songID = event.getOption(SONG.getName(), OptionMapping::getAsString);
+		boolean search = event.getOption(SEARCH.getName(),true,OptionMapping::getAsBoolean);
+		boolean insert = event.getOption(INSERT.getName(),false,OptionMapping::getAsBoolean);
+
 		if(songID==null){
 			event.replyEmbeds(gp.getQueueEmbed(SHOW_QUEUE_LENGTH)).queue();
 		} else {
 			event.reply("processing...").setEphemeral(true).queue();
-			gp.queueID(songID);
+			if(search) {
+				if (insert){
+					gp.insertSearch(songID);
+				} else {
+					gp.queueSearch(songID);
+				}
+			} else {
+				if (insert){
+					gp.insertID(songID);
+				} else {
+					gp.queueID(songID);
+				}
+			}
 		}
 	}
 
@@ -44,7 +59,7 @@ public class QueueCommand extends AbstractMusicSubCommand implements Describable
 
 	@Override
 	public List<String> getAlias() {
-		return Arrays.asList("queue","add");
+		return Arrays.asList("add","queue");
 	}
 
 	@Override
@@ -64,11 +79,9 @@ public class QueueCommand extends AbstractMusicSubCommand implements Describable
 	}
 
 	@Override
-	public SlashCommandData getSlashCommandData() {
-		SlashCommandData rtn = super.getSlashCommandData();
-
-		rtn.addOption(OptionType.STRING,SONG_ID,"the ID or URL of the song you want to add to the end of the queue",false);
-
+	public SubcommandData getSubCommandData() {
+		SubcommandData rtn = super.getSubCommandData();
+		rtn.addOptions(SONG.setRequired(false),SEARCH,INSERT);
 		return rtn;
 	}
 }

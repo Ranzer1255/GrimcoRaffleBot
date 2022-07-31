@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.ranzer.grimco.rafflebot.commands.Describable;
 import net.ranzer.grimco.rafflebot.functions.music.GuildPlayerManager;
 
@@ -52,10 +53,5 @@ public class PauseCommand extends AbstractMusicSubCommand implements Describable
 		return getShortDescription()+"\n\n"
 				+ "to resume: call this command again, or call `play`\n\n"
 				+ "you must be in the same voice channel to pause music.";
-	}
-
-	@Override
-	public SlashCommandData getSlashCommandData() {
-		return super.getSlashCommandData();
 	}
 }

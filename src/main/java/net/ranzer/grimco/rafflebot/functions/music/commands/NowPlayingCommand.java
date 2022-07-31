@@ -69,7 +69,7 @@ public class NowPlayingCommand extends AbstractMusicSubCommand{
 	}
 	@Override
 	public List<String> getAlias() {
-		return Arrays.asList("playing","np","now-playing");
+		return Arrays.asList("now-playing","playing","np");
 	}
 
 }

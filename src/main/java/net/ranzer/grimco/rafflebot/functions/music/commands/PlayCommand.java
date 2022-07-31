@@ -17,13 +17,14 @@ import java.util.List;
 
 public class PlayCommand extends AbstractMusicSubCommand implements Describable{
 
-	private final String SONG_ID = "song_id";
 
 	@Override
 	protected void processSlash(SlashCommandInteractionEvent event) {
 		try {
-			String songID = event.getOption(SONG_ID, OptionMapping::getAsString);
-			process(songID,event.getMember(),event.getGuild());
+			String songID = event.getOption(SONG.getName(), OptionMapping::getAsString);
+			boolean search = event.getOption(SEARCH.getName(),true,OptionMapping::getAsBoolean);
+
+			process(songID,event.getMember(),event.getGuild(),search);
 			event.reply("now playing!").setEphemeral(true).queue();
 		} catch (NoAudioChannelException e){
 			event.reply(e.getMessage()).setEphemeral(true).queue();
@@ -34,19 +35,28 @@ public class PlayCommand extends AbstractMusicSubCommand implements Describable{
 	public void processPrefix(String[] args, MessageReceivedEvent event) {
 
 		try{
-			process(args.length>0?StringUtil.arrayToString(Arrays.asList(args), " "):null, event.getMember(),event.getGuild());
+			process(
+					args.length>0?StringUtil.arrayToString(Arrays.asList(args), " "):null,
+					event.getMember(),
+					event.getGuild(),
+					true
+			);
 		} catch (NoAudioChannelException e){
 			event.getChannel().sendMessage(e.getMessage()).queue();
 		}
 	}
 
-	private void process(String songID, Member member, Guild guild) {
+	private void process(String songID, Member member, Guild guild, boolean search) {
 		if(getAudioChannel(member) == null){
 			throw new NoAudioChannelException("you must be in a voice channel before i can do anything");
 		}
 		GuildPlayer player = GuildPlayerManager.getPlayer(guild);
 		if(songID!=null){
-			player.queueID(songID);
+			if (search){
+				player.queueSearch(songID);
+			} else {
+				player.queueID(songID);
+			}
 		}
 
 		if(!player.isConnected()){
@@ -84,7 +94,7 @@ public class PlayCommand extends AbstractMusicSubCommand implements Describable{
 	@Override
 	protected SubcommandData getSubCommandData() {
 		SubcommandData rtn = super.getSubCommandData();
-		rtn.addOption(OptionType.STRING,SONG_ID,"Youtube ID or URL of the song",false);
+		rtn.addOptions(SONG.setRequired(false),SEARCH);
 		return rtn;
 	}
 }

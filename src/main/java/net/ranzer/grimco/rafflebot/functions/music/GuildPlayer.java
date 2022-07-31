@@ -108,18 +108,17 @@ public class GuildPlayer extends AudioEventAdapter implements AudioSendHandler {
 		});
 	}
 
-//	/**
-//	 * searches Youtube for a song and adds it to the queue
-//	 *
-//	 * @param search
-//	 */
-//	public void queueSearch(String search) {
-//
-//		YouTubeSearcher yts = new YouTubeSearcher();
-//		String videoID = yts.searchForVideo(search);
-//
-//		queueID(videoID);
-//	}
+	/**
+	 * searches Youtube for a song and adds it to the queue
+	 *
+	 * @param search
+	 */
+	public void queueSearch(String search) {
+
+		loading=true;
+		pm.loadItem("ytsearch:" + search, loader);
+
+	}
 
 	public void queueID(String songID) {
 		System.out.println(songID);
@@ -127,10 +126,10 @@ public class GuildPlayer extends AudioEventAdapter implements AudioSendHandler {
 		pm.loadItem(songID, loader);
 	}
 	
-//	public void insertSearch(String search){
-//		insertFlag = true;
-//		queueSearch(search);
-//	}
+	public void insertSearch(String search){
+		insertFlag = true;
+		queueSearch(search);
+	}
 	
 	public void insertID(String songID){
 		insertFlag = true;
@@ -338,10 +337,16 @@ public class GuildPlayer extends AudioEventAdapter implements AudioSendHandler {
 
 		@Override
 		public void playlistLoaded(AudioPlaylist playlist) {
-			notifyOfEvent(new PlaylistLoadEvent(playlist));
-			
-			for (AudioTrack track : playlist.getTracks()) {
+			if(playlist.isSearchResult()){
+				AudioTrack track = playlist.getTracks().get(0);
+				notifyOfEvent(new MusicLoadEvent(track));
 				queue.add(track);
+			}else {
+				notifyOfEvent(new PlaylistLoadEvent(playlist));
+
+				for (AudioTrack track : playlist.getTracks()) {
+					queue.add(track);
+				}
 			}
 			loading = false;
 

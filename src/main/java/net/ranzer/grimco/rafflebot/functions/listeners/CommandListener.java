@@ -12,6 +12,7 @@ import net.ranzer.grimco.rafflebot.commands.admin.*;
 import net.ranzer.grimco.rafflebot.functions.dice.commands.DiceCommand;
 import net.ranzer.grimco.rafflebot.functions.dice.commands.FateDiceCommand;
 import net.ranzer.grimco.rafflebot.functions.draconic.commands.DraconicTranslateCommand;
+import net.ranzer.grimco.rafflebot.functions.excuses.commands.Excuses;
 import net.ranzer.grimco.rafflebot.functions.foldingathome.commands.FoldingAtHomeStatsCommand;
 import net.ranzer.grimco.rafflebot.functions.moderation.commands.AddRoleCommand;
 import net.ranzer.grimco.rafflebot.functions.moderation.commands.RemoveRoleCommand;
@@ -57,7 +58,8 @@ public class CommandListener extends ListenerAdapter {
 			.addCommand(new RaffleEnterCommand())
 			.addCommand(new RaffleWithdrawCommand())
 			.addCommand(new FoldingAtHomeStatsCommand())
-			.addCommand(new MusicCommand());
+			.addCommand(new MusicCommand())
+		    .addCommand(new Excuses());
 
 		List<CommandData> slashCmds = new ArrayList<>();
 		for (BotCommand cmd : cmds) {

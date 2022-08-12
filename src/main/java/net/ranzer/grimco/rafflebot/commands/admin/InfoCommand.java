@@ -2,15 +2,11 @@ package net.ranzer.grimco.rafflebot.commands.admin;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.ranzer.grimco.rafflebot.GrimcoRaffleBot;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
@@ -20,8 +16,6 @@ import net.ranzer.grimco.rafflebot.config.BotConfiguration;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.List;
 
 public class InfoCommand extends BotCommand implements Describable{
 
@@ -48,30 +42,30 @@ public class InfoCommand extends BotCommand implements Describable{
 		event.replyEmbeds(eb.build()).queue();
 	}
 
-	@Override
-	public void processPrefix(String[] args, MessageReceivedEvent event) {
-
-		EmbedBuilder eb;
-		User bot = event.getJDA().getSelfUser();
-
-		// 1 argument !info stats
-		if (args.length == 1 && args[0].equals("stats")) {
-			eb = statusEmbed(bot);
-		}
-		// no arguments !info
-		else {
-			eb = infoEmbed(bot);
-		}
-
-		//color the embed
-		if (event.isFromGuild()) {
-			Member m = event.getGuild().retrieveMember(bot).complete();
-			eb.setColor(m.getColor());
-		}
-
-		event.getChannel().sendMessageEmbeds(eb.build()).queue();
-
-	}
+//	@Override
+//	public void processPrefix(String[] args, MessageReceivedEvent event) {
+//
+//		EmbedBuilder eb;
+//		User bot = event.getJDA().getSelfUser();
+//
+//		// 1 argument !info stats
+//		if (args.length == 1 && args[0].equals("stats")) {
+//			eb = statusEmbed(bot);
+//		}
+//		// no arguments !info
+//		else {
+//			eb = infoEmbed(bot);
+//		}
+//
+//		//color the embed
+//		if (event.isFromGuild()) {
+//			Member m = event.getGuild().retrieveMember(bot).complete();
+//			eb.setColor(m.getColor());
+//		}
+//
+//		event.getChannel().sendMessageEmbeds(eb.build()).queue();
+//
+//	}
 
 	static private EmbedBuilder statusEmbed(User bot) {
 		EmbedBuilder rtn = coreEmbed(bot);
@@ -165,15 +159,14 @@ public class InfoCommand extends BotCommand implements Describable{
 	}
 
 	@Override
-	public String getUsage(Guild g) {
-		return "`"+getPrefix(g)+getName()+" [stats]`";
+	public String getUsage() {
+		return String.format("/`%s [stats]`",getName());
 
 	}
 
 	@Override
-	public List<String> getAlias() {
-
-		return Arrays.asList("info", "i");
+	public String getName() {
+		return "info";
 	}
 
 	@Override
@@ -189,8 +182,10 @@ public class InfoCommand extends BotCommand implements Describable{
 
 	@Override
 	public String getLongDescription() {
-		return    "This command gives detailed information about the bot\n\n"
-				+ "`stats`: displays misc. stats reported by JDA";
+		return """
+				This command gives detailed information about the bot
+
+				`stats`: displays misc. stats reported by JDA""";
 	}
 
 	@Override

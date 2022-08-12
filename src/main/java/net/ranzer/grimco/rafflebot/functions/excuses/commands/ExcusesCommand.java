@@ -1,18 +1,17 @@
 package net.ranzer.grimco.rafflebot.functions.excuses.commands;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.Category;
 import net.ranzer.grimco.rafflebot.commands.Describable;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 
 public class ExcusesCommand extends BotCommand implements Describable {
 
-	private String[] intros = new String[]{
+	private final String[] intros = new String[]{
 			"Sorry I can't come",
 			"Please forgive my absence",
 			"This is going to sound crazy but",
@@ -24,7 +23,7 @@ public class ExcusesCommand extends BotCommand implements Describable {
 			"I regretfully cannot attend,",
 			"This is going to sound like an excuse byt"
 	};
-	private String[] scapegoats = new String[]{
+	private final String[] scapegoats = new String[]{
 			"my nephew",
 			"the ghost of Hitler",
 			"the Pope",
@@ -36,7 +35,7 @@ public class ExcusesCommand extends BotCommand implements Describable {
 			"a professional cricket team",
 			"my Tinder date"
 	};
-	private String[] delays = new String[]{
+	private final String[] delays = new String[]{
 			"just shit the bed",
 			"died in front of me",
 			"won't stop telling me knock knock jokes",
@@ -60,18 +59,13 @@ public class ExcusesCommand extends BotCommand implements Describable {
 	}
 
 	@Override
-	protected void processPrefix(String[] args, MessageReceivedEvent event) {
-		event.getChannel().sendMessage(getExcuse()).queue();
-	}
-
-	@Override
 	public Category getCategory() {
 		return Category.MISC;
 	}
 
 	@Override
-	public List<String> getAlias() {
-		return Collections.singletonList("excuse");
+	public String getName() {
+		return "excuse";
 	}
 
 	@Override
@@ -93,5 +87,10 @@ public class ExcusesCommand extends BotCommand implements Describable {
 
 		return intro + " " + scapegoat + " " + delay;
 
+	}
+
+	@Override
+	public SlashCommandData getSlashCommandData() {
+		return Commands.slash(getName(),getShortDescription());
 	}
 }

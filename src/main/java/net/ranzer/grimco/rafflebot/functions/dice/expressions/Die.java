@@ -58,19 +58,19 @@ public class Die extends Expression {
 			if (!fate)
 				rollDescription = String.valueOf(roll);
 			else {
-				switch (roll){
-					case 1:
+				switch (roll) {
+					case 1 -> {
 						rollDescription = "-";
 						roll = -1;
-						break;
-					case 2:
+					}
+					case 2 -> {
 						rollDescription = "b";
 						roll = 0;
-						break;
-					case 3:
+					}
+					case 3 -> {
 						rollDescription = "+";
 						roll = 1;
-						break;
+					}
 				}
 			}
 

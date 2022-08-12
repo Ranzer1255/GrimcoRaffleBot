@@ -3,15 +3,10 @@ package net.ranzer.grimco.rafflebot.functions.music.commands;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.ranzer.grimco.rafflebot.functions.music.GuildPlayer;
 import net.ranzer.grimco.rafflebot.functions.music.GuildPlayerManager;
-import net.ranzer.grimco.rafflebot.functions.music.MusicListener;
 import net.ranzer.grimco.rafflebot.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class NowPlayingCommand extends AbstractMusicSubCommand{
 
@@ -25,21 +20,6 @@ public class NowPlayingCommand extends AbstractMusicSubCommand{
 		} else {
 			event.replyEmbeds(getNowPlayingEmbed(gp.getPlayingTrack()).build()).setEphemeral(true).queue();
 		}
-	}
-
-	@Override
-	public void processPrefix(String[] args, MessageReceivedEvent event) {
-		GuildPlayer gp = GuildPlayerManager.getPlayer(event.getGuild());
-		if(!gp.isConnected() ||!gp.isPlaying()) return;//ignore command if not playing
-
-		AudioTrack playing = GuildPlayerManager.getPlayer(event.getGuild()).getPlayingTrack();
-
-		EmbedBuilder eb = getNowPlayingEmbed(playing);
-
-		event.getChannel().sendMessageEmbeds(eb.build()).queue(message -> {
-			GuildPlayerManager.getPlayer(event.getGuild()).getMusicListener()
-					.setNowPlayingMessage(message, MusicListener.PLAYING_BUTTONS);
-		});
 	}
 
 	@NotNull
@@ -67,9 +47,10 @@ public class NowPlayingCommand extends AbstractMusicSubCommand{
 	public String getShortDescription() {
 		return "Shows the current playing track and time remaining";
 	}
+
 	@Override
-	public List<String> getAlias() {
-		return Arrays.asList("now-playing","playing","np");
+	public String getName() {
+		return "now-playing";
 	}
 
 }

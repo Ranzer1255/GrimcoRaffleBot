@@ -1,18 +1,13 @@
 package net.ranzer.grimco.rafflebot.functions.music.commands;
 
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.Describable;
-import net.ranzer.grimco.rafflebot.commands.admin.HelpCommand;
 import net.ranzer.grimco.rafflebot.util.Logging;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,7 +28,6 @@ public class MusicCommand extends AbstractMusicCommand implements Describable {
 		subCommands.add(new PauseCommand());
 		subCommands.add(new PlaylistCommand());
 		subCommands.add(new StopCommand());
-		subCommands.add(new SkipCommand());
 		subCommands.add(new VolCommand());
 		subCommands.add(new ShuffleCommand());
 		subCommands.add(new NowPlayingCommand());
@@ -46,44 +40,42 @@ public class MusicCommand extends AbstractMusicCommand implements Describable {
 	@Override
 	protected void processSlash(SlashCommandInteractionEvent event) {
 		Optional<BotCommand> c = subCommands.stream()
-				.filter(cc -> cc.getAlias().contains(event.getSubcommandName())).findFirst();
+				.filter(cc -> cc.getName().equals(event.getSubcommandName())).findFirst();
 
 		// Silent failure of miss-typed subcommands
-		if (!c.isPresent()) {
+		if (c.isEmpty()) {
 			Logging.debug("no music subcommand");
-//			channel.sendMessage(invalidUsage(event.getGuild()));
 			return;
 		}
-		Logging.debug("Music Subclass: "+c.get().getName());
 		setMusicChannel(event.getTextChannel());
 		c.get().runSlashCommand(event);
 	}
 
 
 
+//	@Override
+//	public void processPrefix(String[] args, MessageReceivedEvent event) {
+//		if (args.length == 0) {
+//			event.getTextChannel().sendMessage(new MessageBuilder().setEmbeds(HelpCommand.getDescription(this)).build()).queue();
+//			return;
+//		}
+//
+//		Optional<BotCommand> c = subCommands.stream().filter(cc -> cc.getAlias().contains(args[0])).findFirst();
+//
+//		// Silent failure of miss-typed subcommands
+//		if (c.isEmpty()) {
+//			Logging.debug("no music subcommand");
+////			channel.sendMessage(invalidUsage(event.getGuild()));
+//			return;
+//		}
+//		Logging.debug("Music Subclass: "+c.get().getName());
+//		setMusicChannel(event.getTextChannel());
+//		c.get().runPrefixCommand(Arrays.copyOfRange(args, 1, args.length), event);
+//	}
+
 	@Override
-	public void processPrefix(String[] args, MessageReceivedEvent event) {
-		if (args.length == 0) {
-			event.getTextChannel().sendMessage(new MessageBuilder().setEmbeds(HelpCommand.getDescription(this)).build()).queue();
-			return;
-		}
-
-		Optional<BotCommand> c = subCommands.stream().filter(cc -> cc.getAlias().contains(args[0])).findFirst();
-
-		// Silent failure of miss-typed subcommands
-		if (c.isEmpty()) {
-			Logging.debug("no music subcommand");
-//			channel.sendMessage(invalidUsage(event.getGuild()));
-			return;
-		}
-		Logging.debug("Music Subclass: "+c.get().getName());
-		setMusicChannel(event.getTextChannel());
-		c.get().runPrefixCommand(Arrays.copyOfRange(args, 1, args.length), event);
-	}
-
-	@Override
-	public List<String> getAlias() {
-		return Arrays.asList("music", "m");
+	public String getName() {
+		return "music";
 	}
 
 	@Override
@@ -108,10 +100,10 @@ public class MusicCommand extends AbstractMusicCommand implements Describable {
 	}
 	
 	@Override
-	public String getUsage(Guild g) {
+	public String getUsage() {
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append(String.format("`%s%s {", getPrefix(g), getName()));
+		sb.append(String.format("`/%s {", getName()));
 		for(BotCommand cmd : subCommands){
 			sb.append(String.format("%s|", cmd.getName()));
 		}

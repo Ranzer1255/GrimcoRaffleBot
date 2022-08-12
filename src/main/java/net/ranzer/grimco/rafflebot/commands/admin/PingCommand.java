@@ -1,17 +1,13 @@
 package net.ranzer.grimco.rafflebot.commands.admin;
 
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.Category;
 import net.ranzer.grimco.rafflebot.commands.Describable;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 public class PingCommand extends BotCommand implements  Describable{
 
@@ -25,19 +21,19 @@ public class PingCommand extends BotCommand implements  Describable{
 			});
 		}
 
-	@Override
-	public void processPrefix(String[] args, MessageReceivedEvent event) {
-		Date startTime = new Date();
-		Message pong = event.getChannel().sendMessage("pong!").complete();
-		Date endTime = new Date();
-		long lag = endTime.getTime()-startTime.getTime();
-		pong.editMessage(pong.getContentDisplay()+" `"+lag+"ms`").queue();
-		
-	}
+//	@Override
+//	public void processPrefix(String[] args, MessageReceivedEvent event) {
+//		Date startTime = new Date();
+//		Message pong = event.getChannel().sendMessage("pong!").complete();
+//		Date endTime = new Date();
+//		long lag = endTime.getTime()-startTime.getTime();
+//		pong.editMessage(pong.getContentDisplay()+" `"+lag+"ms`").queue();
+//
+//	}
 
 	@Override
-	public List<String> getAlias() {
-		return List.of("ping");
+	public String getName() {
+		return "ping";
 	}
 
 	@Override

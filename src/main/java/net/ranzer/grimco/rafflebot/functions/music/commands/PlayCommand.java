@@ -3,17 +3,11 @@ package net.ranzer.grimco.rafflebot.functions.music.commands;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.ranzer.grimco.rafflebot.commands.Describable;
 import net.ranzer.grimco.rafflebot.functions.music.GuildPlayer;
 import net.ranzer.grimco.rafflebot.functions.music.GuildPlayerManager;
-import net.ranzer.grimco.rafflebot.util.StringUtil;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class PlayCommand extends AbstractMusicSubCommand implements Describable{
 
@@ -28,21 +22,6 @@ public class PlayCommand extends AbstractMusicSubCommand implements Describable{
 			event.reply("now playing!").setEphemeral(true).queue();
 		} catch (NoAudioChannelException e){
 			event.reply(e.getMessage()).setEphemeral(true).queue();
-		}
-	}
-
-	@Override
-	public void processPrefix(String[] args, MessageReceivedEvent event) {
-
-		try{
-			process(
-					args.length>0?StringUtil.arrayToString(Arrays.asList(args), " "):null,
-					event.getMember(),
-					event.getGuild(),
-					true
-			);
-		} catch (NoAudioChannelException e){
-			event.getChannel().sendMessage(e.getMessage()).queue();
 		}
 	}
 
@@ -67,8 +46,8 @@ public class PlayCommand extends AbstractMusicSubCommand implements Describable{
 	}
 
 	@Override
-	public List<String> getAlias() {
-		return Arrays.asList("play","p");
+	public String getName() {
+		return "play";
 	}
 
 	@Override
@@ -87,8 +66,8 @@ public class PlayCommand extends AbstractMusicSubCommand implements Describable{
 	}
 	
 	@Override
-	public String getUsage(Guild g) {
-		return String.format("`%smusic %s [<search string>]`", getPrefix(g), getName());
+	public String getUsage() {
+		return String.format("`/music %s [<search string>]`", getName());
 	}
 
 	@Override

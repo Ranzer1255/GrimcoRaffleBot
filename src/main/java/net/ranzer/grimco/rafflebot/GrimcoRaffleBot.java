@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.ranzer.grimco.rafflebot.config.BotConfiguration;
 import net.ranzer.grimco.rafflebot.data.GuildManager;
-import net.ranzer.grimco.rafflebot.functions.levels.LevelUpdater;
 import net.ranzer.grimco.rafflebot.functions.listeners.CommandListener;
 import net.ranzer.grimco.rafflebot.util.Logging;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +42,7 @@ public class GrimcoRaffleBot {
 		Collection<GatewayIntent> intents = Arrays.asList(
 			GatewayIntent.GUILD_MEMBERS, //privileged
 			GatewayIntent.DIRECT_MESSAGES,
-			GatewayIntent.GUILD_MESSAGES,
+			GatewayIntent.GUILD_MESSAGES, //privileged
 			GatewayIntent.GUILD_VOICE_STATES
 		);
 		
@@ -56,10 +55,9 @@ public class GrimcoRaffleBot {
 
 		build.enableIntents(GatewayIntent.GUILD_MEMBERS);
 		build.setMemberCachePolicy(MemberCachePolicy.ALL);
+
 		//add Listeners
-		//TODO setup each module as its own command listener
-		build.addEventListeners(new LevelUpdater(),
-							   new StartUpListener());
+		build.addEventListeners(new StartUpListener());
 		build.setActivity(Activity.watching("Waking up, please wait"));
 		build.setStatus(OnlineStatus.DO_NOT_DISTURB);
 		

@@ -56,47 +56,47 @@ public class RemoveRoleCommand extends BotCommand implements Describable {
 
 	}
 
-	@Override
-	protected void processPrefix(String[] args, MessageReceivedEvent event) {
-
-		if (args.length<2){
-			return;
-		}
-
-		//parse role
-		Role role = parseRole(event, args[0]);
-		if(role == null){
-			event.getChannel().sendMessage(String.format("i'm sorry i can't find role `%s`", args[0])).queue();
-			return;
-		}
-
-		//parse members to add role to
-		List<Member> users = event.getMessage().getMentionedMembers();
-		if(users.size()!=1){
-			event.getChannel().sendMessage("i'm sorry but you must mention the user/s to whom you would like to add this role").queue();
-			return;
-		}
-
-		//apply roles
-		for (Member m :	users) {
-			try {
-				rm.removeRole(role,m,event.getAuthor());
-				event.getChannel().sendMessage(String.format(
-						"Role %s successfully removed from %s",
-						role.getName(),
-						m.getEffectiveName()
-				)).queue();
-			} catch (InsufficientPermissionException pe) {
-				event.getChannel().sendMessage(
-						String.format("i'm sorry but i lack the `%s` permission in the server settings to do this",
-								pe.getPermission().getName())).queue();
-			}catch (HierarchyException he){
-				event.getChannel().sendMessage(
-						"That role is above my pay-grade and I cannot Modify it! sorry..."
-				).queue();
-			}
-		}
-	}
+//	@Override
+//	protected void processPrefix(String[] args, MessageReceivedEvent event) {
+//
+//		if (args.length<2){
+//			return;
+//		}
+//
+//		//parse role
+//		Role role = parseRole(event, args[0]);
+//		if(role == null){
+//			event.getChannel().sendMessage(String.format("i'm sorry i can't find role `%s`", args[0])).queue();
+//			return;
+//		}
+//
+//		//parse members to add role to
+//		List<Member> users = event.getMessage().getMentionedMembers();
+//		if(users.size()!=1){
+//			event.getChannel().sendMessage("i'm sorry but you must mention the user/s to whom you would like to add this role").queue();
+//			return;
+//		}
+//
+//		//apply roles
+//		for (Member m :	users) {
+//			try {
+//				rm.removeRole(role,m,event.getAuthor());
+//				event.getChannel().sendMessage(String.format(
+//						"Role %s successfully removed from %s",
+//						role.getName(),
+//						m.getEffectiveName()
+//				)).queue();
+//			} catch (InsufficientPermissionException pe) {
+//				event.getChannel().sendMessage(
+//						String.format("i'm sorry but i lack the `%s` permission in the server settings to do this",
+//								pe.getPermission().getName())).queue();
+//			}catch (HierarchyException he){
+//				event.getChannel().sendMessage(
+//						"That role is above my pay-grade and I cannot Modify it! sorry..."
+//				).queue();
+//			}
+//		}
+//	}
 
 	@Override
 	public Category getCategory() {
@@ -104,8 +104,8 @@ public class RemoveRoleCommand extends BotCommand implements Describable {
 	}
 
 	@Override
-	public List<String> getAlias() {
-		return Collections.singletonList("removerole");
+	public String getName() {
+		return "remove_role";
 	}
 
 	@Override
@@ -119,18 +119,8 @@ public class RemoveRoleCommand extends BotCommand implements Describable {
 	}
 
 	@Override
-	public Permission getPermissionRequirements() {
-		return Permission.ADMINISTRATOR;
-	}
-
-	@Override
-	public List<Role> getRoleRequirements(Guild guild) {
-		return GuildManager.getGuildData(guild).getModRoles();
-	}
-
-	@Override
-	public String getUsage(Guild g) {
-		return String.format("`%s%s <role> <mentioned user/s>`",getPrefix(g),getName());
+	public String getUsage() {
+		return String.format("`/%s <role> <mentioned user/s>`",getName());
 	}
 
 	@Override

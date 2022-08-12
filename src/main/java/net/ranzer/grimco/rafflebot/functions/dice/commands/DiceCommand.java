@@ -1,8 +1,6 @@
 package net.ranzer.grimco.rafflebot.functions.dice.commands;
 
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -12,9 +10,6 @@ import net.ranzer.grimco.rafflebot.commands.Category;
 import net.ranzer.grimco.rafflebot.commands.Describable;
 import net.ranzer.grimco.rafflebot.functions.dice.DiceRoll;
 import net.ranzer.grimco.rafflebot.functions.dice.DiceRollBuilder;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * <p> Credit where Credit is due:
@@ -40,40 +35,11 @@ public class DiceCommand extends BotCommand implements Describable{
 
 		String user = event.isFromGuild()?event.getMember().getEffectiveName():event.getUser().getName();
 
-		var opt = event.getOption(HIDDEN);
 		event.reply(String.format("roll for %s: %s",
 				user,
 				(diceRoll.getLongReadout().length()< MAX_MESSAGE_LENGTH)? diceRoll.getLongReadout():
 						diceRoll.getShortReadout()))
-				.setEphemeral(opt != null && opt.getAsBoolean()).queue();
-
-	}
-
-	@Override
-	public void processPrefix(String[] args, MessageReceivedEvent event) {
-
-		if(args.length<1){
-			if(event.isFromGuild()){
-				invalidUsage(event.getGuild());
-			} else {
-				invalidUsage(null);
-			}
-			return;
-		}
-		StringBuilder expression = new StringBuilder();
-
-		for (String arg : args) {
-			expression.append(" ").append(arg);
-		}
-		DiceRoll diceRoll = DiceRollBuilder.newDiceRoll(expression.substring(1));
-		
-		diceRoll.roll();
-
-		event.getChannel().sendMessage(String.format("%s: %s",
-				event.getAuthor().getAsMention(),
-				(diceRoll.getLongReadout().length()< MAX_MESSAGE_LENGTH)? diceRoll.getLongReadout():
-					diceRoll.getShortReadout()))
-		.queue();
+				.setEphemeral(event.getOption(HIDDEN,false,OptionMapping::getAsBoolean)).queue();
 
 	}
 
@@ -83,8 +49,8 @@ public class DiceCommand extends BotCommand implements Describable{
 	}
 
 	@Override
-	public List<String> getAlias() {
-		return Arrays.asList("roll","r");
+	public String getName() {
+		return "roll";
 	}
 
 	@Override
@@ -112,8 +78,8 @@ public class DiceCommand extends BotCommand implements Describable{
 	}
 	
 	@Override
-	public String getUsage(Guild g) {
-		return "`"+getPrefix(g)+getName()+" <basic rpg notation>`";
+	public String getUsage() {
+		return String.format("`/%s ,basic rpg notation>",getName());
 	}
 
 	@Override

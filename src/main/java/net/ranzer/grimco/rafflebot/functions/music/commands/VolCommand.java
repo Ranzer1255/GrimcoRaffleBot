@@ -1,10 +1,8 @@
 package net.ranzer.grimco.rafflebot.functions.music.commands;
 
 import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -12,10 +10,6 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.ranzer.grimco.rafflebot.commands.Describable;
 import net.ranzer.grimco.rafflebot.functions.music.GuildPlayer;
 import net.ranzer.grimco.rafflebot.functions.music.GuildPlayerManager;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class VolCommand extends AbstractMusicSubCommand implements Describable{
 
@@ -44,29 +38,8 @@ public class VolCommand extends AbstractMusicSubCommand implements Describable{
 	}
 
 	@Override
-	public void processPrefix(String[] args, MessageReceivedEvent event) {
-
-		GuildPlayer gp = GuildPlayerManager.getPlayer(event.getGuild());
-		if(args.length==0){
-			event.getChannel().sendMessage(getVolMessage(gp.getVol())).queue();
-			return;
-		}
-		if(notInSameAudioChannel(event.getMember())){
-			event.getChannel().sendMessage(NOT_IN_VOICE).queue();
-			return;
-		}
-		try {
-			int vol = Integer.parseInt(args[0]);
-			gp.setVol(vol);
-			event.getChannel().sendMessage(getVolMessage(gp.getVol())).queue();
-		} catch (IllegalArgumentException e) {
-			event.getChannel().sendMessage(NOT_IN_RANGE).queue();
-		}
-	}
-
-	@Override
-	public List<String> getAlias() {
-		return Arrays.asList("vol", "v");
+	public String getName() {
+		return "vol";
 	}
 
 	@Override
@@ -83,8 +56,8 @@ public class VolCommand extends AbstractMusicSubCommand implements Describable{
 	}
 
 	@Override
-	public String getUsage(Guild g) {
-		return String.format("`%smusic %s [<1-150>]`", getPrefix(g), getName());
+	public String getUsage() {
+		return String.format("`/music %s [<1-150>]`", getName());
 	}
 
 	@Override

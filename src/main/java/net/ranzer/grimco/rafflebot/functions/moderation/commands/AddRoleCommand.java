@@ -59,60 +59,60 @@ public class AddRoleCommand extends BotCommand implements Describable {
 		}
 	}
 
-	@Override
-	protected void processPrefix(String[] args, MessageReceivedEvent event) {
-
-		if (args.length<3){
-			return;
-		}
-
-		//parse role
-		Role role = parseRole(event, args[0]);
-		if(role == null){
-			event.getChannel().sendMessage(String.format("i'm sorry i can't find role `%s`", args[0])).queue();
-			return;
-		}
-
-		//parse members to add role to
-		List<Member> users = event.getMessage().getMentionedMembers();
-		if(users.size()!=1){
-			event.getChannel().sendMessage("i'm sorry but you must mention the user/s to whom you would like to add this role").queue();
-			return;
-		}
-
-		//parse number of days
-		int days;
-		try {
-			days = Integer.parseInt(args[args.length-1]);
-		} catch (NumberFormatException e) {
-			event.getChannel().sendMessage(String.format("i'm sorry but i didn't understand `%s`",args[args.length-1])).queue();
-			return;
-		}
-
-		User requester = event.getAuthor();
-
-		//apply roles
-		for (Member m :	users) {
-			try {
-				rm.addRole(role,m,days,requester);
-				event.getChannel().sendMessage(String.format(
-						"Role %s successfully added to %s for %d %s",
-						role.getName(),
-						m.getEffectiveName(),
-						days,
-						days==1?"day":"days"
-				)).queue();
-			} catch (InsufficientPermissionException pe) {
-				event.getChannel().sendMessage(
-						String.format("i'm sorry but i lack the `%s` permission in the server settings to do this",
-						pe.getPermission().getName())).queue();
-			} catch (HierarchyException he){
-				event.getChannel().sendMessage(
-					"That role or user is above my pay-grade and I cannot Modify it! sorry..."
-				).queue();
-			}
-		}
-	}
+//	@Override
+//	protected void processPrefix(String[] args, MessageReceivedEvent event) {
+//
+//		if (args.length<3){
+//			return;
+//		}
+//
+//		//parse role
+//		Role role = parseRole(event, args[0]);
+//		if(role == null){
+//			event.getChannel().sendMessage(String.format("i'm sorry i can't find role `%s`", args[0])).queue();
+//			return;
+//		}
+//
+//		//parse members to add role to
+//		List<Member> users = event.getMessage().getMentionedMembers();
+//		if(users.size()!=1){
+//			event.getChannel().sendMessage("i'm sorry but you must mention the user/s to whom you would like to add this role").queue();
+//			return;
+//		}
+//
+//		//parse number of days
+//		int days;
+//		try {
+//			days = Integer.parseInt(args[args.length-1]);
+//		} catch (NumberFormatException e) {
+//			event.getChannel().sendMessage(String.format("i'm sorry but i didn't understand `%s`",args[args.length-1])).queue();
+//			return;
+//		}
+//
+//		User requester = event.getAuthor();
+//
+//		//apply roles
+//		for (Member m :	users) {
+//			try {
+//				rm.addRole(role,m,days,requester);
+//				event.getChannel().sendMessage(String.format(
+//						"Role %s successfully added to %s for %d %s",
+//						role.getName(),
+//						m.getEffectiveName(),
+//						days,
+//						days==1?"day":"days"
+//				)).queue();
+//			} catch (InsufficientPermissionException pe) {
+//				event.getChannel().sendMessage(
+//						String.format("i'm sorry but i lack the `%s` permission in the server settings to do this",
+//						pe.getPermission().getName())).queue();
+//			} catch (HierarchyException he){
+//				event.getChannel().sendMessage(
+//					"That role or user is above my pay-grade and I cannot Modify it! sorry..."
+//				).queue();
+//			}
+//		}
+//	}
 
 	@Override
 	public Category getCategory() {
@@ -120,8 +120,8 @@ public class AddRoleCommand extends BotCommand implements Describable {
 	}
 
 	@Override
-	public List<String> getAlias() {
-		return Collections.singletonList("timed_role");
+	public String getName() {
+		return "timed_role";
 	}
 
 	@Override
@@ -134,19 +134,10 @@ public class AddRoleCommand extends BotCommand implements Describable {
 		return getShortDescription();
 	}
 
-	@Override
-	public Permission getPermissionRequirements() {
-		return Permission.ADMINISTRATOR;
-	}
 
 	@Override
-	public List<Role> getRoleRequirements(Guild guild) {
-		return GuildManager.getGuildData(guild).getModRoles();
-	}
-
-	@Override
-	public String getUsage(Guild g) {
-		return String.format("`%s%s <role> <mentioned user/s> <num of days>`",getPrefix(g),getName());
+	public String getUsage() {
+		return String.format("`/%s <role> <mentioned user/s> <num of days>`",getName());
 	}
 
 	@Override

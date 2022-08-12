@@ -20,6 +20,7 @@ import net.ranzer.grimco.rafflebot.data.IRaffleData;
 import net.ranzer.grimco.rafflebot.functions.raffle.Raffle;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,15 +47,16 @@ public abstract class AbstractRaffleCommand extends BotCommand implements Descri
         return Category.RAFFLE;
     }
 
-    /**
-     * gets the Roles that can manage Raffles in the supplied Guild
-     * @param guild guild for which these roles apply
-     * @return a List<Role> of all the Roles allowed to manage raffles
-     */
+//    /**
+//     * gets the Roles that can manage Raffles in the supplied Guild
+//     * @param guild guild for which these roles apply
+//     * @return a List<Role> of all the Roles allowed to manage raffles
+//     */
     protected static List<Role> getAllowedManagementRoles(Guild guild) {
 
-        List<Role> rtn = GuildManager.getGuildData(guild).getRaffleData().allowedRaffleRoles();
+        List<Role> rtn = new ArrayList<>();
         List<Command> cmds = guild.retrieveCommands().complete();
+        @SuppressWarnings("OptionalGetWithoutIsPresent")
         Command c = cmds.stream().filter(cmd -> cmd.getName().equals("raffle")).findFirst().get();
         List<CommandPrivilege> commandPrivileges = c.retrievePrivileges(guild).complete();
         for(CommandPrivilege cp: commandPrivileges){
@@ -133,10 +135,10 @@ public abstract class AbstractRaffleCommand extends BotCommand implements Descri
                     break;
                 case Raffle.ID_END:
                     if(manager) {
-                        event.reply("This will End the raffle and clear the Entry table. Only push this button" +
-                                " once you're 100% done with the raffle and do not need to draw any more names!!\n" +
-                                "THIS CANNOT BE UNDONE!\n" +
-                                "Dismiss this message to cancel.")
+                        event.reply("""
+                                            This will End the raffle and clear the Entry table. Only push this button once you're 100% done with the raffle and do not need to draw any more names!!
+                                            THIS CANNOT BE UNDONE!
+                                            Dismiss this message to cancel.""")
                                 .setEphemeral(true)
                                 .addActionRow(Button.danger(Raffle.ID_CONFIRM_END, "Yes, We're done!"))
                                 .queue();
@@ -239,9 +241,5 @@ public abstract class AbstractRaffleCommand extends BotCommand implements Descri
 
     protected boolean barred(Member member) {
         return GuildManager.getGuildData(member.getGuild()).getMemberData(member).isBannedFromRaffle();
-    }
-
-    protected SubcommandData getSubcommandData(){
-        return null;
     }
 }

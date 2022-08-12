@@ -1,17 +1,12 @@
 package net.ranzer.grimco.rafflebot.functions.music.commands;
 
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.ranzer.grimco.rafflebot.commands.Describable;
 import net.ranzer.grimco.rafflebot.functions.music.GuildPlayerManager;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class StopCommand extends AbstractMusicSubCommand implements Describable{
 
@@ -31,18 +26,8 @@ public class StopCommand extends AbstractMusicSubCommand implements Describable{
 	}
 
 	@Override
-	public void processPrefix(String[] args, MessageReceivedEvent event) {
-
-		if (args.length>0&&args[0].equals("keep")|| notInSameAudioChannel(event.getMember())){
-			GuildPlayerManager.getPlayer(event.getGuild()).stop(false);
-			return;
-		}
-		GuildPlayerManager.getPlayer(event.getGuild()).stop(true);
-	}
-
-	@Override
-	public List<String> getAlias() {
-		return Arrays.asList("stop", "s");
+	public String getName() {
+		return "stop";
 	}
 
 	@Override
@@ -58,8 +43,8 @@ public class StopCommand extends AbstractMusicSubCommand implements Describable{
 	}
 	
 	@Override
-	public String getUsage(Guild g) {
-		return String.format("`%smusic %s [keep]`", getPrefix(g), getName());
+	public String getUsage() {
+		return String.format("`/music %s [keep]`", getName());
 	}
 
 	@Override

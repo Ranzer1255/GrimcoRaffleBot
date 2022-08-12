@@ -1,23 +1,17 @@
-package net.ranzer.grimco.rafflebot.functions.raffle.commands;
+package net.ranzer.grimco.rafflebot.functions.raffle.commands.manage;
 
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.Describable;
 import net.ranzer.grimco.rafflebot.config.BotConfiguration;
 import net.ranzer.grimco.rafflebot.data.GuildManager;
-import net.ranzer.grimco.rafflebot.functions.raffle.Raffle;
-import net.ranzer.grimco.rafflebot.functions.raffle.commands.manage.BanUserCommand;
-import net.ranzer.grimco.rafflebot.functions.raffle.commands.manage.ChannelEnableCommand;
-import net.ranzer.grimco.rafflebot.functions.raffle.commands.manage.RaffleOpenCommand;
+import net.ranzer.grimco.rafflebot.functions.raffle.commands.AbstractRaffleCommand;
+import net.ranzer.grimco.rafflebot.functions.raffle.commands.AbstractRaffleSubCommand;
 import net.ranzer.grimco.rafflebot.util.Logging;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,23 +22,22 @@ import java.util.Optional;
  * before i have this thought again and run down this rabbit hole a 3rd time, I'm going to leave
  * this note here so that i dont!
 */
-public class RaffleCommand extends AbstractRaffleCommand implements Describable {
+public class RaffleManagementCommand extends AbstractRaffleCommand implements Describable {
 
     private static final List<BotCommand> subCommands;
 
     static {
         subCommands=new ArrayList<>();
         subCommands.add(new RaffleOpenCommand());
-//        subCommands.add(new ModifyRolesCommand());
         subCommands.add(new BanUserCommand());
         subCommands.add(new ChannelEnableCommand());
-
+        subCommands.add(new RaffleWithdrawUserCommand());
     }
 
     @Override
     protected void processSlash(SlashCommandInteractionEvent event) {
 
-        Optional<BotCommand> c = subCommands.stream().filter(cc -> cc.getAlias().contains(event.getSubcommandName())).findFirst();
+        Optional<BotCommand> c = subCommands.stream().filter(cc -> cc.getName().equals(event.getSubcommandName())).findFirst();
 
         // Silent failure of miss-typed subcommands
         if (c.isEmpty()) {
@@ -65,37 +58,8 @@ public class RaffleCommand extends AbstractRaffleCommand implements Describable 
     }
 
     @Override
-    public void processPrefix(String[] args, MessageReceivedEvent event) {
-
-       if (args.length == 0) {
-            if(raffles.containsKey(event.getTextChannel().getId())) {
-                Raffle r = raffles.get(event.getTextChannel().getId());
-                event.getChannel().sendMessageEmbeds(r.getEmbed()).queue(r::setActiveMessage);
-            }
-            return;
-        }
-
-        Optional<BotCommand> c = subCommands.stream().filter(cc -> cc.getAlias().contains(args[0])).findFirst();
-
-        // Silent failure of miss-typed subcommands
-        if (c.isEmpty()) {
-            Logging.debug("no raffle subcommand");
-            return;
-        }
-        Logging.debug("raffle Subcommand: "+c.get().getName());
-        if (!(c.get().getName().equals("enable")||c.get().getName().equals("role"))){
-            if (!GuildManager.getGuildData(event.getGuild()).getChannel(event.getTextChannel()).getRaffle()){
-                event.getChannel().sendMessage("Raffles are Disabled in this channel").queue();
-                return;
-            }
-        }
-        c.get().runPrefixCommand(Arrays.copyOfRange(args, 1, args.length), event);
-
-    }
-
-    @Override
-    public List<String> getAlias() {
-        return Arrays.asList("raffle","giveaway");
+    public String getName() {
+        return "raffle";
     }
 
     @Override
@@ -125,10 +89,10 @@ public class RaffleCommand extends AbstractRaffleCommand implements Describable 
     }
 
     @Override
-    public String getUsage(Guild g) {
+    public String getUsage() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(String.format("`%s%s {", getPrefix(g), getName()));
+        sb.append(String.format("`/%s {", getName()));
         for(BotCommand cmd : subCommands){
             sb.append(String.format("%s|", cmd.getName()));
         }
@@ -154,17 +118,12 @@ public class RaffleCommand extends AbstractRaffleCommand implements Describable 
         rtn.setDefaultEnabled(false);
 
         for (BotCommand cmd: subCommands){
-            AbstractRaffleCommand rcmd = (AbstractRaffleCommand) cmd;
+            AbstractRaffleSubCommand rcmd = (AbstractRaffleSubCommand) cmd;
             if (rcmd.getSubcommandData()!=null){
                 rtn.addSubcommands(rcmd.getSubcommandData());
             }
         }
 
         return rtn;
-    }
-
-    @Override
-    public List<Role> getRoleRequirements(Guild guild) {
-        return getAllowedManagementRoles(guild);
     }
 }

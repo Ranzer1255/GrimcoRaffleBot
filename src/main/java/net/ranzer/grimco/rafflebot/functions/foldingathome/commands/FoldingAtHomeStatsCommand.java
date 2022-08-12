@@ -2,8 +2,6 @@ package net.ranzer.grimco.rafflebot.functions.foldingathome.commands;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
@@ -15,8 +13,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 public class FoldingAtHomeStatsCommand extends BotCommand implements Describable {
 
@@ -41,23 +37,6 @@ public class FoldingAtHomeStatsCommand extends BotCommand implements Describable
 		}
 	}
 
-	@Override
-	protected void processPrefix(String[] args, MessageReceivedEvent event) {
-
-		try {
-			event.getChannel().sendMessageEmbeds(FoldingEmbed().build()).queue();
-		} catch (IOException e) {
-			event.getChannel().sendMessage("There was an issue reaching the Folding@Home API. please try again later.").queue();
-		} catch (JSONException e){
-			event.getChannel().sendMessage("Folding@Home has changed their API structure (again) and Ranzer is unaware. " +
-					"please give him this message so that he can correct the issue as soon as possible\n\n" +
-					"```\n" +
-					e.getLocalizedMessage() +
-					"\n```").queue();
-		}
-
-	}
-
 	private EmbedBuilder FoldingEmbed()throws IOException, JSONException{
 
 		final String TEAM_STATS_URL = "https://api.foldingathome.org/team/238767";
@@ -72,9 +51,11 @@ public class FoldingAtHomeStatsCommand extends BotCommand implements Describable
 		eb.setAuthor(teamStats.getString("name")+" F@H Stats",FAH_URL)
 				.setTitle(String.format("Team number: %d",teamStats.getInt("id")), FAH_URL)
 				.setDescription(
-						String.format("Score: %,d\n"+
-										"Work Units: %,d\n" +
-										"Rank: %,d",
+						String.format(
+								"""
+								Score: %,d
+								Work Units: %,d
+								Rank: %,d""",
 								teamStats.getInt("score"),
 								teamStats.getInt("wus"),
 								teamStats.getInt("rank"))
@@ -101,8 +82,8 @@ public class FoldingAtHomeStatsCommand extends BotCommand implements Describable
 	}
 
 	@Override
-	public List<String> getAlias() {
-		return Arrays.asList("folding", "fold");
+	public String getName() {
+		return "folding";
 	}
 
 	@Override

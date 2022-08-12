@@ -1,46 +1,43 @@
 package net.ranzer.grimco.rafflebot.functions.draconic.commands;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.Category;
 import net.ranzer.grimco.rafflebot.commands.Describable;
 import net.ranzer.grimco.rafflebot.functions.draconic.DraconicTranslator;
-import net.ranzer.grimco.rafflebot.util.StringUtil;
 
 import java.awt.*;
-import java.util.Arrays;
-import java.util.List;
 
 public class DraconicTranslateCommand extends BotCommand implements Describable{
 
-	@Override
-	protected void processSlash(SlashCommandInteractionEvent event) {
-		if(event.getOption("reverse")!=null && event.getOption("reverse", OptionMapping::getAsBoolean)){
-			event.replyEmbeds(fromDraconic(event.getOption("prase",OptionMapping::getAsString))).queue();
-		} else {
-			event.replyEmbeds(toDraconic(event.getOption("phrase",OptionMapping::getAsString))).queue();
-		}
-	}
+	private final OptionData PHRASE = new OptionData(
+			OptionType.STRING,
+			"phrase",
+			"phrase to translate",
+			true);
+	private final OptionData REVERSE = new OptionData(
+			OptionType.BOOLEAN,
+			"reverse",
+			"translate from draconic back to english",
+			false);
 
 	@Override
-	public void processPrefix(String[] args, MessageReceivedEvent event) {
-		
-		if (args[0].equals("com")){
-			event.getChannel().sendMessageEmbeds(
-					fromDraconic(StringUtil.arrayToString(Arrays.asList(Arrays.copyOfRange(args, 1,args.length))," ")
-			)).queue();
+	protected void processSlash(SlashCommandInteractionEvent event) {
+
+		boolean reverse = event.getOption(REVERSE.getName(),false,OptionMapping::getAsBoolean);
+		String phrase = event.getOption(PHRASE.getName(),OptionMapping::getAsString);
+
+		if(reverse){
+			event.replyEmbeds(fromDraconic(phrase)).queue();
 		} else {
-			event.getChannel().sendMessageEmbeds(
-					toDraconic(StringUtil.arrayToString(Arrays.asList(args), " "))
-			).queue();
+			event.replyEmbeds(toDraconic(phrase)).queue();
 		}
 	}
 	
@@ -69,8 +66,8 @@ public class DraconicTranslateCommand extends BotCommand implements Describable{
 	}
 
 	@Override
-	public List<String> getAlias() {
-		return Arrays.asList("draconic","drc");
+	public String getName() {
+		return "draconic";
 	}
 
 	@Override
@@ -80,16 +77,17 @@ public class DraconicTranslateCommand extends BotCommand implements Describable{
 	
 	@Override
 	public String getLongDescription() {
-		return "Translates a word or phrase from Common (english) to Draconic.\n\n"
-				+ "`com`: will translate a word or phrase in Draconic back into Common (english)\n\n"
-				+ "This Translator is powered by [Twilight Realm](http://draconic.twilightrealm.com/)";
+		return """
+				Translates a word or phrase from Common (english) to Draconic.
+
+				`reverse`: will translate a word or phrase in Draconic back into Common (english)
+
+				This Translator is powered by [Twilight Realm](http://draconic.twilightrealm.com/)""";
 	}
 
 	@Override
-	public String getUsage(Guild g) {
-		
-		return "`"+getPrefix(g)+getName()+" [com] <translation phrase>`";
-		
+	public String getUsage() {
+		return String.format("`/%s <phrase to translate> [{true|false}]",getName());
 	}
 	
 	@Override
@@ -106,8 +104,7 @@ public class DraconicTranslateCommand extends BotCommand implements Describable{
 	public SlashCommandData getSlashCommandData() {
 		SlashCommandData rtn = Commands.slash(getName(),getShortDescription());
 
-		rtn.addOption(OptionType.STRING,"phrase","phrase to translate",true);
-		rtn.addOption(OptionType.BOOLEAN,"reverse","translate from draconic back to english",false);
+		rtn.addOptions(PHRASE, REVERSE);
 		return rtn;
 	}
 }

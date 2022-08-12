@@ -176,9 +176,7 @@ public class MusicListener implements MusicEventListener{
 
 		else if (event instanceof MusicPausedEvent) {
 			if (!((MusicPausedEvent) event).getPaused()) {
-				getMusicChannel().sendMessage(String.format("Music paused. call `%sm play` or `%sm pause` to resume",
-						BotCommand.getPrefix(getMusicChannel().getGuild()),
-						BotCommand.getPrefix(getMusicChannel().getGuild()))).queue();
+				getMusicChannel().sendMessage("Music paused. call `/music play` or `/music pause` to resume").queue();
 				setNowPlayingMessage(nowPlayingMessage,PAUSED_BUTTONS);
 			} else {
 				setNowPlayingMessage(nowPlayingMessage,PLAYING_BUTTONS);
@@ -208,7 +206,7 @@ public class MusicListener implements MusicEventListener{
 		}
 
 		else{
-			getMusicChannel().sendMessage("This music event isn't hanndled yet.... Yell at ranzer ("+event.getClass().getSimpleName()+")").queue();
+			getMusicChannel().sendMessage("This music event isn't handled yet.... Yell at ranzer ("+event.getClass().getSimpleName()+")").queue();
 
 		}
 

@@ -1,7 +1,8 @@
 package net.ranzer.grimco.rafflebot.functions.music.commands;
 
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.entities.AudioChannel;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.ranzer.grimco.rafflebot.commands.BotCommand;
 import net.ranzer.grimco.rafflebot.commands.Category;
 import net.ranzer.grimco.rafflebot.commands.Describable;
@@ -25,8 +26,8 @@ public abstract class AbstractMusicCommand extends BotCommand implements Describ
 	}
 	
 	@Override
-	public String getUsage(Guild g) {
-		return String.format("`%smusic %s`", getPrefix(g), getName());
+	public String getUsage() {
+		return String.format("`/music %s`", getName());
 	}
 	
 	@Override

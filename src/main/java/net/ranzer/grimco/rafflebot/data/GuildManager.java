@@ -64,6 +64,7 @@ public class GuildManager extends ListenerAdapter{
 	}
 
 
+	//TODO remove old data un-needed data methods inlciding but not limited to anything related to Prefixes and Moderation role requirements
 	//convenience pass through methods
 	public static String getPrefix(Guild key){
 		return new GuildData(key).getPrefix();
@@ -77,8 +78,7 @@ public class GuildManager extends ListenerAdapter{
 
 	//DB update methods
 
-	//todo test this
-	private static void removeOldGuilds() {//todo test this
+	private static void removeOldGuilds() {
 
 		try (Session s = HibernateManager.getSessionFactory().openSession()){
 			s.beginTransaction();
@@ -92,7 +92,6 @@ public class GuildManager extends ListenerAdapter{
 		}
 	}
 
-	//todo test this
 	private static void removeOldTextChannels() {
 		try (Session s = HibernateManager.getSessionFactory().openSession()){
 			s.beginTransaction();
@@ -106,7 +105,6 @@ public class GuildManager extends ListenerAdapter{
 		}
 	}
 
-	//todo test this
 	private static void updateMembers() {
 
 		//delete old members' XP
@@ -120,10 +118,8 @@ public class GuildManager extends ListenerAdapter{
 					if (g == null) continue; //this should never happen
 					g.retrieveMemberById(Long.parseLong(member.getUserId())).complete();
 				} catch (ErrorResponseException e){
-					switch (e.getErrorResponse()){
-						case UNKNOWN_MEMBER:
-						case UNKNOWN_USER:
-							member.removeAllXP();
+					switch (e.getErrorResponse()) {
+						case UNKNOWN_MEMBER, UNKNOWN_USER -> member.removeAllXP();
 					}
 				}
 			}
@@ -133,7 +129,6 @@ public class GuildManager extends ListenerAdapter{
 
 
 	//data modification listeners
-	//todo test this
 	@Override
 	public void onGuildLeave(@NotNull GuildLeaveEvent event) {
 		super.onGuildLeave(event);
@@ -144,7 +139,6 @@ public class GuildManager extends ListenerAdapter{
 		}
 	}
 
-	//todo test this
 	@Override
 	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
 		getGuildData(event.getGuild()).addMember(event.getMember());
@@ -163,20 +157,6 @@ public class GuildManager extends ListenerAdapter{
 //		getGuildData(event.getGuild()).deleteMember(event.getMember());
 
 	}
-
-	//todo see if this is still needed
-//	@Override
-//	public void onGuildJoin(GuildJoinEvent event) {
-//
-//		try(PreparedStatement stmt = BotDB.getConnection().prepareStatement("insert into grimcodb.guild(guild_id) values (?)")){
-//			stmt.setString(1, event.getGuild().getId());
-//			stmt.execute();
-//		} catch (SQLException e) {
-//			Logging.error("issue joining guild to DB");
-//			Logging.log(e);
-//		}
-//
-//	}
 
 	@Override
 	public void onChannelDelete(@NotNull ChannelDeleteEvent event) {

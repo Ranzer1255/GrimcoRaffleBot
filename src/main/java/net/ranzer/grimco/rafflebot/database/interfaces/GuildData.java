@@ -102,7 +102,7 @@ public class GuildData extends AbstractData implements IGuildData {
 	}
 
 	@Override
-	public void deleteMember(Member m) {//TODO test this
+	public void deleteMember(Member m) {
 		gdm.removeMember(new MemberDataModel(m,gdm));
 		save(gdm);
 	}
@@ -123,7 +123,7 @@ public class GuildData extends AbstractData implements IGuildData {
 		}
 
 		final ChannelDataModel cdm = model;
-		return new IChannelData() {//todo build tess for all of this
+		return new IChannelData() {
 			@Override
 			public void setXPPerm(boolean earnEXP) {
 				cdm.setXpPerm(earnEXP);

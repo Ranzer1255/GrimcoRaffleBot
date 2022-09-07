@@ -15,25 +15,29 @@ repositories {
 
 dependencies {
 
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api',    version: '5.8.2'
-    testRuntimeOnly    group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.2'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api',    version: '5.9.0'
+    testRuntimeOnly    group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.9.0'
 
-    implementation group: 'net.dv8tion',         name: 'JDA',           version: '5.0.0-alpha.11'
-    implementation group: 'org.apache.commons', name: 'commons-text',   version: '1.9'
-    implementation group: 'org.jsoup',          name: 'jsoup',          version: '1.14.3'
-    implementation group: 'org.json',           name: 'json',           version: '20220320'
-    implementation group: 'org.hibernate',      name: 'hibernate-core', version: '5.4.30.Final'
-    implementation group: 'org.postgresql',     name: 'postgresql',     version: '42.3.4'
-    implementation group: 'org.slf4j',          name: 'slf4j-simple',   version: '1.7.36'
-    implementation group: 'com.sedmelluq',      name: 'lavaplayer',     version: '1.3.77'
-
+    implementation group: 'net.dv8tion',                name: 'JDA',                version: '5.0.0-alpha.11'
+    implementation group: 'org.apache.commons',         name: 'commons-text',       version: '1.9'
+    implementation group: 'org.jsoup',                  name: 'jsoup',              version: '1.15.3'
+    implementation group: 'org.json',                   name: 'json',               version: '20220320'
+    implementation group: 'org.hibernate',              name: 'hibernate-core',     version: '5.4.30.Final'
+    implementation group: 'org.postgresql',             name: 'postgresql',         version: '42.5.0'
+    implementation group: 'com.sedmelluq',              name: 'lavaplayer',         version: '1.3.77'
+    constraints {
+        implementation group: 'commons-io',                 name: 'commons-io',         version: '2.11.0'
+        implementation group: 'org.apache.httpcomponents',  name: 'httpclient',         version: '4.5.13'
+        implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind',   version: '2.13.4'
+        implementation group: 'commons-codec',              name: 'commons-codec',      version: '1.15'
+    }
 }
 
 reckon{
     stages('dev','final')
 
 
-    scopeCalc = calcScopeFromProp().or(calcScopeFromCommitMessages()) // fall back to commit message (see below) if no explicit prop set
+    scopeCalc = calcScopeFromProp() | calcScopeFromCommitMessages()// fall back to commit message (see below) if no explicit prop set
     stageCalc = calcStageFromProp()
 
     defaultInferredScope = 'patch'

@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class Excuses extends BotCommand implements Describable {
+public class ExcusesCommand extends BotCommand implements Describable {
 
 	private String[] intros = new String[]{
 			"Sorry I can't come",
@@ -19,7 +19,7 @@ public class Excuses extends BotCommand implements Describable {
 			"Get this!",
 			"I can't go because",
 			"I know you're going to hate me but",
-			"I was minding my own buisness and boom!",
+			"I was minding my own business and boom!",
 			"I feel terrible but",
 			"I regretfully cannot attend,",
 			"This is going to sound like an excuse byt"
@@ -86,7 +86,7 @@ public class Excuses extends BotCommand implements Describable {
 
 	private String getExcuse(){
 
-		Random r = new Random();
+		Random r = new Random(System.currentTimeMillis());
 		String intro = intros[r.nextInt(intros.length)];
 		String scapegoat = scapegoats[r.nextInt(scapegoats.length)];
 		String delay = delays[r.nextInt(delays.length)];
